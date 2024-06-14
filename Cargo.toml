@@ -1,17 +1,7 @@
-[package]
-name = "matrix"
-version = "0.1.0"
-edition = "2021"
-
-[[bin]]
-name = "server"
-path = "server/src/main.rs"
-
 [workspace]
 members = ["server"]
 
-[dependencies]
-cargo-run-script = "0.2.0"
 
-[package.metadata.scripts]
-start-server = "echo test"
+[workspace.metadata.scripts]
+start-client-dev = "npm run start --prefix client"
+start-server = "cargo run --manifest-path server/Cargo.toml"
