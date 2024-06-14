@@ -315,17 +315,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cargo-run-script"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d70214c60eeb6fa5779e35ed94d84ee7de9e6f2896bb6656571462ba59448da"
-dependencies = [
- "serde",
- "serde_derive",
- "toml",
-]
-
-[[package]]
 name = "cc"
 version = "1.0.99"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -782,7 +771,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "90ed8c1e510134f979dbc4f070f87d4313098b704861a105fe34231c70a3901c"
 
 [[package]]
-name = "matrix-server"
+name = "matrix"
 version = "0.1.0"
 dependencies = [
  "actix-web",
@@ -1231,15 +1220,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "toml"
-version = "0.4.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "758664fc71a3a69038656bee8b6be6477d2a6c315a6b81f7081f591bffa4111f"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "tracing"
 version = "0.1.40"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1479,13 +1459,6 @@ dependencies = [
  "quote",
  "syn 2.0.66",
  "synstructure",
-]
-
-[[package]]
-name = "your-project"
-version = "0.1.0"
-dependencies = [
- "cargo-run-script",
 ]
 
 [[package]]

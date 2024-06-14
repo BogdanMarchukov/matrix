@@ -1,9 +1,17 @@
 [package]
-name = "matrix"
+name = "your-project"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[bin]]
+name = "server"
+path = "server/src/main.rs"
+
+[workspace]
+members = ["server"]
 
 [dependencies]
-actix-web = "4"
+cargo-run-script = "0.2.0"
+
+[package.metadata.scripts]
+start-server = "echo test"
