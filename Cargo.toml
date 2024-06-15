@@ -4,4 +4,5 @@ members = ["server"]
 
 [workspace.metadata.scripts]
 start-client-dev = "npm run start --prefix client"
+build-client = "npm run build --prefix client"
 start-server = "cargo run --manifest-path server/Cargo.toml"
