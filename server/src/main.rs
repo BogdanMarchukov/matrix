@@ -1,7 +1,6 @@
-use actix_files::NamedFile;
 use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer};
 use include_dir::{include_dir as include_d, Dir};
-use std::path::PathBuf;
+use mime_guess::from_path;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 
@@ -13,12 +12,14 @@ async fn index(_req: HttpRequest) -> HttpResponse {
 }
 
 async fn static_files(req: HttpRequest) -> HttpResponse {
-    let path: PathBuf = req.match_info().query("filename").parse().unwrap();
-    let file = FRONTEND_DIR.get_file(&path).unwrap();
-    println!("{}", &path.to_str().unwrap());
-    HttpResponse::Ok()
-        .content_type("application/json")
-        .body(file.contents())
+    let path = req.path().trim_start_matches('/');
+    if let Some(file) = FRONTEND_DIR.get_file(path) {
+        let mime_type = from_path(path).first_or_octet_stream();
+        HttpResponse::Ok().content_type(mime_type).body(file.contents())
+    } else {
+        let file = FRONTEND_DIR.get_file("index.html").unwrap();
+        HttpResponse::Ok().content_type("text/html").body(file.contents())
+    }
 }
 
 #[actix_web::main]

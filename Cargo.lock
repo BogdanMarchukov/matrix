@@ -842,6 +842,7 @@ dependencies = [
  "actix-files",
  "actix-web",
  "include_dir",
+ "mime_guess",
 ]
 
 [[package]]
