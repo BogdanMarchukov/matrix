@@ -1,22 +1,25 @@
-use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer, Responder};
-use actix_files::Files;
+use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer, Result};
+use include_dir::{Dir, include_dir as include_d};
+use actix_files as fs;
 
+const FRONTEND_DIR: Dir = include_d!("../client/build");
 
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
+async fn index(_req: HttpRequest) -> HttpResponse {
+    let file = FRONTEND_DIR.get_file("index.html").unwrap();
+    HttpResponse::Ok()
+        .content_type("text/html")
+        .body(file.contents())
 }
-
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
-            .service(Files::new("/", "../../../client/build").index_file("index.html"))
-            .default_service(
-                web::route().to(|| HttpResponse::NotFound())
-            )
+            .route("/", web::get().to(index))
+            .service(fs::Files::new("/static", ".").show_files_listing())
     })
     .bind(("127.0.0.1", 8080))?
     .run()
     .await
 }
+
