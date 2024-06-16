@@ -5,7 +5,7 @@ import MenuIcon from "./svg/menu-icon";
 function Header() {
   return (
     <header className={classes.container}>
-      <div className={classes.item}>Назад</div>
+      <div className={classes.back}>Назад</div>
       <div className={classes.labileContainer}>
         <div className={classes.labile}>KYMATICA</div>
         <div className={classes.bot}>бот</div>

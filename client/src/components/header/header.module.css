@@ -7,10 +7,9 @@
   justify-content: space-between;
 }
 
-.item {
+.item, .back {
   display: flex;
   justify-content: center;
-  text-align: center;
   align-items: center;
   width: 33%;
   font-family: "Unbounded";
@@ -21,8 +20,14 @@
   color: #bcb8d9;
 }
 
+.back {
+  display: block;
+  margin: 10px;
+}
+
+
 .icon {
-  margin-left: 10%;
+  margin-left: 50%;
 }
 
 .labileContainer {
@@ -33,7 +38,7 @@
   padding: 0px;
   height: 42px;
   left: 130px;
-  width: 40%;
+  width: 60%;
   right: 130px;
   top: calc(50% - 42px / 2);
 }
