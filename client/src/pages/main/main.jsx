@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
-import classes from "./mainPage.module.css";
+import UserBar from "../../components/user-bar/userBar";
 
 function MainPage() {
-  return <div className={classes.home}>text</div>;
+  return <UserBar />;
 }
 
 export default MainPage;

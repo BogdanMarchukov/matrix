@@ -1,0 +1,234 @@
+.container {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 8px;
+
+  width: 100%;
+  height: 36px;
+
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.leftItem {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 4px;
+  width: 40%;
+  height: 27px;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  text-align: center;
+  background: #4f2c93;
+  border-radius: 100px;
+}
+
+.nextButton {
+  width: 16px;
+  height: 16px;
+}
+
+.rightItem {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 4px;
+  height: 36px;
+  flex: none;
+  order: 2;
+  flex-grow: 0;
+}
+
+.telegramLogo {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  position: relative;
+}
+
+.logoBg {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: rgb(42, 171, 238);
+  background: linear-gradient(
+    90deg,
+    rgba(42, 171, 238, 1) 100%,
+    rgba(34, 158, 217, 1) 100%
+  );
+  border-radius: 100%;
+}
+
+.logoWrap {
+  position: absolute;
+}
+
+.tgContentWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 4px;
+  height: 29px;
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+
+.tgContentTop {
+  width: 61px;
+  height: 14px;
+  font-family: "Ubuntu Condensed";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  text-align: center;
+  letter-spacing: -0.24px;
+  color: #ffffff;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.tgContentBottom {
+  width: 71px;
+  height: 11px;
+  font-family: "Ubuntu";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 11px;
+  text-align: center;
+  letter-spacing: -0.24px;
+  color: #bcb8d9;
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+
+.message {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0px;
+  width: 95px;
+  height: 28px;
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+
+.messageTextBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  padding-top: 3px;
+  padding-left: 6px;
+  width: 77px;
+  height: 28px;
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+
+.messageTop {
+  width: 77px;
+  height: 12px;
+  font-family: "Ubuntu";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 130%;
+  letter-spacing: 0.005em;
+  color: #ffffff;
+}
+
+.messageBottom {
+  width: 77px;
+  height: 16px;
+  font-family: "Ubuntu";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 130%;
+  letter-spacing: 0.005em;
+  color: #ffffff;
+}
+
+.card {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.avatar span {
+  width: 12px;
+  height: 19px;
+  left: calc(50% - 12px / 2);
+  top: calc(50% - 19px / 2 - 0.5px);
+  font-family: "SF Pro Text";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+  text-align: center;
+  letter-spacing: -0.24px;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.username {
+  font-family: "Unbounded";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  text-align: center;
+  letter-spacing: -0.24px;
+  color: #ffffff;
+}
+
+.userStatus span {
+  width: 51px;
+  height: 12px;
+  font-family: "Unbounded";
+  font-style: normal;
+  font-weight: 300;
+  font-size: 10px;
+  line-height: 12px;
+  text-align: center;
+  letter-spacing: -0.24px;
+  color: #ffffff;
+}
+
+.userStatus {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 2px;
+  gap: 8px;
+  width: 55px;
+  height: 12px;
+  background: #8174a6;
+  border-radius: 100px;
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
