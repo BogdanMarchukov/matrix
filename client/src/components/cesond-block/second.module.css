@@ -29,6 +29,20 @@
   flex-grow: 0;
 }
 
+.inviteTitle p {
+  position: absolute;
+  width: 113px;
+  height: 17px;
+  left: 12px;
+  top: -5px;
+  font-family: "Unbounded";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17px;
+  color: #ffffff;
+}
+
 .selectWrap {
   display: flex;
   flex-direction: row;
@@ -183,6 +197,20 @@
   background: #ffffff;
   border-radius: 100px;
   transform: matrix(-1, 0, 0, 1, 0, 0);
+}
+
+.bonus p {
+  position: absolute;
+  width: 135px;
+  height: 34px;
+  left: 12px;
+  top: 32px;
+  font-family: "Ubuntu";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 130%;
+  color: #ffffff;
 }
 
 .inviteWrap {

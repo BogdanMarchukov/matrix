@@ -22,7 +22,17 @@ function SecondBlock() {
                 <p>Баллы</p>
               </div>
             </div>
-            <div className={classes.inviteWrap}></div>
+            <div className={classes.inviteWrap}>
+            <div className={classes.leftPointsBtn}>
+              <MiniBtnSvg />
+            </div>
+              <div className={classes.inviteTitle}>
+                <p>Зови друзей</p>
+              </div>
+              <div className={classes.bonus} >
+                <p>Дарим по 500 ₽ - тебе и приведенному другу</p>
+              </div>
+            </div>
           </div>
         </div>
         <div className={classes.selectRight}>
