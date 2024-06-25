@@ -1,0 +1,15 @@
+version: "3.8"
+
+networks:
+  matrix.network:
+    driver: local
+    name: matrix.network
+    external: true
+
+services:
+  matrix-10:
+    image: matrix:1.0.7
+    container_name: matrix-10
+    env_file: ./.env
+    ports:
+      - "127.0.0.1:3000:3000"
