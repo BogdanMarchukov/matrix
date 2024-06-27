@@ -1,21 +1,22 @@
 import React from "react";
-import { User } from "../../common/types/tegelram";
+import { useTelegram } from "../../common/hooks/useTelegram";
 import Card from "./svg/card";
 import NextButton from "./svg/nextButton";
 import TelegramLogo from "./svg/telegramLogo";
 import classes from "./userBar.module.css";
 
 function UserBar() {
-  const user = window?.Telegram?.WebApp?.initDataUnsafe?.user as User;
-  const avatar = user?.photo_url;
+  const { user } = useTelegram();
+  const avatar = user.photo_url;
   const userName =
-    user?.username || user?.first_name || user?.last_name || "Имя пользователя";
+    user.first_name || user.last_name || user.username || "username";
+  const telegramLogin = user.username || "@teleganame";
 
   return (
     <div className={classes.container}>
       <div className={classes.leftItem}>
         <div className={classes.avatar}>
-          <img src={avatar} alt="U" />
+          {avatar ? <img src={avatar} alt="U" /> : "U"}
         </div>
         <div>
           <div>
@@ -46,7 +47,7 @@ function UserBar() {
           </div>
         </div>
         <div className={classes.tgContentWrap}>
-          <span className={classes.tgContentTop}>@teleganame</span>
+          <span className={classes.tgContentTop}>{telegramLogin}</span>
           <span className={classes.tgContentBottom}>our Tlg - channal</span>
         </div>
       </div>
