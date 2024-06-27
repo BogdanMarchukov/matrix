@@ -1,7 +1,6 @@
 use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer};
 use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
-use std::env;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 
@@ -34,12 +33,21 @@ async fn main() -> std::io::Result<()> {
         Ok(val) => host = val,
         Err(e) => println!("error: {}", e),
     };
+    let mut port = 80;
+    match std::env::var("PORT") {
+        Ok(val) => match val.parse() {
+            Ok(p) => port = p,
+            Err(e) => println!("error: {}", e),
+        },
+        Err(e) => println!("error: {}", e),
+    }
+
     HttpServer::new(|| {
         App::new()
             .route("/", web::get().to(index))
             .route("/{filename:.*}", web::get().to(static_files))
     })
-    .bind((host, 3000))?
+    .bind((host, port))?
     .run()
     .await
 }

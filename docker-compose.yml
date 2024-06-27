@@ -1,15 +1,25 @@
-version: "3.8"
-
-networks:
-  matrix.network:
-    driver: local
-    name: matrix.network
-    external: true
+version: "3"
 
 services:
-  matrix-10:
-    image: matrix:1.0.7
-    container_name: matrix-10
+  matrix:
+    image: bogdanmarchukv/matrix:1.0.0
     env_file: ./.env
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
     ports:
-      - "127.0.0.1:3000:3000"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+      - ./nginx/vhost.d:/etc/nginx/vhost.d
+      - ./nginx/html:/usr/share/nginx/html
+
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: letsencrypt
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./nginx/certs:/etc/nginx/certs:rw

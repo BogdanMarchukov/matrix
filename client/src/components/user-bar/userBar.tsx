@@ -1,19 +1,25 @@
 import React from "react";
+import { User } from "../../common/types/tegelram";
 import Card from "./svg/card";
 import NextButton from "./svg/nextButton";
 import TelegramLogo from "./svg/telegramLogo";
 import classes from "./userBar.module.css";
 
 function UserBar() {
+  const user = window?.Telegram?.WebApp?.initDataUnsafe?.user as User;
+  const avatar = user?.photo_url;
+  const userName =
+    user?.username || user?.first_name || user?.last_name || "Имя пользователя";
+
   return (
     <div className={classes.container}>
       <div className={classes.leftItem}>
         <div className={classes.avatar}>
-          <span>U</span>
+          <img src={avatar} alt="U" />
         </div>
         <div>
           <div>
-            <div className={classes.username}>Username</div>
+            <div className={classes.username}>{userName}</div>
           </div>
           <div className={classes.userStatus}>
             <span>Новичок</span>

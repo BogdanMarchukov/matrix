@@ -6,7 +6,7 @@ import UserBar from "../../components/user-bar/userBar";
 function MainPage() {
   return (
     <>
-      <UserBar />
+      <UserBar  />
       <SecondBlock />
       <PriceCalc />
       <Products />
