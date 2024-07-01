@@ -3,6 +3,14 @@ use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
 #[path = "common/config/config.rs"]
 mod config;
+#[path = "common/db_utils/db_utils.rs"]
+mod db_utils;
+use actix::SyncArbiter;
+use db_utils::{get_pool, AppState, DbActor};
+use diesel::{
+    r2d2::{ConnectionManager, Pool},
+    PgConnection,
+};
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 
@@ -32,9 +40,14 @@ async fn static_files(req: HttpRequest) -> HttpResponse {
 async fn main() -> std::io::Result<()> {
     let host = config::get_host();
     let port = config::get_port();
+    let pool: Pool<ConnectionManager<PgConnection>> = get_pool();
+    let db_addr = SyncArbiter::start(5, move || DbActor(pool.clone()));
 
-    HttpServer::new(|| {
+    HttpServer::new(move || {
         App::new()
+            .app_data(web::Data::new(AppState {
+                db: db_addr.clone(),
+            }))
             .route("/", web::get().to(index))
             .route("/{filename:.*}", web::get().to(static_files))
     })

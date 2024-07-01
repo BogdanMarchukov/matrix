@@ -22,3 +22,8 @@ pub fn get_host() -> String {
     };
     host
 }
+
+pub fn get_database_url() -> String {
+    dotenv().ok();
+    std::env::var("DATABASE_URL").expect("DATABASE_URL must be set")
+}

@@ -1,25 +1,14 @@
 version: "3"
 
 services:
-  matrix:
-    image: bogdanmarchukv/matrix:1.0.0
-    env_file: ./.env
-
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    container_name: nginx-proxy
+  db-matrix:
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    container_name: pg-matrix
     ports:
-      - "80:80"
-      - "443:443"
+      #      - "127.0.0.1:5432:5432"
+      - '5430:5432' # open host for superset purposes
     volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./nginx/certs:/etc/nginx/certs:ro
-      - ./nginx/vhost.d:/etc/nginx/vhost.d
-      - ./nginx/html:/usr/share/nginx/html
-
-  letsencrypt:
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    container_name: letsencrypt
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./nginx/certs:/etc/nginx/certs:rw
+      - ./pgdata-telegramm:/var/lib/postgresql/data
