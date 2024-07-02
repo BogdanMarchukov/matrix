@@ -953,6 +953,7 @@ dependencies = [
  "mime_guess",
  "serde",
  "serde_json",
+ "uuid",
 ]
 
 [[package]]

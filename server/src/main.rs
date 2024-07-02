@@ -1,3 +1,4 @@
+use actix::Addr;
 use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer};
 use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
@@ -5,12 +6,17 @@ use mime_guess::from_path;
 mod config;
 #[path = "common/db_utils/db_utils.rs"]
 mod db_utils;
+mod get_user;
+mod models;
+mod schema;
 use actix::SyncArbiter;
-use db_utils::{get_pool, AppState, DbActor};
+use db_utils::{get_pool, DbActor};
 use diesel::{
     r2d2::{ConnectionManager, Pool},
     PgConnection,
 };
+#[path = "user/user.rs"]
+mod user;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 
@@ -34,6 +40,10 @@ async fn static_files(req: HttpRequest) -> HttpResponse {
             .content_type("text/html")
             .body(file.contents())
     }
+}
+
+pub struct AppState {
+    pub db: Addr<DbActor>,
 }
 
 #[actix_web::main]

@@ -1,12 +1,9 @@
-use actix::{Actor, Addr, SyncContext};
+use actix::{Actor, SyncContext};
+
 use diesel::{
     r2d2::{ConnectionManager, Pool},
     PgConnection,
 };
-
-pub struct AppState {
-    pub db: Addr<DbActor>,
-}
 
 pub struct DbActor(pub Pool<ConnectionManager<PgConnection>>);
 
@@ -22,4 +19,3 @@ pub fn get_pool() -> Pool<ConnectionManager<PgConnection>> {
         .build(manager)
         .expect("Error building a connection pool")
 }
-
