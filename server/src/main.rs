@@ -1,6 +1,6 @@
 use actix::Addr;
 use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer};
-use async_graphql::{http::GraphiQLSource, EmptyMutation, EmptySubscription, Schema};
+use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
@@ -15,6 +15,7 @@ mod models;
 mod schema;
 #[path = "user/user.rs"]
 mod user;
+use crate::gql_schema::Mutation;
 use crate::gql_schema::Query;
 use actix::SyncArbiter;
 use db_utils::{get_pool, DbActor};
@@ -47,7 +48,7 @@ async fn static_files(req: HttpRequest) -> HttpResponse {
     }
 }
 
-type GqlSchema = Schema<Query, EmptyMutation, EmptySubscription>;
+type GqlSchema = Schema<Query, Mutation, EmptySubscription>;
 
 pub struct AppState {
     pub db: Addr<DbActor>,
@@ -77,7 +78,7 @@ async fn main() -> std::io::Result<()> {
     let db_addr = SyncArbiter::start(5, move || DbActor(pool.clone()));
 
     HttpServer::new(move || {
-        let schema = Schema::build(Query, EmptyMutation, EmptySubscription).finish();
+        let schema = Schema::build(Query::default(), Mutation, EmptySubscription).finish();
         App::new()
             .app_data(web::Data::new(AppState {
                 db: db_addr.clone(),
