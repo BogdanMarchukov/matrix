@@ -1,7 +1,7 @@
 use actix::Addr;
-use actix_web::{guard, web, App, HttpRequest, HttpResponse, HttpServer};
+use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer};
 use async_graphql::{http::GraphiQLSource, EmptyMutation, EmptySubscription, Schema};
-use async_graphql_actix_web::{GraphQL, GraphQLRequest, GraphQLResponse};
+use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
 #[path = "common/config/config.rs"]
@@ -57,7 +57,7 @@ pub struct AppState {
 async fn gql_playgound() -> HttpResponse {
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(GraphiQLSource::build().endpoint("/").finish())
+        .body(GraphiQLSource::build().endpoint("/gql").finish())
 }
 
 async fn gql_index(app_data: web::Data<AppState>, gql_request: GraphQLRequest) -> GraphQLResponse {
@@ -83,8 +83,10 @@ async fn main() -> std::io::Result<()> {
                 db: db_addr.clone(),
                 schema: schema.clone(),
             }))
-            .route("/", web::post().to(gql_index))
-            .route("/", web::get().to(gql_playgound))
+            .route("/gql", web::post().to(gql_index))
+            .route("/gql", web::get().to(gql_playgound))
+            .route("/", web::get().to(index))
+            .route("/{filename:.*}", web::get().to(static_files))
     })
     .bind((host, port))?
     .run()
