@@ -1,4 +1,5 @@
 use async_graphql::{Error, FieldResult, MergedObject, Object, SimpleObject};
+use crate::auth::auth_gql::{AuthMutation};
 
 #[derive(MergedObject, Default)]
 pub struct Query(UserQuery, TestQuery);
@@ -43,8 +44,7 @@ pub struct Mutation;
 
 #[Object]
 impl Mutation {
-    async fn test_int(&self, int: i32) -> FieldResult<Auth> {
-        let auth = Auth { result: int };
-        Ok(auth)
+    async fn auth(&self) -> FieldResult<AuthMutation> {
+        Ok(AuthMutation)
     }
 }

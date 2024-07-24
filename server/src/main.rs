@@ -15,6 +15,10 @@ mod models;
 mod schema;
 #[path = "user/user.rs"]
 mod user;
+#[path = "auth/auth.rs"]
+mod auth;
+#[path = "common/secret/secret.rs"]
+mod secret;
 use crate::gql_schema::Mutation;
 use crate::gql_schema::Query;
 use actix::SyncArbiter;
