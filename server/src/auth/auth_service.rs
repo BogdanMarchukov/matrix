@@ -1,7 +1,9 @@
-use crate::auth::web_app_data::InitDataTgWebApp;
+use crate::{auth::web_app_data::InitDataTgWebApp, entity::users};
 use crate::config;
 use crate::secret::secret_service;
 use async_graphql::{Error, FieldResult};
+use sea_orm::Condition;
+use crate::user::user_repository;
 
 pub fn login(init_data: String) -> FieldResult<bool> {
     let data: InitDataTgWebApp =

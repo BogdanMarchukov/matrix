@@ -1,14 +1,29 @@
 version: "3"
 
 services:
-  db-matrix:
+  db-mx:
+    container_name: postgres-mx
     image: postgres
-    restart: always
-    env_file:
-      - .env
-    container_name: pg-matrix
-    ports:
-      #      - "127.0.0.1:5432:5432"
-      - '5430:5432' # open host for superset purposes
+    environment:
+      POSTGRES_USER: matrix
+      POSTGRES_PASSWORD: passwordpassword
+      PGDATA: /data/postgres
+      POSTGRES_DB: matrix
     volumes:
-      - ./pgdata-telegramm:/var/lib/postgresql/data
+      - db-mx:/data/postgres
+    ports:
+      - "5332:5432"
+    networks:
+      - db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+networks:
+  db:
+    driver: bridge
+
+volumes:
+  db-mx:

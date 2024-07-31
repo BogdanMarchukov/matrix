@@ -1,21 +1,13 @@
-use actix::{Actor, SyncContext};
+use migration::{Migrator, MigratorTrait};
+use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 
-use diesel::{
-    r2d2::{ConnectionManager, Pool},
-    PgConnection,
-};
-
-pub struct DbActor(pub Pool<ConnectionManager<PgConnection>>);
-
-impl Actor for DbActor {
-    type Context = SyncContext<Self>;
-}
-
-pub fn get_pool() -> Pool<ConnectionManager<PgConnection>> {
+pub async fn get_pool() -> DatabaseConnection {
     use crate::config;
     let db_url = config::get_database_url();
-    let manager: ConnectionManager<PgConnection> = ConnectionManager::<PgConnection>::new(db_url);
-    Pool::builder()
-        .build(manager)
-        .expect("Error building a connection pool")
+    let opt = ConnectOptions::new(db_url);
+    let conn = Database::connect(opt)
+        .await
+        .expect("database connection error");
+    Migrator::up(&conn, None).await.expect("migration error");
+    conn
 }

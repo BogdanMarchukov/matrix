@@ -1,32 +1,27 @@
-use actix::Addr;
 use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer};
 use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
+use sea_orm::DatabaseConnection;
+#[path = "auth/auth.rs"]
+mod auth;
 #[path = "common/config/config.rs"]
 mod config;
 #[path = "common/db_utils/db_utils.rs"]
 mod db_utils;
-mod get_user;
 #[path = "common/gql/gql_schema.rs"]
 mod gql_schema;
-mod models;
 mod schema;
-#[path = "user/user.rs"]
-mod user;
-#[path = "auth/auth.rs"]
-mod auth;
 #[path = "common/secret/secret.rs"]
 mod secret;
+#[path = "user/mod.rs"]
+mod user;
 use crate::gql_schema::Mutation;
 use crate::gql_schema::Query;
-use actix::SyncArbiter;
-use db_utils::{get_pool, DbActor};
-use diesel::{
-    r2d2::{ConnectionManager, Pool},
-    PgConnection,
-};
+use db_utils::get_pool;
+#[path = "entity/mod.rs"]
+mod entity;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 
@@ -55,7 +50,7 @@ async fn static_files(req: HttpRequest) -> HttpResponse {
 type GqlSchema = Schema<Query, Mutation, EmptySubscription>;
 
 pub struct AppState {
-    pub db: Addr<DbActor>,
+    pub db: DatabaseConnection,
     pub schema: GqlSchema,
 }
 
@@ -78,14 +73,12 @@ async fn gql_index(app_data: web::Data<AppState>, gql_request: GraphQLRequest) -
 async fn main() -> std::io::Result<()> {
     let host = config::get_host();
     let port = config::get_port();
-    let pool: Pool<ConnectionManager<PgConnection>> = get_pool();
-    let db_addr = SyncArbiter::start(5, move || DbActor(pool.clone()));
-
+    let pool: DatabaseConnection = get_pool().await;
     HttpServer::new(move || {
         let schema = Schema::build(Query::default(), Mutation, EmptySubscription).finish();
         App::new()
             .app_data(web::Data::new(AppState {
-                db: db_addr.clone(),
+                db: pool.clone(),
                 schema: schema.clone(),
             }))
             .route("/gql", web::post().to(gql_index))
