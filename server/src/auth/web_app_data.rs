@@ -24,7 +24,7 @@ impl InitDataTgWebApp {
 
 #[derive(Serialize, Deserialize)]
 pub struct UserTgWebApp {
-    pub id: i32,
+    pub id: i64,
     pub is_bot: Option<bool>,
     pub first_name: String,
     pub last_name: String,
