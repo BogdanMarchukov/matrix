@@ -31,5 +31,9 @@ pub fn get_database_url() -> String {
 pub fn get_bot_token() -> String {
     dotenv().ok();
     std::env::var("BOT_TOKEN").expect("BOT_TOKEN must be set")
+}
 
+pub fn get_jwt_sectet() -> String {
+    dotenv().ok();
+    std::env::var("JWT_SECRET").expect("JWT_SECRET must be set")
 }

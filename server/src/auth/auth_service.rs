@@ -1,4 +1,4 @@
-use crate::auth::web_app_data::InitDataTgWebApp;
+use crate::{auth::web_app_data::InitDataTgWebApp, secret};
 use crate::config;
 use crate::entity::users;
 use crate::secret::secret_service;
@@ -33,6 +33,10 @@ pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<
                 Ok(data) => data,
                 Err(err) => return Err(Error::new(format!("{}", err))),
             },
+        };
+        let token = match secret::secret_service::create_jwt(&user.user_id.to_string()) {
+            Ok(data) => data,
+            Err(err) => return Err(Error::new(format!("{}, create jwt error", err))),
         };
         // TODO: jwt create
         Ok(true)

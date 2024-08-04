@@ -54,6 +54,10 @@ pub struct AppState {
     pub schema: GqlSchema,
 }
 
+pub struct GqlCtx {
+    pub db: DatabaseConnection,
+}
+
 async fn gql_playgound() -> HttpResponse {
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
@@ -75,7 +79,9 @@ async fn main() -> std::io::Result<()> {
     let port = config::get_port();
     let pool: DatabaseConnection = get_pool().await;
     HttpServer::new(move || {
-        let schema = Schema::build(Query::default(), Mutation, EmptySubscription).finish();
+        let schema = Schema::build(Query::default(), Mutation, EmptySubscription)
+            .data(GqlCtx { db: pool.clone() })
+            .finish();
         App::new()
             .app_data(web::Data::new(AppState {
                 db: pool.clone(),

@@ -1,3 +1,8 @@
+use std::usize;
+use crate::config;
+use chrono::Utc;
+use jsonwebtoken::{encode, errors, EncodingKey, Header};
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
 pub fn create_hash_sha256(input_str: &String, salt: &String) -> String {
@@ -6,6 +11,30 @@ pub fn create_hash_sha256(input_str: &String, salt: &String) -> String {
     hasher.update(salt.as_bytes());
     let hash: String = format!("{:X}", hasher.finalize());
     hash
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct JwtPayload {
+    pub sub: String,
+    pub exp: usize,
+}
+
+pub fn create_jwt(user_id: &String) -> Result<String, errors::Error> {
+    let secret = config::get_jwt_sectet();
+    let expiration = Utc::now()
+        .checked_add_signed(chrono::Duration::days(3))
+        .expect("valid timestamp")
+        .timestamp();
+    let payload = JwtPayload {
+        sub: user_id,
+        exp: expiration as usize,
+    };
+    let token = encode(
+        &Header::default(),
+        &payload,
+        &EncodingKey::from_secret(&secret.as_ref()),
+    );
+    token
 }
 
 #[test]
