@@ -1,18 +1,39 @@
-use crate::{auth::web_app_data::InitDataTgWebApp, entity::users};
+use crate::auth::web_app_data::InitDataTgWebApp;
 use crate::config;
+use crate::entity::users;
 use crate::secret::secret_service;
-use async_graphql::{Error, FieldResult};
-use sea_orm::Condition;
 use crate::user::user_repository;
+use async_graphql::{Error, FieldResult};
+use migration::IntoCondition;
+use sea_orm::{ColumnTrait, DatabaseConnection};
 
-pub fn login(init_data: String) -> FieldResult<bool> {
-    let data: InitDataTgWebApp =
-        match InitDataTgWebApp::de_serialize_init_data(&init_data[..]) {
-            Ok(data) => data,
-            Err(err) => return Err(Error::new(format!("{}, parse error", err))),
-        };
+pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<bool> {
+    let data: InitDataTgWebApp = match InitDataTgWebApp::de_serialize_init_data(&init_data[..]) {
+        Ok(data) => data,
+        Err(err) => return Err(Error::new(format!("{}, parse error", err))),
+    };
     let pass = check_init_data_tg(init_data, &data.hash);
     if pass {
+        let init_user = match data.user {
+            Some(value) => value,
+            None => return Err(Error::new(String::from("init data error: user not found"))),
+        };
+        let user = match user_repository::find_one(
+            users::Column::TelegramId.eq(init_user.id).into_condition(),
+            conn,
+        )
+        .await
+        {
+            Ok(data) => data,
+            Err(err) => return Err(Error::new(format!("{}", err))),
+        };
+        let user = match user {
+            Some(v) => v,
+            None => match user_repository::create_one_by_tg(init_user, conn).await {
+                Ok(data) => data,
+                Err(err) => return Err(Error::new(format!("{}", err))),
+            },
+        };
         // TODO: jwt create
         Ok(true)
     } else {

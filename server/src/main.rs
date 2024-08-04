@@ -4,7 +4,7 @@ use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
 use sea_orm::DatabaseConnection;
-#[path = "auth/auth.rs"]
+#[path = "auth/mod.rs"]
 mod auth;
 #[path = "common/config/config.rs"]
 mod config;
@@ -13,7 +13,7 @@ mod db_utils;
 #[path = "common/gql/gql_schema.rs"]
 mod gql_schema;
 mod schema;
-#[path = "common/secret/secret.rs"]
+#[path = "common/secret/mod.rs"]
 mod secret;
 #[path = "user/mod.rs"]
 mod user;
