@@ -6,8 +6,9 @@ use crate::user::user_repository;
 use async_graphql::{Error, FieldResult};
 use migration::IntoCondition;
 use sea_orm::{ColumnTrait, DatabaseConnection};
+use super::auth_gql::LoginResult;
 
-pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<bool> {
+pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<LoginResult> {
     let data: InitDataTgWebApp = match InitDataTgWebApp::de_serialize_init_data(&init_data[..]) {
         Ok(data) => data,
         Err(err) => return Err(Error::new(format!("{}, parse error", err))),
@@ -34,12 +35,14 @@ pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<
                 Err(err) => return Err(Error::new(format!("{}", err))),
             },
         };
-        let token = match secret::secret_service::create_jwt(user.user_id.to_string()) {
+        let jwt = match secret::secret_service::create_jwt(user.user_id.to_string()) {
             Ok(data) => data,
             Err(err) => return Err(Error::new(format!("{}, create jwt error", err))),
         };
-        // TODO: jwt create
-        Ok(true)
+        Ok(LoginResult {
+            jwt,
+            user,
+        })
     } else {
         Err(Error::new(String::from("check init data error")))
     }
