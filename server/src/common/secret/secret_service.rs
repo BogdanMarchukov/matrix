@@ -19,7 +19,7 @@ struct JwtPayload {
     pub exp: usize,
 }
 
-pub fn create_jwt(user_id: &String) -> Result<String, errors::Error> {
+pub fn create_jwt(user_id: String) -> Result<String, errors::Error> {
     let secret = config::get_jwt_sectet();
     let expiration = Utc::now()
         .checked_add_signed(chrono::Duration::days(3))

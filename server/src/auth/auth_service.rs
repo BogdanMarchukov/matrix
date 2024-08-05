@@ -34,7 +34,7 @@ pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<
                 Err(err) => return Err(Error::new(format!("{}", err))),
             },
         };
-        let token = match secret::secret_service::create_jwt(&user.user_id.to_string()) {
+        let token = match secret::secret_service::create_jwt(user.user_id.to_string()) {
             Ok(data) => data,
             Err(err) => return Err(Error::new(format!("{}, create jwt error", err))),
         };
