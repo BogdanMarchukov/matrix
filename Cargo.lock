@@ -1927,6 +1927,8 @@ dependencies = [
  "serde_json",
  "sha2",
  "tokio",
+ "url-search-params",
+ "urlencoding",
  "uuid",
 ]
 
@@ -3689,6 +3691,12 @@ dependencies = [
  "idna",
  "percent-encoding",
 ]
+
+[[package]]
+name = "url-search-params"
+version = "12.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2a4b5120022ae7548d0005c9e99f9a695a33bcd732deffb578f7e85516dbb7a6"
 
 [[package]]
 name = "urlencoding"

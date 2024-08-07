@@ -1,26 +1,29 @@
-import React from "react";
-import { useTelegram } from "../../common/hooks/useTelegram";
+import { useEffect } from "react";
+import { useLogin } from "../../common/hooks/useLogin";
+import useTelegramInitData from "../../common/hooks/useTelegramInitData";
 import Card from "./svg/card";
 import NextButton from "./svg/nextButton";
 import TelegramLogo from "./svg/telegramLogo";
 import classes from "./userBar.module.css";
 
 function UserBar() {
-  const { user } = useTelegram();
-  const avatar = user.photo_url;
-  const userName =
-    user.first_name || user.last_name || user.username || "username";
-  const telegramLogin = user.username || "@teleganame";
+  const init = useTelegramInitData();
+  const { login, loading, error, data } = useLogin();
+
+  useEffect(() => {
+    login();
+  }, [login, init]);
+
+  if (loading) return "....loading";
+  if (error && init) return `error ${JSON.stringify(error)}`;
 
   return (
     <div className={classes.container}>
       <div className={classes.leftItem}>
-        <div className={classes.avatar}>
-          {avatar ? <img src={avatar} alt="U" /> : "U"}
-        </div>
+        <div className={classes.avatar}></div>
         <div>
           <div>
-            <div className={classes.username}>{userName}</div>
+            <div className={classes.username}>{data?.auth?.login?.jwt}</div>
           </div>
           <div className={classes.userStatus}>
             <span>Новичок</span>
@@ -47,7 +50,7 @@ function UserBar() {
           </div>
         </div>
         <div className={classes.tgContentWrap}>
-          <span className={classes.tgContentTop}>{telegramLogin}</span>
+          <span className={classes.tgContentTop}>login</span>
           <span className={classes.tgContentBottom}>our Tlg - channal</span>
         </div>
       </div>
