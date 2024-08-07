@@ -6,7 +6,7 @@ use jsonwebtoken::{
 };
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::{io::ErrorKind, result, usize};
+use std::usize;
 
 pub fn create_hash_sha256(input_str: &String, salt: &String) -> String {
     let mut hasher = Sha256::new();
