@@ -11,7 +11,7 @@ declare global {
 }
 
 const client = new ApolloClient({
-  uri: "https://9f92-5-138-202-34.ngrok-free.app/gql",
+  uri: "https://39a4-5-138-202-34.ngrok-free.app/gql",
   cache: new InMemoryCache(),
 });
 

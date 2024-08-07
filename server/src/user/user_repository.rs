@@ -1,6 +1,7 @@
 use crate::auth::web_app_data;
 use crate::entity::prelude::Users;
 use crate::entity::users;
+use uuid::Uuid;
 
 use sea_orm::ActiveValue::Set;
 use sea_orm::{Condition, DatabaseConnection, DbErr, EntityTrait, QueryFilter};
@@ -18,6 +19,7 @@ pub async fn create_one_by_tg(
     conn: &DatabaseConnection,
 ) -> Result<users::Model, DbErr> {
     let new_user = users::ActiveModel {
+        user_id: Set(Uuid::new_v4()),
         telegram_id: Set(tg_user.id),
         first_name: Set(Some(tg_user.first_name)),
         last_name: Set(Some(tg_user.last_name)),
@@ -25,7 +27,6 @@ pub async fn create_one_by_tg(
         language_code: Set(tg_user.language_code),
         is_premium: Set(tg_user.is_premium),
         photo_url: Set(tg_user.photo_url),
-        ..Default::default()
     };
 
     let result: users::Model = users::Entity::insert(new_user)

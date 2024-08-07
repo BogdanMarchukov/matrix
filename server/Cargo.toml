@@ -7,6 +7,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+url = "2.2"
 async-graphql = { version = "7.0", features = ["uuid"] }
 actix-web = { version = "4.0.1", default-features = false, features = [
   "macros",
@@ -29,6 +30,8 @@ dotenv = "0.15.0"
 async-graphql-actix-web = "7.0.6"
 tokio = { version = "1", features = ["full"] }
 sha2 = { version = "0.10", default-features = false }
+hmac = "0.12"
+hex = "0.4"
 sea-orm = { version = "0.12", features = [
   "sqlx-postgres",
   "runtime-tokio-rustls",

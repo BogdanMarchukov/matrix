@@ -20,22 +20,34 @@ pub struct InitDataTgWebApp {
 }
 
 impl InitDataTgWebApp {
-    pub fn de_serialize_init_data(&mut self, init_data: &str) -> FieldResult<UserTgWebApp> {
+    pub fn de_serialize_init_data(init_data: &str) -> FieldResult<Self> {
         let decode_init_dat = decode(init_data).expect("UTF-8");
         let params: HashMap<String, String> = parse_url_search_params(&decode_init_dat);
-        let value = match params.get("user") {
+        let user_value = match params.get("user") {
             Some(v) => v,
-            None => return Err(Error::new("user not found, 1")),
+            None => return Err(Error::new("pars error, user not found")),
         };
-        let user: Result<UserTgWebApp> = serde_json::from_str(&value);
-        let result = match user {
-            Ok(v) => {
-                self.user = Some(v.clone());
-                Ok(v)
-            }
+        let hash_value = match params.get("hash") {
+            Some(v) => v,
+            None => return Err(Error::new("pars error, hash not found")),
+        };
+        let user: Result<UserTgWebApp> = serde_json::from_str(user_value);
+        let result_user = match user {
+            Ok(v) => v,
             Err(err) => return Err(Error::new(format!("{}", err))),
         };
-        result
+        Ok(Self {
+            user: Some(result_user),
+            hash: Some(hash_value.clone()),
+            query_id: None,
+            receiver: None,
+            chat: None,
+            chat_type: None,
+            chat_instance: None,
+            start_param: None,
+            can_send_after: None,
+            auth_date: None,
+        })
     }
 }
 
