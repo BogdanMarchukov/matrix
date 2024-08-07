@@ -1,9 +1,12 @@
-use std::usize;
 use crate::config;
+use async_graphql::Error;
 use chrono::Utc;
-use jsonwebtoken::{encode, errors, EncodingKey, Header};
+use jsonwebtoken::{
+    decode, encode, errors, Algorithm, DecodingKey, EncodingKey, Header, TokenData, Validation,
+};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+use std::{io::ErrorKind, result, usize};
 
 pub fn create_hash_sha256(input_str: &String, salt: &String) -> String {
     let mut hasher = Sha256::new();
@@ -16,7 +19,7 @@ pub fn create_hash_sha256(input_str: &String, salt: &String) -> String {
 #[derive(Debug, Deserialize, Serialize)]
 struct JwtPayload {
     pub sub: String,
-    pub exp: usize,
+    pub exp: i64,
 }
 
 pub fn create_jwt(user_id: String) -> Result<String, errors::Error> {
@@ -27,7 +30,7 @@ pub fn create_jwt(user_id: String) -> Result<String, errors::Error> {
         .timestamp();
     let payload = JwtPayload {
         sub: user_id,
-        exp: expiration as usize,
+        exp: expiration,
     };
     let token = encode(
         &Header::default(),
@@ -35,6 +38,25 @@ pub fn create_jwt(user_id: String) -> Result<String, errors::Error> {
         &EncodingKey::from_secret(&secret.as_ref()),
     );
     token
+}
+
+pub fn verify_jwt(token: String) -> Result<TokenData<JwtPayload>, Error> {
+    let secret = config::get_jwt_sectet();
+    let result = decode::<JwtPayload>(
+        &token,
+        &DecodingKey::from_secret(secret.as_ref()),
+        &Validation::new(Algorithm::HS256),
+    );
+    let jwt_payload = match result {
+        Ok(v) => v,
+        Err(err) => return Err(Error::new(format!("invalid token: {}", err))),
+    };
+    let curremt_timestamp = Utc::now().timestamp();
+    let exp_date = &jwt_payload.claims.exp;
+    if exp_date > &curremt_timestamp {
+        return Err(Error::new("expire token"));
+    }
+    Ok(jwt_payload)
 }
 
 #[test]

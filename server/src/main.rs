@@ -18,6 +18,9 @@ mod schema;
 mod secret;
 #[path = "user/mod.rs"]
 mod user;
+#[path = "common/guards/mod.rs"]
+mod guards;
+
 use crate::gql_schema::Mutation;
 use crate::gql_schema::Query;
 use db_utils::get_pool;

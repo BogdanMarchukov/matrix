@@ -1,7 +1,7 @@
-use async_graphql::{Context, FieldResult, Error, InputObject, Object, SimpleObject};
 use crate::auth::auth_service;
-use crate::GqlCtx;
 use crate::entity::users;
+use crate::GqlCtx;
+use async_graphql::{Context, Error, FieldResult, InputObject, Object, SimpleObject};
 
 #[derive(InputObject)]
 pub struct LoginInput {
