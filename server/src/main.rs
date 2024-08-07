@@ -4,6 +4,7 @@ use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
 use sea_orm::DatabaseConnection;
+use std::collections::HashMap;
 #[path = "auth/mod.rs"]
 mod auth;
 #[path = "common/config/config.rs"]
@@ -56,6 +57,7 @@ pub struct AppState {
 
 pub struct GqlCtx {
     pub db: DatabaseConnection,
+    pub headers: HashMap<String, String>,
 }
 
 async fn gql_playgound() -> HttpResponse {
@@ -64,9 +66,20 @@ async fn gql_playgound() -> HttpResponse {
         .body(GraphiQLSource::build().endpoint("/gql").finish())
 }
 
-async fn gql_index(app_data: web::Data<AppState>, gql_request: GraphQLRequest) -> GraphQLResponse {
+async fn gql_index(
+    app_data: web::Data<AppState>,
+    gql_request: GraphQLRequest,
+    http_request: HttpRequest,
+) -> GraphQLResponse {
+    let mut headers: HashMap<String, String> = HashMap::new();
+    for (key, value) in http_request.headers().iter() {
+        headers.insert(key.to_string(), value.to_str().unwrap_or("").to_string());
+    }
     let schema = app_data.schema.clone();
-    let request = gql_request.into_inner();
+    let request = gql_request.into_inner().data(GqlCtx {
+        db: app_data.db.clone(),
+        headers,
+    });
     let que = serde_json::to_string(&request).unwrap_or(String::from("{}"));
     println!("{}", que);
     let result = schema.execute(request).await;
@@ -79,9 +92,7 @@ async fn main() -> std::io::Result<()> {
     let port = config::get_port();
     let pool: DatabaseConnection = get_pool().await;
     HttpServer::new(move || {
-        let schema = Schema::build(Query::default(), Mutation, EmptySubscription)
-            .data(GqlCtx { db: pool.clone() })
-            .finish();
+        let schema = Schema::build(Query::default(), Mutation, EmptySubscription).finish();
         App::new()
             .app_data(web::Data::new(AppState {
                 db: pool.clone(),
