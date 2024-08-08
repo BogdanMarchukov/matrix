@@ -14,6 +14,18 @@ pub async fn find_one(
     Ok(user)
 }
 
+pub async fn find_by_id(
+    user_id: &String,
+    conn: &DatabaseConnection,
+) -> Result<Option<users::Model>, DbErr> {
+    let uuid = match Uuid::parse_str(&user_id[..]) {
+        Ok(id) => id,
+        Err(_) => return Err(DbErr::Type(String::from("user_id mast be uuid"))),
+    };
+    let user: Option<users::Model> = Users::find_by_id(uuid).one(conn).await?;
+    Ok(user)
+}
+
 pub async fn create_one_by_tg(
     tg_user: web_app_data::UserTgWebApp,
     conn: &DatabaseConnection,

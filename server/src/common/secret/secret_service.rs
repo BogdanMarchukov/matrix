@@ -17,7 +17,7 @@ pub fn create_hash_sha256(input_str: &String, salt: &String) -> String {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-struct JwtPayload {
+pub struct JwtPayload {
     pub sub: String,
     pub exp: i64,
 }
@@ -40,7 +40,7 @@ pub fn create_jwt(user_id: String) -> Result<String, errors::Error> {
     token
 }
 
-pub fn verify_jwt(token: String) -> Result<TokenData<JwtPayload>, Error> {
+pub fn verify_jwt(token: &String) -> Result<TokenData<JwtPayload>, Error> {
     let secret = config::get_jwt_sectet();
     let result = decode::<JwtPayload>(
         &token,

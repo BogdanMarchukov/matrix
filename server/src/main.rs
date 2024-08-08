@@ -13,17 +13,21 @@ mod config;
 mod db_utils;
 #[path = "common/gql/gql_schema.rs"]
 mod gql_schema;
+#[path = "common/guards/mod.rs"]
+mod guards;
 mod schema;
 #[path = "common/secret/mod.rs"]
 mod secret;
 #[path = "user/mod.rs"]
 mod user;
-#[path = "common/guards/mod.rs"]
-mod guards;
-
+use crate::entity::users;
 use crate::gql_schema::Mutation;
 use crate::gql_schema::Query;
+use crate::secret::secret_service;
+use crate::secret::secret_service::JwtPayload;
+use crate::user::user_repository;
 use db_utils::get_pool;
+use jsonwebtoken::TokenData;
 #[path = "entity/mod.rs"]
 mod entity;
 
@@ -78,6 +82,27 @@ async fn gql_index(
     for (key, value) in http_request.headers().iter() {
         headers.insert(key.to_string(), value.to_str().unwrap_or("").to_string());
     }
+    let jwtPayload: Option<TokenData<JwtPayload>> = match headers.get("Authorization") {
+        Some(token) => match secret_service::verify_jwt(token) {
+            Ok(p) => Some(p),
+            Err(_) => None,
+        },
+        None => None,
+    };
+    let user = match jwtPayload {
+        Some(payload) => {
+            match user_repository::find_one(
+                users::Column::UserId.eq(payload.claims.sub),
+                &app_data.db,
+            )
+            .await
+            {
+                Ok(user) => Some(user),
+                Err(_) => None,
+            }
+        }
+        None => None,
+    };
     let schema = app_data.schema.clone();
     let request = gql_request.into_inner().data(GqlCtx {
         db: app_data.db.clone(),
