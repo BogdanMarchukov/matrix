@@ -1,6 +1,7 @@
 use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer};
 use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
+use entity::users;
 use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
 use sea_orm::DatabaseConnection;
@@ -20,7 +21,6 @@ mod schema;
 mod secret;
 #[path = "user/mod.rs"]
 mod user;
-use crate::entity::users;
 use crate::gql_schema::Mutation;
 use crate::gql_schema::Query;
 use crate::secret::secret_service;
@@ -65,6 +65,7 @@ pub struct AppState {
 pub struct GqlCtx {
     pub db: DatabaseConnection,
     pub headers: HashMap<String, String>,
+    pub user: Option<users::Model>,
 }
 
 async fn gql_playgound() -> HttpResponse {
@@ -82,22 +83,17 @@ async fn gql_index(
     for (key, value) in http_request.headers().iter() {
         headers.insert(key.to_string(), value.to_str().unwrap_or("").to_string());
     }
-    let jwtPayload: Option<TokenData<JwtPayload>> = match headers.get("Authorization") {
+    let jwt_payload: Option<TokenData<JwtPayload>> = match headers.get("Authorization") {
         Some(token) => match secret_service::verify_jwt(token) {
             Ok(p) => Some(p),
             Err(_) => None,
         },
         None => None,
     };
-    let user = match jwtPayload {
+    let user = match jwt_payload {
         Some(payload) => {
-            match user_repository::find_one(
-                users::Column::UserId.eq(payload.claims.sub),
-                &app_data.db,
-            )
-            .await
-            {
-                Ok(user) => Some(user),
+            match user_repository::find_by_id(&payload.claims.sub, &app_data.db).await {
+                Ok(user) => user,
                 Err(_) => None,
             }
         }
@@ -107,6 +103,7 @@ async fn gql_index(
     let request = gql_request.into_inner().data(GqlCtx {
         db: app_data.db.clone(),
         headers,
+        user,
     });
     let que = serde_json::to_string(&request).unwrap_or(String::from("{}"));
     println!("{}", que);
