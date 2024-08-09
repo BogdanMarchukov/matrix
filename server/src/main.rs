@@ -117,7 +117,7 @@ async fn main() -> std::io::Result<()> {
     let port = config::get_port();
     let pool: DatabaseConnection = get_pool().await;
     HttpServer::new(move || {
-        let schema = Schema::build(Query::default(), Mutation, EmptySubscription).finish();
+        let schema = Schema::build(Query, Mutation, EmptySubscription).finish();
         App::new()
             .app_data(web::Data::new(AppState {
                 db: pool.clone(),

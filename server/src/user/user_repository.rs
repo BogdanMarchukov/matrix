@@ -39,6 +39,7 @@ pub async fn create_one_by_tg(
         language_code: Set(tg_user.language_code),
         is_premium: Set(tg_user.is_premium),
         photo_url: Set(tg_user.photo_url),
+        ..Default::default()
     };
 
     let result: users::Model = users::Entity::insert(new_user)
