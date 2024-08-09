@@ -3,7 +3,7 @@ use crate::entity::users;
 use crate::errors::gql_error::GqlError;
 use crate::user::user_repository;
 use crate::{auth::web_app_data::InitDataTgWebApp, secret};
-use async_graphql::{Error, ErrorExtensions, FieldResult};
+use async_graphql::{ErrorExtensions, FieldResult};
 use migration::IntoCondition;
 use sea_orm::{ColumnTrait, DatabaseConnection};
 
