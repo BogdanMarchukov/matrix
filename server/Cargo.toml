@@ -42,3 +42,4 @@ migration = { path = "../migration" } # depends on your needs
 jsonwebtoken = "9"
 urlencoding = "2.1.3"
 url-search-params = "12.0.0"
+thiserror = "1.0.63"

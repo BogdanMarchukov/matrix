@@ -30,6 +30,8 @@ use db_utils::get_pool;
 use jsonwebtoken::TokenData;
 #[path = "entity/mod.rs"]
 mod entity;
+#[path = "common/errors/mod.rs"]
+mod errors;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 
