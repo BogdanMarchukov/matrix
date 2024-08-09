@@ -1,8 +1,9 @@
 use crate::auth::auth_service;
 use crate::entity::users;
+use crate::errors::gql_error::GqlError;
 use crate::guards::auth_guard::AuthGuard;
 use crate::GqlCtx;
-use async_graphql::{Context, Error, FieldResult, InputObject, Object, SimpleObject};
+use async_graphql::{Context, ErrorExtensions, FieldResult, InputObject, Object, SimpleObject};
 
 #[derive(InputObject)]
 pub struct LoginInput {
@@ -22,7 +23,7 @@ impl AuthMutation {
     async fn login<'ctx>(&self, ctx: &Context<'ctx>, data: LoginInput) -> FieldResult<LoginResult> {
         let ctx_data = match ctx.data::<GqlCtx>() {
             Ok(data) => data,
-            Err(_) => return Err(Error::new("gql ctx error".to_owned())),
+            Err(_) => return Err(GqlError::ServerError("get ctx data errors".to_string()).extend()),
         };
         auth_service::login(data.init_data, &ctx_data.db).await
     }

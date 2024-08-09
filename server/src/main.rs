@@ -32,6 +32,8 @@ use jsonwebtoken::TokenData;
 mod entity;
 #[path = "common/errors/mod.rs"]
 mod errors;
+#[path ="common/helpers/mod.rs"]
+mod helpers;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 

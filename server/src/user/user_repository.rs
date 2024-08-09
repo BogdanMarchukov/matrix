@@ -1,6 +1,8 @@
 use crate::auth::web_app_data;
 use crate::entity::prelude::Users;
 use crate::entity::users;
+use crate::errors::gql_error::GqlError;
+use async_graphql::FieldResult;
 use uuid::Uuid;
 
 use sea_orm::ActiveValue::Set;
@@ -9,20 +11,37 @@ use sea_orm::{Condition, DatabaseConnection, DbErr, EntityTrait, QueryFilter};
 pub async fn find_one(
     filter: Condition,
     conn: &DatabaseConnection,
-) -> Result<Option<users::Model>, DbErr> {
-    let user: Option<users::Model> = Users::find().filter(filter).one(conn).await?;
+) -> FieldResult<Option<users::Model>> {
+    let user: Option<users::Model> = match Users::find().filter(filter).one(conn).await {
+        Ok(u) => u,
+        Err(_) => return Err(GqlError::ServerError("database error".to_string()).into()),
+    };
     Ok(user)
 }
 
 pub async fn find_by_id(
     user_id: &String,
     conn: &DatabaseConnection,
-) -> Result<Option<users::Model>, DbErr> {
+) -> FieldResult<Option<users::Model>> {
     let uuid = match Uuid::parse_str(&user_id[..]) {
         Ok(id) => id,
-        Err(_) => return Err(DbErr::Type(String::from("user_id mast be uuid"))),
+        Err(_) => return Err(GqlError::ServerError("database error".to_string()).into()),
     };
-    let user: Option<users::Model> = Users::find_by_id(uuid).one(conn).await?;
+    let user: Option<users::Model> = match Users::find_by_id(uuid).one(conn).await {
+        Ok(u) => u,
+        Err(_) => return Err(GqlError::ServerError("database error".to_string()).into()),
+    };
+    Ok(user)
+}
+
+pub async fn find_by_uuid(
+    user_id: Uuid,
+    conn: &DatabaseConnection,
+) -> FieldResult<Option<users::Model>> {
+    let user: Option<users::Model> = match Users::find_by_id(user_id).one(conn).await {
+        Ok(u) => u,
+        Err(_) => return Err(GqlError::ServerError("database error".to_string()).into()),
+    };
     Ok(user)
 }
 

@@ -1,5 +1,5 @@
 use crate::{auth::auth_gql::AuthMutation, user::user_gql::UserQuery};
-use async_graphql::{FieldResult, Object};
+use async_graphql::{FieldResult, Object, InputObject};
 
 pub struct Query;
 

@@ -3,7 +3,7 @@ use crate::entity::users;
 use crate::errors::gql_error::GqlError;
 use crate::user::user_repository;
 use crate::{auth::web_app_data::InitDataTgWebApp, secret};
-use async_graphql::{Error, FieldResult};
+use async_graphql::{Error, ErrorExtensions, FieldResult};
 use migration::IntoCondition;
 use sea_orm::{ColumnTrait, DatabaseConnection};
 
@@ -18,7 +18,7 @@ pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<
             Some(value) => value,
             None => {
                 return Err(
-                    GqlError::BadRequest("init data error: user not found".to_string()).into(),
+                    GqlError::BadRequest("init data error: user not found".to_string()).extend(),
                 )
             }
         };
@@ -29,22 +29,22 @@ pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<
         .await
         {
             Ok(data) => data,
-            Err(err) => return Err(Error::new(format!("{}", err))),
+            Err(err) => return Err(GqlError::ServerError("database error".to_string()).extend()),
         };
         let user = match user {
             Some(v) => v,
             None => match user_repository::create_one_by_tg(init_user, conn).await {
                 Ok(data) => data,
-                Err(err) => return Err(GqlError::ServerError(format!("{}", err)).into()),
+                Err(err) => return Err(GqlError::ServerError(format!("{}", err)).extend()),
             },
         };
         let jwt = match secret::secret_service::create_jwt(user.user_id.to_string()) {
             Ok(data) => data,
-            Err(_) => return Err(GqlError::ServerError("create jwt error".to_string()).into()),
+            Err(err) => return Err(GqlError::ServerError(format!("{}", err)).extend()),
         };
         Ok(LoginResult { jwt, user })
     } else {
-        Err(GqlError::BadRequest("init data is not check".to_string()).into())
+        Err(GqlError::BadRequest("init data is not check".to_string()).extend())
     }
 }
 

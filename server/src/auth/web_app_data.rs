@@ -1,5 +1,5 @@
 use crate::errors::gql_error::GqlError;
-use async_graphql::{Error, FieldResult};
+use async_graphql::{Error, ErrorExtensions, FieldResult};
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
 use std::collections::HashMap;
@@ -27,13 +27,13 @@ impl InitDataTgWebApp {
         let user_value = match params.get("user") {
             Some(v) => v,
             None => {
-                return Err(GqlError::BadRequest("pars error, user not found".to_string()).into())
+                return Err(GqlError::BadRequest("pars error, user not found".to_string()).extend())
             }
         };
         let hash_value = match params.get("hash") {
             Some(v) => v,
             None => {
-                return Err(GqlError::BadRequest("pars error, hash not found".to_string()).into())
+                return Err(GqlError::BadRequest("pars error, hash not found".to_string()).extend())
             }
         };
         let user: Result<UserTgWebApp> = serde_json::from_str(user_value);
