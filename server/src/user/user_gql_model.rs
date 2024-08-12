@@ -6,7 +6,7 @@ use async_graphql::{FieldResult, SimpleObject};
 use uuid::Uuid;
 
 #[derive(SimpleObject, Clone)]
-#[graphql(name = "user")]
+#[graphql(name = "User")]
 pub struct UserGqlModel {
     pub user_id: Uuid,
     pub telegram_id: i64,
@@ -52,6 +52,5 @@ impl UserGqlModel {
             first_name: user_model.first_name,
             role: user_model.role.into(),
         }
-
     }
 }
