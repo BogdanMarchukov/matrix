@@ -20,7 +20,7 @@ pub struct UserGqlModel {
 }
 
 #[derive(Enum, Copy, Clone, Eq, PartialEq)]
-#[graphql(remote = "UserRoleType")]
+#[graphql(remote = "UserRoleType", name = "UserRoleType")]
 pub enum UserRoleGqlType {
     Admin,
     Member,
