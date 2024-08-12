@@ -5,6 +5,7 @@ use entity::users;
 use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
 use sea_orm::DatabaseConnection;
+use user::user_gql_model::UserGqlModel;
 use std::collections::HashMap;
 #[path = "auth/mod.rs"]
 mod auth;
@@ -69,7 +70,7 @@ pub struct AppState {
 pub struct GqlCtx {
     pub db: DatabaseConnection,
     pub headers: HashMap<String, String>,
-    pub user: Option<users::Model>,
+    pub user: Option<UserGqlModel>,
 }
 
 async fn gql_playgound() -> HttpResponse {

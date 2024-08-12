@@ -1,5 +1,4 @@
-use crate::auth::auth_service;
-use crate::entity::users;
+use crate::{auth::auth_service, user::user_gql_model::UserGqlModel};
 use crate::errors::gql_error::GqlError;
 use crate::guards::auth_guard::AuthGuard;
 use crate::GqlCtx;
@@ -13,7 +12,7 @@ pub struct LoginInput {
 #[derive(SimpleObject)]
 pub struct LoginResult {
     pub jwt: String,
-    pub user: users::Model,
+    pub user: UserGqlModel,
 }
 
 pub struct AuthMutation;
