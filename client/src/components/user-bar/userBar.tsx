@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Puff, ThreeDots } from "react-loader-spinner";
 import { useLogin } from "../../common/hooks/useLogin";
 import useTelegramInitData from "../../common/hooks/useTelegramInitData";
+import { useAuthStore } from "../../common/store/userStore";
 import Card from "./svg/card";
 import NextButton from "./svg/nextButton";
 import TelegramLogo from "./svg/telegramLogo";
@@ -10,6 +11,7 @@ import classes from "./userBar.module.css";
 function UserBar() {
   const init = useTelegramInitData();
   const { login, loading, error, data } = useLogin();
+  const setJwt = useAuthStore((state) => state.setJwt);
   const firstName =
     data?.auth?.login?.user?.firstName ||
     data?.auth?.login?.user?.lastName ||
@@ -19,7 +21,13 @@ function UserBar() {
 
   useEffect(() => {
     login();
-  }, []);
+  }, [login]);
+
+  useEffect(() => {
+    if (loading === false && data?.auth?.login?.jwt) {
+      setJwt(data.auth.login.jwt);
+    }
+  }, [loading, data?.auth?.login?.jwt, setJwt]);
 
   return (
     <div className={classes.container}>
