@@ -9,6 +9,9 @@ const LOGIN = gql(/* GraphQl */ `
         jwt
         user {
           userId
+          firstName
+          lastName
+          photoUrl
         }
       }
     }

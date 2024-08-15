@@ -54,44 +54,44 @@ export type Mutation = {
 
 export type Query = {
   __typename?: 'Query';
-  /** Returns the sum of a and b */
-  add: Scalars['Int']['output'];
-  users: TestProp;
-};
-
-
-export type QueryAddArgs = {
-  int: Scalars['Int']['input'];
-};
-
-export type TestProp = {
-  __typename?: 'TestProp';
-  getUsers: Scalars['Int']['output'];
-};
-
-
-export type TestPropGetUsersArgs = {
-  int: Scalars['Int']['input'];
+  user: UserQuery;
 };
 
 export type User = {
-  __typename?: 'user';
+  __typename?: 'User';
   firstName?: Maybe<Scalars['String']['output']>;
   isPremium?: Maybe<Scalars['Boolean']['output']>;
   languageCode?: Maybe<Scalars['String']['output']>;
   lastName?: Maybe<Scalars['String']['output']>;
   photoUrl?: Maybe<Scalars['String']['output']>;
+  role: UserRoleType;
   telegramId: Scalars['Int']['output'];
   userId: Scalars['UUID']['output'];
   username?: Maybe<Scalars['String']['output']>;
 };
+
+export type UserQuery = {
+  __typename?: 'UserQuery';
+  findByPk: User;
+};
+
+
+export type UserQueryFindByPkArgs = {
+  userId: Scalars['UUID']['input'];
+};
+
+export enum UserRoleType {
+  Admin = 'ADMIN',
+  Member = 'MEMBER',
+  Owner = 'OWNER'
+}
 
 export type UserLoginMutationVariables = Exact<{
   data: LoginInput;
 }>;
 
 
-export type UserLoginMutation = { __typename?: 'Mutation', auth: { __typename?: 'AuthMutation', login: { __typename?: 'LoginResult', jwt: string, user: { __typename?: 'user', userId: any } } } };
+export type UserLoginMutation = { __typename?: 'Mutation', auth: { __typename?: 'AuthMutation', login: { __typename?: 'LoginResult', jwt: string, user: { __typename?: 'User', userId: any, firstName?: string | null, lastName?: string | null, photoUrl?: string | null } } } };
 
 
-export const UserLoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"userLogin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LoginInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"auth"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"jwt"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UserLoginMutation, UserLoginMutationVariables>;
+export const UserLoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"userLogin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LoginInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"auth"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"jwt"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"photoUrl"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UserLoginMutation, UserLoginMutationVariables>;

@@ -12,10 +12,7 @@ function UserBar() {
 
   useEffect(() => {
     login();
-  }, [login, init]);
-
-  if (loading) return "....loading";
-  if (error && init) return `error ${JSON.stringify(error)}`;
+  }, []);
 
   return (
     <div className={classes.container}>
