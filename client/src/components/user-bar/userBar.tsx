@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Puff, ThreeDots } from "react-loader-spinner";
 import { useLogin } from "../../common/hooks/useLogin";
-import useTelegramInitData from "../../common/hooks/useTelegramInitData";
 import { useUserStore } from "../../common/store/userStore";
 import Card from "./svg/card";
 import NextButton from "./svg/nextButton";
@@ -9,7 +8,6 @@ import TelegramLogo from "./svg/telegramLogo";
 import classes from "./userBar.module.css";
 
 function UserBar() {
-  const init = useTelegramInitData();
   const { login, loading, error, data } = useLogin();
   const { setJwt, setFirstName } = useUserStore((state) => state);
   const firstName =
