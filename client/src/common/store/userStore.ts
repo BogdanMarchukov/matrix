@@ -4,11 +4,21 @@ type AuthState = {
   jwt: string | null;
 };
 
-type Actions = {
-  setJwt: (jwt: string) => void;
+type UserState = {
+  auth: AuthState;
+  firstName: string | null;
 };
 
-export const useAuthStore = create<AuthState & Actions>((set) => ({
-  jwt: null,
-  setJwt: (jwt) => set((_) => ({ jwt })),
+type Actions = {
+  setJwt: (jwt: string) => void;
+  setFirstName: (firstName: string) => void;
+};
+
+export const useUserStore = create<UserState & Actions>((set) => ({
+  auth: {
+    jwt: null,
+  },
+  firstName: null,
+  setJwt: (jwt) => set((state) => ({ ...state, auth: { jwt } })),
+  setFirstName: (firstName) => set((state) => ({ ...state, firstName })),
 }));
