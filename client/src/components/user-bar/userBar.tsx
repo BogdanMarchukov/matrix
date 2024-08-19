@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { Puff, ThreeDots } from "react-loader-spinner";
 import { useLogin } from "../../common/hooks/useLogin";
 import { useUserStore } from "../../common/store/userStore";
@@ -17,7 +17,7 @@ function UserBar() {
   const avatarUrl = data?.auth?.login?.user?.photoUrl || firstName[0];
   const loaderConfig = { height: 20, width: 30, color: "#ffffff	" };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     login();
   }, [login]);
 

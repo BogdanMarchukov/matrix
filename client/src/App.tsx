@@ -18,7 +18,7 @@ declare global {
 }
 
 const httpLink = createHttpLink({
-  uri: "https://e1a5-31-181-25-226.ngrok-free.app/gql",
+  uri: "https://b72e-31-181-25-226.ngrok-free.app/gql",
 });
 
 const authLink = setContext((_, { headers }) => {

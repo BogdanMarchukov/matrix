@@ -2,5 +2,6 @@
 
 pub mod prelude;
 
+pub mod notify;
 pub mod sea_orm_active_enums;
 pub mod users;
