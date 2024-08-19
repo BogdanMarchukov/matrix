@@ -35,6 +35,7 @@ mod entity;
 mod errors;
 #[path ="common/helpers/mod.rs"]
 mod helpers;
+mod notify;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 

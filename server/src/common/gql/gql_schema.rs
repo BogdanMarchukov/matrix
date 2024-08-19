@@ -1,4 +1,4 @@
-use crate::{auth::auth_gql::AuthMutation, user::user_gql::UserQuery};
+use crate::{auth::auth_gql::AuthMutation, notify::notify_gql::NotifyQuery, user::user_gql::UserQuery};
 use async_graphql::{FieldResult, Object};
 
 pub struct Query;
@@ -16,5 +16,9 @@ impl Mutation {
 impl Query {
     async fn user(&self) -> FieldResult<UserQuery> {
         Ok(UserQuery)
+    }
+
+    async fn notify(&self) -> FieldResult<NotifyQuery> {
+        Ok(NotifyQuery)
     }
 }
