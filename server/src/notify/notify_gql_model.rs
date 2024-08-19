@@ -1,8 +1,11 @@
+use crate::{
+    entity::notify,
+    errors::gql_error::GqlError,
+    user::user_gql_model::{UserGqlModel, UserRoleGqlType},
+};
 use async_graphql::*;
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
-
-use crate::entity::notify;
 
 #[derive(Clone, SimpleObject)]
 #[graphql(name = "Notify")]
@@ -25,5 +28,17 @@ impl NotifyGqlModel {
             created_at: DateTime::<Utc>::from_naive_utc_and_offset(notify_model.created_at, Utc),
             user_id: notify_model.user_id,
         }
+    }
+
+    pub fn check_role(&self, user: &UserGqlModel) -> FieldResult<&Self> {
+        let allowed = match user.role {
+            UserRoleGqlType::Owner => true,
+            UserRoleGqlType::Admin => true,
+            UserRoleGqlType::Member => &self.user_id == &user.user_id,
+        };
+        if allowed {
+            return Ok(&self);
+        }
+        Err(GqlError::Forbidden.into())
     }
 }

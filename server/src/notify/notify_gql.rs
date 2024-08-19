@@ -1,14 +1,15 @@
 use super::notify_gql_model::NotifyGqlModel;
-use crate::guards::auth_guard::AuthGuard;
+use crate::{guards::auth_guard::AuthGuard, user::user_service};
 use async_graphql::{Context, FieldResult, InputObject, Object};
 use uuid::Uuid;
+use super::notify_service;
 
 pub struct NotifyQuery;
 
 #[derive(InputObject)]
-struct NotifyByUserIdFilter {
-    user_id: Uuid,
-    is_read: bool,
+pub struct NotifyByUserIdFilter {
+    pub user_id: Uuid,
+    pub is_read: bool,
 }
 
 #[Object]
@@ -18,7 +19,8 @@ impl NotifyQuery {
         &self,
         ctx: &Context<'ctx>,
         data: NotifyByUserIdFilter,
-    ) -> FieldResult<bool> {
-        Ok(true)
+    ) -> FieldResult<Vec<NotifyGqlModel>> {
+        let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
+        notify_service::find_many_by_user_id(request_user, data, &conn).await
     }
 }
