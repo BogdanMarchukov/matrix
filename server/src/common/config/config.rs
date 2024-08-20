@@ -37,3 +37,9 @@ pub fn get_jwt_sectet() -> String {
     dotenv().ok();
     std::env::var("JWT_SECRET").expect("JWT_SECRET must be set")
 }
+
+pub fn get_api_key() -> String {
+    dotenv().ok();
+    std::env::var("API_KEY").expect("API_KEY must be set")
+
+}

@@ -1,7 +1,8 @@
+use super::{newsletter_gql_model::NewsletterGqlModel, newsletter_repository};
+use crate::guards::system_guard::SystemGuard;
+use crate::{errors::gql_error::GqlError, GqlCtx};
 use async_graphql::{Context, ErrorExtensions, FieldResult, InputObject, Object};
 use chrono::NaiveDateTime;
-use crate::{errors::gql_error::GqlError, GqlCtx};
-use super::{newsletter_gql_model::NewsletterGqlModel, newsletter_repository};
 
 pub struct NewsletterMutation;
 
@@ -15,6 +16,7 @@ pub struct NewsLetterCreateInput {
 
 #[Object]
 impl NewsletterMutation {
+    #[graphql(guard = "SystemGuard")]
     async fn create_one<'ctx>(
         &self,
         ctx: &Context<'ctx>,
