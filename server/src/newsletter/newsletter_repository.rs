@@ -13,7 +13,6 @@ pub async fn create_one(
     let new_newsletter = newsletter::ActiveModel {
         newsletter_id: Set(Uuid::new_v4()),
         title: Set(input_data.title),
-        is_published: Set(input_data.is_published),
         payload: Set(input_data.payload),
         publish_at: Set(input_data.publish_at),
         ..Default::default()

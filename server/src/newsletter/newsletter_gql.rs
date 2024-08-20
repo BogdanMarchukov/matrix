@@ -9,7 +9,6 @@ pub struct NewsletterMutation;
 #[derive(InputObject)]
 pub struct NewsLetterCreateInput {
     pub title: String,
-    pub is_published: bool,
     pub payload: String,
     pub publish_at: NaiveDateTime,
 }
