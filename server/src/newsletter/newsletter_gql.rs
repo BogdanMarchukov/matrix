@@ -1,8 +1,6 @@
 use async_graphql::{Context, ErrorExtensions, FieldResult, InputObject, Object};
 use chrono::NaiveDateTime;
-
 use crate::{errors::gql_error::GqlError, GqlCtx};
-
 use super::{newsletter_gql_model::NewsletterGqlModel, newsletter_repository};
 
 pub struct NewsletterMutation;
