@@ -1,7 +1,6 @@
 use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer};
 use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
-use entity::users;
 use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
 use sea_orm::DatabaseConnection;
@@ -36,6 +35,7 @@ mod errors;
 #[path ="common/helpers/mod.rs"]
 mod helpers;
 mod notify;
+mod newsletter;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 

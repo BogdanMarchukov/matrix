@@ -3,6 +3,7 @@ members = ["server", "migration"]
 default-members = ["server"]
 
 [workspace.metadata.scripts]
+migration-create = "sea-orm-cli migrate generate"
 start-client-dev = "npm run start --prefix client"
 build-client = "npm run build --prefix client"
 start-server = "cargo run --manifest-path server/Cargo.toml"
