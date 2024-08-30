@@ -3,7 +3,7 @@ use chrono::{DateTime, Utc};
 use uuid::Uuid;
 use crate::entity::newsletter;
 
-#[derive(Clone, SimpleObject)]
+#[derive(Clone, SimpleObject, Debug)]
 #[graphql(name = "Newsletter")]
 pub struct NewsletterGqlModel {
     pub newsletter_id: Uuid,
@@ -24,5 +24,9 @@ impl NewsletterGqlModel {
             created_at: DateTime::<Utc>::from_naive_utc_and_offset(newsletter.created_at, Utc),
             publish_at: DateTime::<Utc>::from_naive_utc_and_offset(newsletter.publish_at, Utc),
         }
+    }
+
+    pub async  fn create_events(&self) {
+        
     }
 }

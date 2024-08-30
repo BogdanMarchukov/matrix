@@ -1,5 +1,4 @@
 use async_graphql::FieldResult;
-use migration::IntoCondition;
 use sea_orm::{ColumnTrait, Condition, DatabaseConnection};
 use crate::{entity::notify, user::user_gql_model::UserGqlModel};
 use super::{

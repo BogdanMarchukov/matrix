@@ -1,12 +1,12 @@
+use super::user_gql_model::UserGqlModel;
 use crate::auth::web_app_data;
 use crate::entity::prelude::Users;
 use crate::entity::users;
 use crate::errors::gql_error::GqlError;
 use async_graphql::FieldResult;
-use uuid::Uuid;
 use sea_orm::ActiveValue::Set;
 use sea_orm::{Condition, DatabaseConnection, DbErr, EntityTrait, QueryFilter};
-use super::user_gql_model::UserGqlModel;
+use uuid::Uuid;
 
 pub async fn find_one(
     filter: Condition,
@@ -20,6 +20,11 @@ pub async fn find_one(
         Some(u) => Ok(Some(UserGqlModel::new(u))),
         None => Ok(None),
     }
+}
+
+pub async fn find_all(conn: &DatabaseConnection) -> Result<Vec<users::Model>, DbErr> {
+    let users = Users::find().all(conn).await?;
+    Ok(users)
 }
 
 pub async fn find_by_id(

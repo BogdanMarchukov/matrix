@@ -1,13 +1,16 @@
+use super::notify_gql_model::NotifyGqlModel;
 use crate::{
     entity::{notify, prelude::Notify},
     errors::gql_error::GqlError,
+    newsletter::newsletter_gql_model::NewsletterGqlModel,
+    user_repository,
 };
 use async_graphql::FieldResult;
+use sea_orm::ActiveValue::Set;
 use sea_orm::{Condition, DatabaseConnection, EntityTrait, QueryFilter};
-use super::notify_gql_model::NotifyGqlModel;
 
 pub async fn find_many(
-    filter:  Condition,
+    filter: Condition,
     conn: &DatabaseConnection,
 ) -> FieldResult<Vec<NotifyGqlModel>> {
     let notify_all: Vec<notify::Model> = match Notify::find().filter(filter).all(conn).await {
@@ -16,7 +19,25 @@ pub async fn find_many(
     };
     let result = notify_all
         .iter()
-        .map(|n| NotifyGqlModel::new(n.clone()))
+        .map(|n| NotifyGqlModel::new(n.to_owned()))
         .collect::<Vec<NotifyGqlModel>>();
     Ok(result)
+}
+
+pub async fn create_for_all_users(newsletter: NewsletterGqlModel, conn: &DatabaseConnection) {
+    match user_repository::find_all(conn).await {
+        Ok(v) => {
+            let inserd_data: Vec<notify::ActiveModel> = vec![];
+            for user in v.iter() {
+                let data = notify::ActiveModel {
+                    title: Set(newsletter.title.to_owned()),
+                    payload: Set(newsletter.payload.to_owned()),
+                    is_read: Set(false),
+                    user_id: Set(user.user_id.to_owned()),
+                    ..Default::default()
+                };
+            }
+        }
+        Err(_) => println!(""),
+    }
 }

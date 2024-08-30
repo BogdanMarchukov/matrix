@@ -4,8 +4,7 @@ use crate::errors::gql_error::GqlError;
 use crate::user::user_repository;
 use crate::{auth::web_app_data::InitDataTgWebApp, secret};
 use async_graphql::{ErrorExtensions, FieldResult};
-use migration::IntoCondition;
-use sea_orm::{ColumnTrait, DatabaseConnection};
+use sea_orm::{ColumnTrait, Condition, DatabaseConnection};
 
 pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<LoginResult> {
     let data: InitDataTgWebApp = match InitDataTgWebApp::de_serialize_init_data(&init_data[..]) {
@@ -23,7 +22,7 @@ pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<
             }
         };
         let user = match user_repository::find_one(
-            users::Column::TelegramId.eq(init_user.id).into_condition(),
+            Condition::all().add(users::Column::TelegramId.eq(init_user.id)),
             conn,
         )
         .await

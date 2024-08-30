@@ -1,6 +1,7 @@
 use crate::entity::newsletter;
+use chrono::Utc;
 use sea_orm::ActiveValue::Set;
-use sea_orm::{DatabaseConnection, DbErr, EntityTrait};
+use sea_orm::{ColumnTrait, DatabaseConnection, DbErr, EntityTrait, QueryFilter};
 use uuid::Uuid;
 
 use super::newsletter_gql::NewsLetterCreateInput;
@@ -21,4 +22,17 @@ pub async fn create_one(
         .exec_with_returning(conn)
         .await?;
     Ok(NewsletterGqlModel::new(result))
+}
+
+pub async fn find_all_active(conn: &DatabaseConnection) -> Result<Vec<NewsletterGqlModel>, DbErr> {
+    let current_date = Utc::now().date_naive();
+    let result = newsletter::Entity::find()
+        .filter(newsletter::Column::PublishAt.lte(current_date))
+        .all(conn)
+        .await?;
+    Ok(result
+        .into_iter()
+        .map(NewsletterGqlModel::new)
+        .rev()
+        .collect())
 }

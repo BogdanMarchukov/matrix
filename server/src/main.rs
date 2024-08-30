@@ -3,6 +3,7 @@ use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
+use newsletter::newsletter_scheduler::newsletter_scheduler;
 use sea_orm::DatabaseConnection;
 use user::user_gql_model::UserGqlModel;
 use std::collections::HashMap;
@@ -121,6 +122,7 @@ async fn gql_index(
 async fn main() -> std::io::Result<()> {
     let host = config::get_host();
     let port = config::get_port();
+    newsletter_scheduler().await;
     let pool: DatabaseConnection = get_pool().await;
     HttpServer::new(move || {
         let schema = Schema::build(Query, Mutation, EmptySubscription).finish();

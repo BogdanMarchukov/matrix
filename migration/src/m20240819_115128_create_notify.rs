@@ -19,8 +19,18 @@ impl MigrationTrait for Migration {
                     )
                     .col(ColumnDef::new(Notify::Payload).string().not_null())
                     .col(ColumnDef::new(Notify::Title).string().not_null())
-                    .col(ColumnDef::new(Notify::IsRead).boolean().not_null().default(false))
-                    .col(ColumnDef::new(Notify::CreatedAt).date_time().not_null().default(Expr::current_date()))
+                    .col(
+                        ColumnDef::new(Notify::IsRead)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .col(
+                        ColumnDef::new(Notify::CreatedAt)
+                            .date_time()
+                            .not_null()
+                            .default(Expr::current_date()),
+                    )
                     .col(ColumnDef::new(Notify::UserId).uuid().not_null())
                     .foreign_key(
                         ForeignKey::create()
@@ -48,7 +58,7 @@ enum Notify {
     Title,
     IsRead,
     UserId,
-    CreatedAt
+    CreatedAt,
 }
 
 #[derive(DeriveIden)]
