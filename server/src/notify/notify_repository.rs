@@ -1,9 +1,7 @@
 use super::notify_gql_model::NotifyGqlModel;
 use crate::{
-    entity::{notify, prelude::Notify},
-    errors::gql_error::GqlError,
-    newsletter::newsletter_gql_model::NewsletterGqlModel,
-    user_repository,
+    entity::notify, entity::prelude::Notify, errors::gql_error::GqlError,
+    newsletter::newsletter_gql_model::NewsletterGqlModel, user_repository,
 };
 use async_graphql::FieldResult;
 use sea_orm::ActiveValue::Set;
@@ -24,10 +22,13 @@ pub async fn find_many(
     Ok(result)
 }
 
-pub async fn create_for_all_users(newsletter: NewsletterGqlModel, conn: &DatabaseConnection) {
+pub async fn create_for_all_users(
+    newsletter: &NewsletterGqlModel,
+    conn: &DatabaseConnection,
+) -> bool {
     match user_repository::find_all(conn).await {
         Ok(v) => {
-            let inserd_data: Vec<notify::ActiveModel> = vec![];
+            let mut insert_data: Vec<notify::ActiveModel> = vec![];
             for user in v.iter() {
                 let data = notify::ActiveModel {
                     title: Set(newsletter.title.to_owned()),
@@ -36,8 +37,10 @@ pub async fn create_for_all_users(newsletter: NewsletterGqlModel, conn: &Databas
                     user_id: Set(user.user_id.to_owned()),
                     ..Default::default()
                 };
+                insert_data.push(data);
             }
+            Notify::insert_many(insert_data).exec(conn).await.is_ok()
         }
-        Err(_) => println!(""),
+        Err(_) => false,
     }
 }

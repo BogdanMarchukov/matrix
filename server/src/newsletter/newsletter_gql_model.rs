@@ -1,7 +1,8 @@
+use crate::{entity::newsletter, notify::notify_repository};
 use async_graphql::*;
 use chrono::{DateTime, Utc};
+use sea_orm::DatabaseConnection;
 use uuid::Uuid;
-use crate::entity::newsletter;
 
 #[derive(Clone, SimpleObject, Debug)]
 #[graphql(name = "Newsletter")]
@@ -26,7 +27,13 @@ impl NewsletterGqlModel {
         }
     }
 
-    pub async  fn create_events(&self) {
-        
+    pub async fn send_notify(&self, conn: &DatabaseConnection) -> bool {
+        let result = notify_repository::create_for_all_users(&self, conn).await;
+        if result {
+            println!("publish newsletter is success Id: {}", &self.newsletter_id)
+        } else {
+            println!("error publish newsletter: Id: {}", &self.newsletter_id)
+        };
+        result
     }
 }

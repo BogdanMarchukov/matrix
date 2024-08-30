@@ -9,8 +9,12 @@ use tokio::runtime::Handle;
 
 pub async fn run() {
     let pool: DatabaseConnection = db_utils::get_pool().await;
-     match newsletter_repository::find_all_active(&pool).await {
-        Ok(v) => println!("{:?}", v),
+    match newsletter_repository::find_all_active(&pool).await {
+        Ok(v) => {
+            for n in v.iter() {
+                n.send_notify(&pool).await;
+            }
+        }
         Err(_) => println!("get newsletter error"),
     };
 }
@@ -29,7 +33,7 @@ pub async fn newsletter_scheduler() {
                 thread::sleep(wait_time.to_std().unwrap());
             }
 
-            handle.spawn(async  {
+            handle.spawn(async {
                 run().await;
             });
         }
