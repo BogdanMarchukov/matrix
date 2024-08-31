@@ -1,9 +1,14 @@
-use crate::{auth::auth_gql::AuthMutation, newsletter::newsletter_gql::NewsletterMutation, notify::notify_gql::NotifyQuery, user::user_gql::UserQuery};
+use crate::{
+    auth::auth_gql::AuthMutation, newsletter::newsletter_gql::NewsletterMutation,
+    notify::notify_gql::NotifyQuery, user::user_gql::UserQuery,
+};
 use async_graphql::{FieldResult, Object};
 
 pub struct Query;
 
 pub struct Mutation;
+
+pub struct Subscription;
 
 #[Object]
 impl Mutation {

@@ -4,7 +4,7 @@ use crate::{
     newsletter::newsletter_gql_model::NewsletterGqlModel, user_repository,
 };
 use async_graphql::FieldResult;
-use chrono::{Local, NaiveDate, NaiveDateTime};
+use chrono::Local;
 use sea_orm::ActiveValue::Set;
 use sea_orm::{Condition, DatabaseConnection, EntityTrait, QueryFilter};
 use uuid::Uuid;

@@ -1,12 +1,14 @@
-use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer};
+use actix_web::{guard, web, App, Error, HttpRequest, HttpResponse, HttpServer};
 use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
+use async_graphql_actix_web::GraphQLSubscription;
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
+use gql_schema::Subscription;
 use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
 use newsletter::newsletter_scheduler::newsletter_scheduler;
 use sea_orm::DatabaseConnection;
-use user::user_gql_model::UserGqlModel;
 use std::collections::HashMap;
+use user::user_gql_model::UserGqlModel;
 #[path = "auth/mod.rs"]
 mod auth;
 #[path = "common/config/config.rs"]
@@ -33,10 +35,10 @@ use jsonwebtoken::TokenData;
 mod entity;
 #[path = "common/errors/mod.rs"]
 mod errors;
-#[path ="common/helpers/mod.rs"]
+#[path = "common/helpers/mod.rs"]
 mod helpers;
-mod notify;
 mod newsletter;
+mod notify;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 
@@ -62,7 +64,7 @@ async fn static_files(req: HttpRequest) -> HttpResponse {
     }
 }
 
-type GqlSchema = Schema<Query, Mutation, EmptySubscription>;
+type GqlSchema = Schema<Query, Mutation, Subscription>;
 
 pub struct AppState {
     pub db: DatabaseConnection,
@@ -78,7 +80,15 @@ pub struct GqlCtx {
 async fn gql_playgound() -> HttpResponse {
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(GraphiQLSource::build().endpoint("/gql").finish())
+        .body(GraphiQLSource::build().endpoint("/gql").subscription_endpoint("/gql").finish())
+}
+
+async fn index_ws(
+    app_data: web::Data<AppState>,
+    req: HttpRequest,
+    payload: web::Payload,
+) -> Result<HttpResponse, Error> {
+    GraphQLSubscription::new(app_data.schema.clone()).start(&req, payload)
 }
 
 async fn gql_index(
@@ -125,12 +135,18 @@ async fn main() -> std::io::Result<()> {
     newsletter_scheduler().await;
     let pool: DatabaseConnection = get_pool().await;
     HttpServer::new(move || {
-        let schema = Schema::build(Query, Mutation, EmptySubscription).finish();
+        let schema = Schema::build(Query, Mutation, Subscription).finish();
         App::new()
             .app_data(web::Data::new(AppState {
                 db: pool.clone(),
                 schema: schema.clone(),
             }))
+            .service(
+                web::resource("/gql")
+                    .guard(guard::Get())
+                    .guard(guard::Header("upgrade", "websocket"))
+                    .to(index_ws),
+            )
             .route("/gql", web::post().to(gql_index))
             .route("/gql", web::get().to(gql_playgound))
             .route("/", web::get().to(index))
