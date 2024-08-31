@@ -8,9 +8,11 @@ use std::thread;
 use tokio::runtime::Handle;
 
 pub async fn run() {
+    println!("start schedule");
     let pool: DatabaseConnection = db_utils::get_pool().await;
     match newsletter_repository::find_all_active(&pool).await {
         Ok(v) => {
+            println!("{:?}", v );
             for n in v.iter() {
                 n.send_notify(&pool).await;
             }

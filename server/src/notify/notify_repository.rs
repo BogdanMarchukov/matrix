@@ -6,6 +6,7 @@ use crate::{
 use async_graphql::FieldResult;
 use sea_orm::ActiveValue::Set;
 use sea_orm::{Condition, DatabaseConnection, EntityTrait, QueryFilter};
+use uuid::Uuid;
 
 pub async fn find_many(
     filter: Condition,
@@ -31,6 +32,7 @@ pub async fn create_for_all_users(
             let mut insert_data: Vec<notify::ActiveModel> = vec![];
             for user in v.iter() {
                 let data = notify::ActiveModel {
+                    notify_id: Set(Uuid::new_v4()),
                     title: Set(newsletter.title.to_owned()),
                     payload: Set(newsletter.payload.to_owned()),
                     is_read: Set(false),
@@ -39,8 +41,17 @@ pub async fn create_for_all_users(
                 };
                 insert_data.push(data);
             }
-            Notify::insert_many(insert_data).exec(conn).await.is_ok()
+            match Notify::insert_many(insert_data).exec(conn).await {
+                Ok(_) => true,
+                Err(e) => {
+                    println!("insert many error: {}", e);
+                    false
+                }
+            }
         }
-        Err(_) => false,
+        Err(e) => {
+            println!("ger users error: {}", e);
+            false
+        }
     }
 }
