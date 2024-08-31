@@ -4,6 +4,7 @@ use crate::{
     newsletter::newsletter_gql_model::NewsletterGqlModel, user_repository,
 };
 use async_graphql::FieldResult;
+use chrono::{Local, NaiveDate, NaiveDateTime};
 use sea_orm::ActiveValue::Set;
 use sea_orm::{Condition, DatabaseConnection, EntityTrait, QueryFilter};
 use uuid::Uuid;
@@ -37,6 +38,7 @@ pub async fn create_for_all_users(
                     payload: Set(newsletter.payload.to_owned()),
                     is_read: Set(false),
                     user_id: Set(user.user_id.to_owned()),
+                    created_at: Set(Local::now().naive_local()),
                     ..Default::default()
                 };
                 insert_data.push(data);
