@@ -6,3 +6,14 @@ pub struct NewsletterUpdateInput {
     pub publish_at: Option<NaiveDateTime>,
     pub is_published: Option<bool>,
 }
+
+impl Default for NewsletterUpdateInput {
+    fn default() -> Self {
+        Self {
+            title: None,
+            payload: None,
+            publish_at: None,
+            is_published: None,
+        }
+    }
+}

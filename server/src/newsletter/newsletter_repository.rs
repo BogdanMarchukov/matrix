@@ -25,10 +25,10 @@ pub async fn create_one(
 }
 
 pub async fn find_by_id(
-    newsletter_id: Uuid,
+    newsletter_id: &Uuid,
     conn: &DatabaseConnection,
 ) -> Option<newsletter::Model> {
-    let result = newsletter::Entity::find_by_id(newsletter_id)
+    let result = newsletter::Entity::find_by_id(newsletter_id.clone())
         .one(conn)
         .await;
     match result {
@@ -41,7 +41,7 @@ pub async fn find_by_id(
 }
 
 pub async fn update_one(
-    newsletter_id: Uuid,
+    newsletter_id: &Uuid,
     data: NewsletterUpdateInput,
     conn: &DatabaseConnection,
 ) -> bool {
@@ -60,7 +60,6 @@ pub async fn update_one(
         if let Some(is_published) = data.is_published {
             newsletter.is_published = Set(is_published);
         }
-
         newsletter.update(conn).await.is_ok()
     } else {
         false
@@ -71,6 +70,7 @@ pub async fn find_all_active(conn: &DatabaseConnection) -> Result<Vec<Newsletter
     let current_date = Local::now();
     let result = newsletter::Entity::find()
         .filter(newsletter::Column::PublishAt.lte(current_date))
+        .filter(newsletter::Column::IsPublished.eq(false))
         .all(conn)
         .await?;
     Ok(result
