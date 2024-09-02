@@ -39,6 +39,8 @@ mod errors;
 mod helpers;
 mod newsletter;
 mod notify;
+use tokio::sync::broadcast::{self, Sender};
+use uuid::Uuid;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 
@@ -64,11 +66,25 @@ async fn static_files(req: HttpRequest) -> HttpResponse {
     }
 }
 
+
 type GqlSchema = Schema<Query, Mutation, Subscription>;
+
+#[derive(Clone)]
+pub enum TxType  {
+    Notify,
+}
+
+#[derive(Clone)]
+pub struct  TxSender {
+    pub id: Uuid,
+    pub tx_type: TxType,
+    pub user_id: Uuid,
+}
 
 pub struct AppState {
     pub db: DatabaseConnection,
     pub schema: GqlSchema,
+    pub tx: Sender<TxSender>
 }
 
 pub struct GqlCtx {
@@ -130,6 +146,7 @@ async fn gql_index(
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let (tx, _rx) = broadcast::channel(100);
     let host = config::get_host();
     let port = config::get_port();
     newsletter_scheduler().await;
@@ -140,6 +157,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(AppState {
                 db: pool.clone(),
                 schema: schema.clone(),
+                tx: tx.clone()
             }))
             .service(
                 web::resource("/gql")

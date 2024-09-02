@@ -1,10 +1,10 @@
 use super::notify_gql_model::NotifyGqlModel;
 use super::notify_service;
 use crate::{gql_schema::Subscription, guards::auth_guard::AuthGuard, user::user_service};
+use crate::{AppState, TxSender};
 use actix::dev::Stream;
 use async_graphql::*;
-use async_graphql::{Context, FieldResult, InputObject, Object, Subscription};
-use tokio::sync::broadcast::Sender;
+use async_graphql::{Context, FieldResult, InputObject, Object, SimpleObject, Subscription};
 use uuid::Uuid;
 
 pub struct NotifyQuery;
@@ -13,6 +13,11 @@ pub struct NotifyQuery;
 pub struct NotifyByUserIdFilter {
     pub user_id: Uuid,
     pub is_read: bool,
+}
+
+#[derive(SimpleObject)]
+pub struct NotifySub {
+    pub notify_id: Uuid,
 }
 
 #[Object]
@@ -30,14 +35,13 @@ impl NotifyQuery {
 
 #[Subscription]
 impl Subscription {
-    async fn messages(&self, ctx: &Context<'_>) -> impl Stream<Item = String> {
-        let mut sender = ctx.data::<Sender<String>>().unwrap().subscribe();
-
+    async fn messages(&self, ctx: &Context<'_>) -> impl Stream<Item = NotifySub> {
+        let data = ctx.data::<AppState>().unwrap();
+        let mut sender = data.tx.clone().subscribe();
         async_stream::stream! {
-            loop {
-                match sender.recv().await {
-                    Ok(message) => yield message,
-                    Err(_) => break,
+            while let Ok(message) = sender.recv().await {
+                yield NotifySub {
+                    notify_id: message.id
                 }
             }
         }
