@@ -1,9 +1,16 @@
+use std::collections::HashMap;
+
 use super::auth_gql::LoginResult;
 use crate::entity::users;
 use crate::errors::gql_error::GqlError;
+use crate::secret::secret_service;
+use crate::secret::secret_service::JwtPayload;
+use crate::user::user_gql_model::UserGqlModel;
 use crate::user::user_repository;
 use crate::{auth::web_app_data::InitDataTgWebApp, secret};
+use actix_web::HttpRequest;
 use async_graphql::{ErrorExtensions, FieldResult};
+use jsonwebtoken::TokenData;
 use sea_orm::{ColumnTrait, Condition, DatabaseConnection};
 
 pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<LoginResult> {
@@ -45,6 +52,32 @@ pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<
     } else {
         Err(GqlError::BadRequest("init data is not check".to_string()).extend())
     }
+}
+
+pub async fn get_user_from_request(
+    http_request: &HttpRequest,
+    conn: &DatabaseConnection,
+) -> (HashMap<String, String>, Option<UserGqlModel>) {
+    let mut headers: HashMap<String, String> = HashMap::new();
+    for (key, value) in http_request.headers().iter() {
+        headers.insert(key.to_string(), value.to_str().unwrap_or("").to_string());
+    }
+    let jwt_payload: Option<TokenData<JwtPayload>> = match headers.get("Authorization") {
+        Some(token) => match secret_service::verify_jwt(token) {
+            Ok(p) => Some(p),
+            Err(_) => None,
+        },
+        None => None,
+    };
+    let user = match jwt_payload {
+        Some(payload) => match user_repository::find_by_id(&payload.claims.sub, conn).await {
+            Ok(user) => user,
+            Err(_) => None,
+        },
+        None => None,
+    };
+
+    (headers, user)
 }
 
 fn check_init_data_tg(init_data: String) -> bool {

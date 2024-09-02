@@ -1,13 +1,15 @@
 use actix_web::{guard, web, App, Error, HttpRequest, HttpResponse, HttpServer};
-use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
+use async_graphql::{http::GraphiQLSource, Data, Schema};
 use async_graphql_actix_web::GraphQLSubscription;
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
+use auth::auth_service;
 use gql_schema::Subscription;
 use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
 use newsletter::newsletter_scheduler::newsletter_scheduler;
 use sea_orm::DatabaseConnection;
 use std::collections::HashMap;
+use tokio::sync::broadcast::{self, Sender};
 use user::user_gql_model::UserGqlModel;
 #[path = "auth/mod.rs"]
 mod auth;
@@ -26,8 +28,6 @@ mod secret;
 mod user;
 use crate::gql_schema::Mutation;
 use crate::gql_schema::Query;
-use crate::secret::secret_service;
-use crate::secret::secret_service::JwtPayload;
 use crate::user::user_repository;
 use db_utils::get_pool;
 use jsonwebtoken::TokenData;
@@ -39,7 +39,6 @@ mod errors;
 mod helpers;
 mod newsletter;
 mod notify;
-use tokio::sync::broadcast::{self, Sender};
 use uuid::Uuid;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
@@ -66,16 +65,15 @@ async fn static_files(req: HttpRequest) -> HttpResponse {
     }
 }
 
-
 type GqlSchema = Schema<Query, Mutation, Subscription>;
 
 #[derive(Clone)]
-pub enum TxType  {
+pub enum TxType {
     Notify,
 }
 
 #[derive(Clone)]
-pub struct  TxSender {
+pub struct TxSender {
     pub id: Uuid,
     pub tx_type: TxType,
     pub user_id: Uuid,
@@ -84,19 +82,35 @@ pub struct  TxSender {
 pub struct AppState {
     pub db: DatabaseConnection,
     pub schema: GqlSchema,
-    pub tx: Sender<TxSender>
+    pub tx: Sender<TxSender>,
+}
+
+impl AppState {
+    pub fn new(db: DatabaseConnection, schema: GqlSchema, tx: Sender<TxSender>) -> Self {
+        Self { db, schema, tx }
+    }
+
+    pub fn tx(&self) -> &Sender<TxSender> {
+        &self.tx
+    }
 }
 
 pub struct GqlCtx {
     pub db: DatabaseConnection,
     pub headers: HashMap<String, String>,
     pub user: Option<UserGqlModel>,
+    pub tx: Sender<TxSender>,
 }
 
 async fn gql_playgound() -> HttpResponse {
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(GraphiQLSource::build().endpoint("/gql").subscription_endpoint("/gql").finish())
+        .body(
+            GraphiQLSource::build()
+                .endpoint("/gql")
+                .subscription_endpoint("/gql")
+                .finish(),
+        )
 }
 
 async fn index_ws(
@@ -104,7 +118,18 @@ async fn index_ws(
     req: HttpRequest,
     payload: web::Payload,
 ) -> Result<HttpResponse, Error> {
-    GraphQLSubscription::new(app_data.schema.clone()).start(&req, payload)
+    let (headers, user) = auth_service::get_user_from_request(&req, &app_data.db).await;
+    let ctx_data = GqlCtx {
+        headers,
+        user,
+        tx: app_data.tx.clone(),
+        db: app_data.db.to_owned(),
+    };
+    let schema = Schema::build(Query, Mutation, Subscription)
+        .data(ctx_data)
+        .finish();
+
+    GraphQLSubscription::new(schema).start(&req, payload)
 }
 
 async fn gql_index(
@@ -112,31 +137,35 @@ async fn gql_index(
     gql_request: GraphQLRequest,
     http_request: HttpRequest,
 ) -> GraphQLResponse {
-    let mut headers: HashMap<String, String> = HashMap::new();
-    for (key, value) in http_request.headers().iter() {
-        headers.insert(key.to_string(), value.to_str().unwrap_or("").to_string());
-    }
-    let jwt_payload: Option<TokenData<JwtPayload>> = match headers.get("Authorization") {
-        Some(token) => match secret_service::verify_jwt(token) {
-            Ok(p) => Some(p),
-            Err(_) => None,
-        },
-        None => None,
-    };
-    let user = match jwt_payload {
-        Some(payload) => {
-            match user_repository::find_by_id(&payload.claims.sub, &app_data.db).await {
-                Ok(user) => user,
-                Err(_) => None,
-            }
-        }
-        None => None,
-    };
+    // TODO: deprecated
+    //
+    // let mut headers: HashMap<String, String> = HashMap::new();
+    // for (key, value) in http_request.headers().iter() {
+    //     headers.insert(key.to_string(), value.to_str().unwrap_or("").to_string());
+    // }
+    // let jwt_payload: Option<TokenData<JwtPayload>> = match headers.get("Authorization") {
+    //     Some(token) => match secret_service::verify_jwt(token) {
+    //         Ok(p) => Some(p),
+    //         Err(_) => None,
+    //     },
+    //     None => None,
+    // };
+    // let user = match jwt_payload {
+    //     Some(payload) => {
+    //         match user_repository::find_by_id(&payload.claims.sub, &app_data.db).await {
+    //             Ok(user) => user,
+    //             Err(_) => None,
+    //         }
+    //     }
+    //     None => None,
+    // };
+    let (headers, user) = auth_service::get_user_from_request(&http_request, &app_data.db).await;
     let schema = app_data.schema.clone();
     let request = gql_request.into_inner().data(GqlCtx {
-        db: app_data.db.clone(),
+        db: app_data.db.to_owned(),
         headers,
         user,
+        tx: app_data.tx.clone(),
     });
     let que = serde_json::to_string(&request).unwrap_or(String::from("{}"));
     println!("{}", que);
@@ -157,7 +186,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(AppState {
                 db: pool.clone(),
                 schema: schema.clone(),
-                tx: tx.clone()
+                tx: tx.clone(),
             }))
             .service(
                 web::resource("/gql")
