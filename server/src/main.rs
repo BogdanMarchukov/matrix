@@ -67,7 +67,7 @@ async fn static_files(req: HttpRequest) -> HttpResponse {
 
 type GqlSchema = Schema<Query, Mutation, Subscription>;
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub enum TxType {
     Notify,
 }

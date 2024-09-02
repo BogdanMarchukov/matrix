@@ -1,12 +1,11 @@
 use super::notify_gql_model::NotifyGqlModel;
 use super::notify_service;
-use crate::errors::gql_error::GqlError;
 use crate::guards::auth_guard::AuthGuard;
+use crate::{GqlCtx, TxType};
 use crate::{gql_schema::Subscription, user::user_service};
-use crate::{AppState, GqlCtx};
 use actix::dev::Stream;
 use async_graphql::*;
-use async_graphql::{Context, Error, FieldResult, InputObject, Object, SimpleObject, Subscription};
+use async_graphql::{Context, FieldResult, InputObject, Object, SimpleObject, Subscription};
 use uuid::Uuid;
 
 pub struct NotifyQuery;
@@ -45,12 +44,12 @@ impl Subscription {
         async_stream::stream! {
             while let Ok(message) = sender.recv().await {
                 if let Some(user) = user.to_owned() {
-                    if user.user_id == message.user_id {
+                    if user.user_id == message.user_id && message.tx_type == TxType::Notify {
                         yield NotifySub {
                            notify_id: message.id
                         }
                     }
-                } 
+                }
             }
         }
     }
