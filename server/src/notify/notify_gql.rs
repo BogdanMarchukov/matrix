@@ -1,7 +1,9 @@
+use std::sync::Arc;
+
 use super::notify_gql_model::NotifyGqlModel;
 use super::notify_service;
 use crate::guards::auth_guard::AuthGuard;
-use crate::{GqlCtx, TxType};
+use crate::{GqlCtx, TxType, TX_NOTIFY};
 use crate::{gql_schema::Subscription, user::user_service};
 use actix::dev::Stream;
 use async_graphql::*;
@@ -39,7 +41,7 @@ impl Subscription {
     #[graphql(guard = "AuthGuard")]
     async fn messages(&self, ctx: &Context<'_>) -> impl Stream<Item = NotifySub> {
         let data = ctx.data::<GqlCtx>().unwrap();
-        let mut sender = data.tx.clone().subscribe();
+        let mut sender = TX_NOTIFY.clone().subscribe();
         let user = data.user.to_owned();
         async_stream::stream! {
             while let Ok(message) = sender.recv().await {

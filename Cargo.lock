@@ -1958,6 +1958,7 @@ dependencies = [
  "jsonwebtoken",
  "migration",
  "mime_guess",
+ "once_cell",
  "sea-orm",
  "serde",
  "serde_json",

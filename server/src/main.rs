@@ -7,9 +7,11 @@ use gql_schema::Subscription;
 use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
 use newsletter::newsletter_scheduler::newsletter_scheduler;
+use once_cell::sync::Lazy;
 use sea_orm::DatabaseConnection;
 use std::collections::HashMap;
-use tokio::sync::broadcast::{self, Sender};
+use std::sync::Arc;
+use tokio::sync::broadcast::{self};
 use user::user_gql_model::UserGqlModel;
 #[path = "auth/mod.rs"]
 mod auth;
@@ -30,7 +32,6 @@ use crate::gql_schema::Mutation;
 use crate::gql_schema::Query;
 use crate::user::user_repository;
 use db_utils::get_pool;
-use jsonwebtoken::TokenData;
 #[path = "entity/mod.rs"]
 mod entity;
 #[path = "common/errors/mod.rs"]
@@ -42,6 +43,11 @@ mod notify;
 use uuid::Uuid;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
+
+pub static TX_NOTIFY: Lazy<broadcast::Sender<TxSender>> = Lazy::new(|| {
+    let (tx, _rx) = broadcast::channel(100);
+    tx
+});
 
 async fn index(_req: HttpRequest) -> HttpResponse {
     let file = FRONTEND_DIR.get_file("index.html").unwrap();
@@ -82,16 +88,11 @@ pub struct TxSender {
 pub struct AppState {
     pub db: DatabaseConnection,
     pub schema: GqlSchema,
-    pub tx: Sender<TxSender>,
 }
 
 impl AppState {
-    pub fn new(db: DatabaseConnection, schema: GqlSchema, tx: Sender<TxSender>) -> Self {
-        Self { db, schema, tx }
-    }
-
-    pub fn tx(&self) -> &Sender<TxSender> {
-        &self.tx
+    pub fn new(db: DatabaseConnection, schema: GqlSchema) -> Self {
+        Self { db, schema }
     }
 }
 
@@ -99,7 +100,6 @@ pub struct GqlCtx {
     pub db: DatabaseConnection,
     pub headers: HashMap<String, String>,
     pub user: Option<UserGqlModel>,
-    pub tx: Sender<TxSender>,
 }
 
 async fn gql_playgound() -> HttpResponse {
@@ -122,7 +122,6 @@ async fn index_ws(
     let ctx_data = GqlCtx {
         headers,
         user,
-        tx: app_data.tx.clone(),
         db: app_data.db.to_owned(),
     };
     let schema = Schema::build(Query, Mutation, Subscription)
@@ -165,7 +164,6 @@ async fn gql_index(
         db: app_data.db.to_owned(),
         headers,
         user,
-        tx: app_data.tx.clone(),
     });
     let que = serde_json::to_string(&request).unwrap_or(String::from("{}"));
     println!("{}", que);
@@ -175,7 +173,6 @@ async fn gql_index(
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let (tx, _rx) = broadcast::channel(100);
     let host = config::get_host();
     let port = config::get_port();
     newsletter_scheduler().await;
@@ -186,7 +183,6 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(AppState {
                 db: pool.clone(),
                 schema: schema.clone(),
-                tx: tx.clone(),
             }))
             .service(
                 web::resource("/gql")

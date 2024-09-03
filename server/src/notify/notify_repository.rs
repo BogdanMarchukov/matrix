@@ -3,6 +3,7 @@ use crate::{
     entity::notify, entity::prelude::Notify, errors::gql_error::GqlError,
     newsletter::newsletter_gql_model::NewsletterGqlModel, user_repository,
 };
+use crate::{TxSender, TxType, TX_NOTIFY};
 use async_graphql::FieldResult;
 use chrono::Local;
 use sea_orm::ActiveValue::Set;
@@ -43,8 +44,21 @@ pub async fn create_for_all_users(
                 };
                 insert_data.push(data);
             }
-            match Notify::insert_many(insert_data).exec(conn).await {
-                Ok(_) => true,
+            match Notify::insert_many(insert_data.clone()).exec(conn).await {
+                Ok(_) => {
+                    for notify in insert_data.iter() {
+                        let tx = TX_NOTIFY.clone();
+                        match tx.send(TxSender {
+                            user_id: notify.user_id.to_owned().unwrap(),
+                            id: notify.notify_id.to_owned().unwrap(),
+                            tx_type: TxType::Notify,
+                        }) {
+                            Ok(_) => {}
+                            Err(err) => println!("TX_NOTIFY send error: {}", err),
+                        }
+                    }
+                    true
+                }
                 Err(e) => {
                     println!("insert many error: {}", e);
                     false
