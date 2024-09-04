@@ -1,5 +1,7 @@
 use migration::{Migrator, MigratorTrait};
-use sea_orm::{ConnectOptions, Database, DatabaseConnection};
+use sea_orm::{
+    ConnectOptions, Database, DatabaseConnection, DatabaseTransaction, TransactionTrait,
+};
 
 pub async fn get_pool() -> DatabaseConnection {
     use crate::config;
@@ -10,4 +12,9 @@ pub async fn get_pool() -> DatabaseConnection {
         .expect("database connection error");
     Migrator::up(&conn, None).await.expect("migration error");
     conn
+}
+
+pub async fn get_transaction() -> DatabaseTransaction {
+    let connection = get_pool().await;
+    connection.begin().await.expect("transaction error")
 }

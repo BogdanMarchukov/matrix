@@ -1,4 +1,6 @@
 use super::notify_gql_model::NotifyGqlModel;
+use crate::db_utils::get_transaction;
+use crate::entity::sea_orm_active_enums::NotifyTypeEnum;
 use crate::{
     entity::notify, entity::prelude::Notify, errors::gql_error::GqlError,
     newsletter::newsletter_gql_model::NewsletterGqlModel, user_repository,
@@ -6,8 +8,9 @@ use crate::{
 use crate::{TxSender, TX_NOTIFY};
 use async_graphql::FieldResult;
 use chrono::Local;
+use migration::Expr;
 use sea_orm::ActiveValue::Set;
-use sea_orm::{Condition, DatabaseConnection, EntityTrait, QueryFilter};
+use sea_orm::{ColumnTrait, Condition, DatabaseConnection, EntityTrait, QueryFilter, Value};
 use uuid::Uuid;
 
 pub async fn find_many(
@@ -29,6 +32,8 @@ pub async fn create_for_all_users(
     newsletter: &NewsletterGqlModel,
     conn: &DatabaseConnection,
 ) -> bool {
+    let txn = get_transaction().await;
+    let tx = TX_NOTIFY.clone();
     match user_repository::find_all(conn).await {
         Ok(v) => {
             let mut insert_data: Vec<notify::ActiveModel> = vec![];
@@ -44,24 +49,43 @@ pub async fn create_for_all_users(
                 };
                 insert_data.push(data);
             }
-            match Notify::insert_many(insert_data.clone()).exec(conn).await {
-                Ok(_) => {
-                    for notify in insert_data.iter() {
-                        let tx = TX_NOTIFY.clone();
-                        match tx.send(TxSender {
-                            user_id: notify.user_id.to_owned().unwrap(),
-                            id: notify.notify_id.to_owned().unwrap(),
-                        }) {
-                            Ok(_) => {}
-                            Err(err) => println!("TX_NOTIFY send error: {}", err),
+            if let Ok(update_result) = Notify::update_many()
+                .col_expr(
+                    notify::Column::IsRead,
+                    Expr::value(true),
+                )
+                .filter(notify::Column::IsRead.eq(false))
+                .filter(notify::Column::NotifyType.eq(NotifyTypeEnum::Daly))
+                .exec(&txn)
+                .await
+            {
+                println!("update all notify success: {:?}", update_result);
+                match Notify::insert_many(insert_data.clone()).exec(&txn).await {
+                    Ok(_) => {
+                        txn.commit().await.ok();
+                        for notify in insert_data.iter() {
+                            match tx.send(TxSender {
+                                user_id: notify.user_id.to_owned().unwrap(),
+                                id: notify.notify_id.to_owned().unwrap(),
+                            }) {
+                                Ok(_) => {}
+                                Err(err) => {
+                                    println!("TX_NOTIFY send error: {}", err);
+                                    return true;
+                                }
+                            }
                         }
+                        true
                     }
-                    true
+                    Err(e) => {
+                        txn.rollback().await.ok();
+                        println!("insert many error: {}", e);
+                        false
+                    }
                 }
-                Err(e) => {
-                    println!("insert many error: {}", e);
-                    false
-                }
+            } else {
+                txn.rollback().await.ok();
+                false
             }
         }
         Err(e) => {
