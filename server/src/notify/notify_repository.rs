@@ -51,7 +51,6 @@ pub async fn create_for_all_users(
                         match tx.send(TxSender {
                             user_id: notify.user_id.to_owned().unwrap(),
                             id: notify.notify_id.to_owned().unwrap(),
-                            tx_type: TxType::Notify,
                         }) {
                             Ok(_) => {}
                             Err(err) => println!("TX_NOTIFY send error: {}", err),

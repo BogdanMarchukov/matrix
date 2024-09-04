@@ -1,5 +1,5 @@
 use actix_web::{guard, web, App, Error, HttpRequest, HttpResponse, HttpServer};
-use async_graphql::{http::GraphiQLSource, Data, Schema};
+use async_graphql::{http::GraphiQLSource, Schema};
 use async_graphql_actix_web::GraphQLSubscription;
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use auth::auth_service;
@@ -10,7 +10,6 @@ use newsletter::newsletter_scheduler::newsletter_scheduler;
 use once_cell::sync::Lazy;
 use sea_orm::DatabaseConnection;
 use std::collections::HashMap;
-use std::sync::Arc;
 use tokio::sync::broadcast::{self};
 use user::user_gql_model::UserGqlModel;
 #[path = "auth/mod.rs"]
@@ -73,15 +72,9 @@ async fn static_files(req: HttpRequest) -> HttpResponse {
 
 type GqlSchema = Schema<Query, Mutation, Subscription>;
 
-#[derive(Clone, PartialEq)]
-pub enum TxType {
-    Notify,
-}
-
 #[derive(Clone)]
 pub struct TxSender {
     pub id: Uuid,
-    pub tx_type: TxType,
     pub user_id: Uuid,
 }
 

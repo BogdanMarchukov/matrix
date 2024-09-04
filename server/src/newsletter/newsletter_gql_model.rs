@@ -1,6 +1,6 @@
 use super::newsletter_repository;
 use crate::{
-    entity::newsletter, newsletter::types::NewsletterUpdateInput, notify::notify_repository, TxSender, TxType, TX_NOTIFY
+    entity::newsletter, newsletter::types::NewsletterUpdateInput, notify::notify_repository,
 };
 use async_graphql::*;
 use chrono::{DateTime, Utc};
