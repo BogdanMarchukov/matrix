@@ -1,5 +1,6 @@
 use crate::{
     entity::notify,
+    entity::sea_orm_active_enums::NotifyTypeEnum,
     errors::gql_error::GqlError,
     user::user_gql_model::{UserGqlModel, UserRoleGqlType},
 };
@@ -16,6 +17,13 @@ pub struct NotifyGqlModel {
     pub is_read: bool,
     pub created_at: DateTime<Utc>,
     pub user_id: Uuid,
+    pub notify_type: NotifyTypeGql,
+}
+
+#[derive(Enum, Copy, Clone, Eq, PartialEq, Debug)]
+#[graphql(remote = "NotifyTypeEnum", name = "NotifyType")]
+pub enum NotifyTypeGql {
+    Daly,
 }
 
 impl NotifyGqlModel {
@@ -27,6 +35,7 @@ impl NotifyGqlModel {
             is_read: notify_model.is_read,
             created_at: DateTime::<Utc>::from_naive_utc_and_offset(notify_model.created_at, Utc),
             user_id: notify_model.user_id,
+            notify_type: notify_model.notify_type.into(),
         }
     }
 
