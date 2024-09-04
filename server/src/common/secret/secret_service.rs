@@ -40,7 +40,7 @@ pub fn create_jwt(user_id: String) -> Result<String, errors::Error> {
     token
 }
 
-pub fn verify_jwt(token: &String) -> Result<TokenData<JwtPayload>, Error> {
+pub fn verify_jwt(token: String) -> Result<TokenData<JwtPayload>, Error> {
     let secret = config::get_jwt_sectet();
     let result = decode::<JwtPayload>(
         &token,
@@ -53,7 +53,7 @@ pub fn verify_jwt(token: &String) -> Result<TokenData<JwtPayload>, Error> {
     };
     let curremt_timestamp = Utc::now().timestamp();
     let exp_date = &jwt_payload.claims.exp;
-    if exp_date > &curremt_timestamp {
+    if exp_date < &curremt_timestamp {
         return Err(Error::new("expire token"));
     }
     Ok(jwt_payload)

@@ -5,7 +5,7 @@ use async_graphql::*;
 use async_graphql::{FieldResult, SimpleObject};
 use uuid::Uuid;
 
-#[derive(SimpleObject, Clone)]
+#[derive(SimpleObject, Clone, Debug)]
 #[graphql(name = "User")]
 pub struct UserGqlModel {
     pub user_id: Uuid,
@@ -19,7 +19,7 @@ pub struct UserGqlModel {
     pub role: UserRoleGqlType,
 }
 
-#[derive(Enum, Copy, Clone, Eq, PartialEq)]
+#[derive(Enum, Copy, Clone, Eq, PartialEq, Debug)]
 #[graphql(remote = "UserRoleType", name = "UserRoleType")]
 pub enum UserRoleGqlType {
     Admin,
@@ -28,11 +28,11 @@ pub enum UserRoleGqlType {
 }
 
 impl UserGqlModel {
-    pub fn check_role(&self, user_id: Uuid) -> FieldResult<&Self> {
+    pub fn check_role(&self, user_id: &Uuid) -> FieldResult<&Self> {
         let allowed = match &self.role {
             UserRoleGqlType::Owner => true,
             UserRoleGqlType::Admin => true,
-            UserRoleGqlType::Member => &self.user_id == &user_id,
+            UserRoleGqlType::Member => &self.user_id == user_id,
         };
         if allowed {
             return Ok(&self);

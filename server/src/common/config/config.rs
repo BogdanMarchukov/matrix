@@ -41,5 +41,9 @@ pub fn get_jwt_sectet() -> String {
 pub fn get_api_key() -> String {
     dotenv().ok();
     std::env::var("API_KEY").expect("API_KEY must be set")
+}
 
+pub fn get_node_env() -> String {
+    dotenv().ok();
+    std::env::var("NODE_ENV").expect("NODE_ENV must be set")
 }

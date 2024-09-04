@@ -12,6 +12,7 @@ use actix_web::HttpRequest;
 use async_graphql::{ErrorExtensions, FieldResult};
 use jsonwebtoken::TokenData;
 use sea_orm::{ColumnTrait, Condition, DatabaseConnection};
+use uuid::Uuid;
 
 pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<LoginResult> {
     let data: InitDataTgWebApp = match InitDataTgWebApp::de_serialize_init_data(&init_data[..]) {
@@ -35,7 +36,7 @@ pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<
         .await
         {
             Ok(data) => data,
-            Err(err) => return Err(GqlError::ServerError("database error".to_string()).extend()),
+            Err(_) => return Err(GqlError::ServerError("database error".to_string()).extend()),
         };
         let user = match user {
             Some(v) => v,
@@ -54,6 +55,18 @@ pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<
     }
 }
 
+pub async fn dev_login(user_id: Uuid, conn: &DatabaseConnection) -> FieldResult<LoginResult> {
+    if let Ok(Some(user)) = user_repository::find_by_id(&user_id.to_string(), conn).await {
+        let jwt = match secret::secret_service::create_jwt(user.user_id.to_string()) {
+            Ok(data) => data,
+            Err(err) => return Err(GqlError::ServerError(format!("{}", err)).extend()),
+        };
+        Ok(LoginResult { user, jwt })
+    } else {
+        Err(GqlError::NotFound("User not found".to_string()).extend())
+    }
+}
+
 pub async fn get_user_from_request(
     http_request: &HttpRequest,
     conn: &DatabaseConnection,
@@ -63,7 +76,7 @@ pub async fn get_user_from_request(
         headers.insert(key.to_string(), value.to_str().unwrap_or("").to_string());
     }
     let jwt_payload: Option<TokenData<JwtPayload>> = match headers.get("Authorization") {
-        Some(token) => match secret_service::verify_jwt(token) {
+        Some(token) => match secret_service::verify_jwt(token.to_owned()) {
             Ok(p) => Some(p),
             Err(_) => None,
         },
@@ -80,7 +93,7 @@ pub async fn get_user_from_request(
     (headers, user)
 }
 
-fn check_init_data_tg(init_data: String) -> bool {
+fn check_init_data_tg(_: String) -> bool {
     true
     //  let params: HashMap<_, _> = form_urlencoded::parse(init_data.as_bytes())
     //      .into_owned()

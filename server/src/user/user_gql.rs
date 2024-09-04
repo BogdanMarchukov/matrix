@@ -22,7 +22,7 @@ impl UserQuery {
             Some(u) => u,
             None => return Err(GqlError::NotFound("user not found".to_string()).into()),
         };
-        result_user.check_role(request_user.user_id)?;
+        result_user.check_role(&request_user.user_id)?;
         Ok(result_user)
     }
 }

@@ -3,7 +3,7 @@ use crate::{
     entity::notify, entity::prelude::Notify, errors::gql_error::GqlError,
     newsletter::newsletter_gql_model::NewsletterGqlModel, user_repository,
 };
-use crate::{TxSender, TxType, TX_NOTIFY};
+use crate::{TxSender, TX_NOTIFY};
 use async_graphql::FieldResult;
 use chrono::Local;
 use sea_orm::ActiveValue::Set;

@@ -1,7 +1,9 @@
-use crate::errors::gql_error::GqlError;
-use crate::GqlCtx;
-use crate::{auth::auth_service, user::user_gql_model::UserGqlModel};
-use async_graphql::{Context, ErrorExtensions, FieldResult, InputObject, Object, SimpleObject};
+use crate::{
+    auth::auth_service, guards::system_guard::SystemGuard, helpers,
+    user::user_gql_model::UserGqlModel,
+};
+use async_graphql::{Context, FieldResult, InputObject, Object, SimpleObject};
+use uuid::Uuid;
 
 #[derive(InputObject)]
 pub struct LoginInput {
@@ -14,15 +16,27 @@ pub struct LoginResult {
     pub user: UserGqlModel,
 }
 
+#[derive(InputObject)]
+pub struct DevLoginInput {
+    pub user_id: Uuid,
+}
+
 pub struct AuthMutation;
 
 #[Object]
 impl AuthMutation {
     async fn login<'ctx>(&self, ctx: &Context<'ctx>, data: LoginInput) -> FieldResult<LoginResult> {
-        let ctx_data = match ctx.data::<GqlCtx>() {
-            Ok(data) => data,
-            Err(_) => return Err(GqlError::ServerError("get ctx data errors".to_string()).extend()),
-        };
+        let ctx_data = helpers::ctx::get_ctx_data(ctx)?;
         auth_service::login(data.init_data, &ctx_data.db).await
+    }
+
+    #[graphql(guard = "SystemGuard")]
+    async fn dev_login<'ctx>(
+        &self,
+        ctx: &Context<'ctx>,
+        data: DevLoginInput,
+    ) -> FieldResult<LoginResult> {
+        let ctx_data = helpers::ctx::get_ctx_data(ctx)?;
+        auth_service::dev_login(data.user_id, &ctx_data.db).await
     }
 }
