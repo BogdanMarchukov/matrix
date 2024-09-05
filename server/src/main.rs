@@ -25,7 +25,6 @@ mod db_utils;
 mod gql_schema;
 #[path = "common/guards/mod.rs"]
 mod guards;
-mod schema;
 #[path = "common/secret/mod.rs"]
 mod secret;
 #[path = "user/mod.rs"]

@@ -10,7 +10,7 @@ use async_graphql::FieldResult;
 use chrono::Local;
 use migration::Expr;
 use sea_orm::ActiveValue::Set;
-use sea_orm::{ColumnTrait, Condition, DatabaseConnection, EntityTrait, QueryFilter, Value};
+use sea_orm::{ColumnTrait, Condition, DatabaseConnection, EntityTrait, QueryFilter};
 use uuid::Uuid;
 
 pub async fn find_many(
@@ -50,10 +50,7 @@ pub async fn create_for_all_users(
                 insert_data.push(data);
             }
             if let Ok(update_result) = Notify::update_many()
-                .col_expr(
-                    notify::Column::IsRead,
-                    Expr::value(true),
-                )
+                .col_expr(notify::Column::IsRead, Expr::value(true))
                 .filter(notify::Column::IsRead.eq(false))
                 .filter(notify::Column::NotifyType.eq(NotifyTypeEnum::Daly))
                 .exec(&txn)
