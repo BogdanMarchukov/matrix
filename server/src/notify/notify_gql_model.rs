@@ -43,10 +43,10 @@ impl NotifyGqlModel {
         let allowed = match user.role {
             UserRoleGqlType::Owner => true,
             UserRoleGqlType::Admin => true,
-            UserRoleGqlType::Member => &self.user_id == &user.user_id,
+            UserRoleGqlType::Member => self.user_id == user.user_id,
         };
         if allowed {
-            return Ok(&self);
+            return Ok(self);
         }
         Err(GqlError::Forbidden.into())
     }
