@@ -1,6 +1,4 @@
-use std::sync::Arc;
-
-use super::notify_gql_model::NotifyGqlModel;
+use super::notify_gql_model::{NotifyGqlModel, NotifyTypeGql};
 use super::notify_service;
 use crate::guards::auth_guard::AuthGuard;
 use crate::{gql_schema::Subscription, user::user_service};
@@ -15,7 +13,8 @@ pub struct NotifyQuery;
 #[derive(InputObject)]
 pub struct NotifyByUserIdFilter {
     pub user_id: Uuid,
-    pub is_read: bool,
+    pub is_read: Option<bool>,
+    pub notify_type: Option<NotifyTypeGql>,
 }
 
 #[derive(SimpleObject)]
@@ -39,7 +38,7 @@ impl NotifyQuery {
 #[Subscription]
 impl Subscription {
     #[graphql(guard = "AuthGuard")]
-    async fn messages(&self, ctx: &Context<'_>) -> impl Stream<Item = NotifySub> {
+    async fn notify_delay(&self, ctx: &Context<'_>) -> impl Stream<Item = NotifySub> {
         let data = ctx.data::<GqlCtx>().unwrap();
         let mut sender = TX_NOTIFY.clone().subscribe();
         let user = data.user.to_owned();

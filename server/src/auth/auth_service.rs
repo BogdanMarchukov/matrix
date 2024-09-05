@@ -73,9 +73,9 @@ pub async fn get_user_from_request(
 ) -> (HashMap<String, String>, Option<UserGqlModel>) {
     let mut headers: HashMap<String, String> = HashMap::new();
     for (key, value) in http_request.headers().iter() {
-        headers.insert(key.to_string(), value.to_str().unwrap_or("").to_string());
+        headers.insert(key.to_string().to_lowercase(), value.to_str().unwrap_or("").to_string());
     }
-    let jwt_payload: Option<TokenData<JwtPayload>> = match headers.get("Authorization") {
+    let jwt_payload: Option<TokenData<JwtPayload>> = match headers.get("authorization") {
         Some(token) => match secret_service::verify_jwt(token.to_owned()) {
             Ok(p) => Some(p),
             Err(_) => None,

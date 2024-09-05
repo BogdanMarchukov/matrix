@@ -140,28 +140,6 @@ async fn gql_index(
     gql_request: GraphQLRequest,
     http_request: HttpRequest,
 ) -> GraphQLResponse {
-    // TODO: deprecated
-    //
-    // let mut headers: HashMap<String, String> = HashMap::new();
-    // for (key, value) in http_request.headers().iter() {
-    //     headers.insert(key.to_string(), value.to_str().unwrap_or("").to_string());
-    // }
-    // let jwt_payload: Option<TokenData<JwtPayload>> = match headers.get("Authorization") {
-    //     Some(token) => match secret_service::verify_jwt(token) {
-    //         Ok(p) => Some(p),
-    //         Err(_) => None,
-    //     },
-    //     None => None,
-    // };
-    // let user = match jwt_payload {
-    //     Some(payload) => {
-    //         match user_repository::find_by_id(&payload.claims.sub, &app_data.db).await {
-    //             Ok(user) => user,
-    //             Err(_) => None,
-    //         }
-    //     }
-    //     None => None,
-    // };
     let (headers, user) = auth_service::get_user_from_request(&http_request, &app_data.db).await;
     let schema = app_data.schema.clone();
     let request = gql_request.into_inner().data(GqlCtx {

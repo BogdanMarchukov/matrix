@@ -1,25 +1,27 @@
-use async_graphql::FieldResult;
-use sea_orm::{ColumnTrait, Condition, DatabaseConnection};
-use crate::{entity::notify, user::user_gql_model::UserGqlModel};
 use super::{
     notify_gql::NotifyByUserIdFilter, notify_gql_model::NotifyGqlModel,
     notify_repository::find_many,
 };
+use crate::{
+    entity::{notify, sea_orm_active_enums::NotifyTypeEnum},
+    user::user_gql_model::UserGqlModel,
+};
+use async_graphql::FieldResult;
+use sea_orm::{ColumnTrait, Condition, DatabaseConnection};
 
 pub async fn find_many_by_user_id(
     user: UserGqlModel,
     input_data: NotifyByUserIdFilter,
     conn: &DatabaseConnection,
 ) -> FieldResult<Vec<NotifyGqlModel>> {
-    let all_notify = find_many(
-        Condition::all().add(
-            notify::Column::UserId
-                .eq(input_data.user_id)
-                .add(notify::Column::IsRead.eq(input_data.is_read)),
-        ),
-        conn,
-    )
-    .await?;
+    let mut filter = Condition::all().add(notify::Column::UserId.eq(input_data.user_id));
+    if let Some(is_read) = input_data.is_read {
+        filter = filter.add(notify::Column::IsRead.eq(is_read));
+    }
+    if let Some(notify_type) = input_data.notify_type {
+        filter = filter.add(notify::Column::NotifyType.eq(NotifyTypeEnum::from(notify_type)));
+    }
+    let all_notify = find_many(filter, conn).await?;
     for n in all_notify.iter() {
         n.check_role(&user)?;
     }

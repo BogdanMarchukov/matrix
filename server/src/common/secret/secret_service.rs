@@ -35,7 +35,7 @@ pub fn create_jwt(user_id: String) -> Result<String, errors::Error> {
     let token = encode(
         &Header::default(),
         &payload,
-        &EncodingKey::from_secret(&secret.as_ref()),
+        &EncodingKey::from_secret(secret.as_ref()),
     );
     token
 }
