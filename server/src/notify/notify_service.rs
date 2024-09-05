@@ -1,6 +1,7 @@
 use super::{
-    notify_gql::NotifyByUserIdFilter, notify_gql_model::NotifyGqlModel,
-    notify_repository::find_many,
+    notify_gql::NotifyByUserIdFilter,
+    notify_gql_model::NotifyGqlModel,
+    notify_repository::{self, find_many},
 };
 use crate::{
     entity::{notify, sea_orm_active_enums::NotifyTypeEnum},
@@ -8,6 +9,7 @@ use crate::{
 };
 use async_graphql::FieldResult;
 use sea_orm::{ColumnTrait, Condition, DatabaseConnection};
+use uuid::Uuid;
 
 pub async fn find_many_by_user_id(
     user: UserGqlModel,
@@ -26,4 +28,14 @@ pub async fn find_many_by_user_id(
         n.check_role(&user)?;
     }
     Ok(all_notify)
+}
+
+pub async fn find_by_pk(
+    notify_id: Uuid,
+    user: UserGqlModel,
+    conn: &DatabaseConnection,
+) -> FieldResult<NotifyGqlModel> {
+    let notify = notify_repository::find_by_pk(notify_id, conn).await?;
+    notify.check_role(&user);
+    Ok(notify)
 }

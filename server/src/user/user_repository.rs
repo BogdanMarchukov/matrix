@@ -28,10 +28,10 @@ pub async fn find_all(conn: &DatabaseConnection) -> Result<Vec<users::Model>, Db
 }
 
 pub async fn find_by_id(
-    user_id: &String,
+    user_id: &str,
     conn: &DatabaseConnection,
 ) -> FieldResult<Option<UserGqlModel>> {
-    let uuid = match Uuid::parse_str(&user_id[..]) {
+    let uuid = match Uuid::parse_str(user_id) {
         Ok(id) => id,
         Err(_) => return Err(GqlError::ServerError("database error".to_string()).into()),
     };

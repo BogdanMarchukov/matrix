@@ -4,8 +4,8 @@ use async_graphql::{Context, ErrorExtensions, FieldResult};
 use sea_orm::DatabaseConnection;
 use super::user_gql_model::UserGqlModel;
 
-pub fn get_auth_user_from_ctx<'ctx>(
-    ctx: &Context<'ctx>,
+pub fn get_auth_user_from_ctx(
+    ctx: &Context,
 ) -> FieldResult<(UserGqlModel, DatabaseConnection)> {
     let ctx_data = match ctx.data::<GqlCtx>() {
         Ok(data) => data,
@@ -15,5 +15,5 @@ pub fn get_auth_user_from_ctx<'ctx>(
         Some(user) => user,
         None => return Err(GqlError::Unauthorized.extend()),
     };
-    Ok((user, ctx_data.db.clone()))
+    Ok((user, ctx_data.db.to_owned()))
 }

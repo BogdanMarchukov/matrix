@@ -7,7 +7,7 @@ use crate::{
     entity::notify, entity::prelude::Notify, errors::gql_error::GqlError,
     newsletter::newsletter_gql_model::NewsletterGqlModel, user_repository,
 };
-use async_graphql::FieldResult;
+use async_graphql::{ErrorExtensions, FieldResult};
 use chrono::Local;
 use migration::Expr;
 use sea_orm::ActiveValue::Set;
@@ -27,6 +27,14 @@ pub async fn find_many(
         .map(|n| NotifyGqlModel::new(n.to_owned()))
         .collect::<Vec<NotifyGqlModel>>();
     Ok(result)
+}
+
+pub async fn find_by_pk(notify_id: Uuid, conn: &DatabaseConnection) -> FieldResult<NotifyGqlModel> {
+    if let Ok(Some(notify)) = Notify::find_by_id(notify_id).one(conn).await {
+        Ok(NotifyGqlModel::new(notify))
+    } else {
+        Err(GqlError::NotFound("notify not found".to_string()).extend())
+    }
 }
 
 pub async fn create_for_all_users(

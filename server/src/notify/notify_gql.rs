@@ -33,6 +33,16 @@ impl NotifyQuery {
         let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
         notify_service::find_many_by_user_id(request_user, data, &conn).await
     }
+
+    #[graphql(guard = "AuthGuard")]
+    async fn find_by_pk<'ctx>(
+        &self,
+        ctx: &Context<'ctx>,
+        notify_id: Uuid,
+    ) -> FieldResult<NotifyGqlModel> {
+        let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
+        notify_service::find_by_pk(notify_id, request_user, &conn).await
+    }
 }
 
 #[Subscription]

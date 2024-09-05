@@ -48,6 +48,6 @@ impl NotifyGqlModel {
         if allowed {
             return Ok(self);
         }
-        Err(GqlError::Forbidden.into())
+        Err(GqlError::Forbidden.extend())
     }
 }
