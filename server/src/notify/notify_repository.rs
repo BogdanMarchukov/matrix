@@ -1,11 +1,12 @@
 use super::notify_gql_model::NotifyGqlModel;
 use crate::db_utils::get_transaction;
 use crate::entity::sea_orm_active_enums::NotifyTypeEnum;
+use crate::notify::notify_sender::{send, NotifySenderType};
+use crate::TxSender;
 use crate::{
     entity::notify, entity::prelude::Notify, errors::gql_error::GqlError,
     newsletter::newsletter_gql_model::NewsletterGqlModel, user_repository,
 };
-use crate::{TxSender, TX_NOTIFY};
 use async_graphql::FieldResult;
 use chrono::Local;
 use migration::Expr;
@@ -33,7 +34,6 @@ pub async fn create_for_all_users(
     conn: &DatabaseConnection,
 ) -> bool {
     let txn = get_transaction().await;
-    let tx = TX_NOTIFY.clone();
     match user_repository::find_all(conn).await {
         Ok(v) => {
             let mut insert_data: Vec<notify::ActiveModel> = vec![];
@@ -61,16 +61,10 @@ pub async fn create_for_all_users(
                     Ok(_) => {
                         txn.commit().await.ok();
                         for notify in insert_data.iter() {
-                            match tx.send(TxSender {
+                            send(NotifySenderType::Dely(TxSender {
                                 user_id: notify.user_id.to_owned().unwrap(),
                                 id: notify.notify_id.to_owned().unwrap(),
-                            }) {
-                                Ok(_) => {}
-                                Err(err) => {
-                                    println!("TX_NOTIFY send error: {}", err);
-                                    return true;
-                                }
-                            }
+                            }));
                         }
                         true
                     }
