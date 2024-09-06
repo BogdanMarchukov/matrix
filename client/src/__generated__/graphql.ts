@@ -15,6 +15,20 @@ export type Scalars = {
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
   /**
+   * Implement the DateTime<Utc> scalar
+   *
+   * The input/output is a string in RFC3339 format.
+   */
+  DateTime: { input: any; output: any; }
+  /**
+   * ISO 8601 combined date and time without timezone.
+   *
+   * # Examples
+   *
+   * * `2015-07-01T08:59:60.123`,
+   */
+  NaiveDateTime: { input: any; output: any; }
+  /**
    * A UUID is a unique 128-bit number, stored as 16 octets. UUIDs are parsed as
    * Strings within GraphQL. UUIDs are used to assign unique identifiers to
    * entities without requiring a central allocating authority.
@@ -29,12 +43,22 @@ export type Scalars = {
 
 export type AuthMutation = {
   __typename?: 'AuthMutation';
+  devLogin: LoginResult;
   login: LoginResult;
+};
+
+
+export type AuthMutationDevLoginArgs = {
+  data: DevLoginInput;
 };
 
 
 export type AuthMutationLoginArgs = {
   data: LoginInput;
+};
+
+export type DevLoginInput = {
+  userId: Scalars['UUID']['input'];
 };
 
 export type LoginInput = {
@@ -50,11 +74,86 @@ export type LoginResult = {
 export type Mutation = {
   __typename?: 'Mutation';
   auth: AuthMutation;
+  newsletter: NewsletterMutation;
 };
+
+export type NewsLetterCreateInput = {
+  payload: Scalars['String']['input'];
+  publishAt: Scalars['NaiveDateTime']['input'];
+  title: Scalars['String']['input'];
+};
+
+export type Newsletter = {
+  __typename?: 'Newsletter';
+  createdAt: Scalars['DateTime']['output'];
+  isPublished: Scalars['Boolean']['output'];
+  newsletterId: Scalars['UUID']['output'];
+  payload: Scalars['String']['output'];
+  publishAt: Scalars['DateTime']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type NewsletterMutation = {
+  __typename?: 'NewsletterMutation';
+  createOne: Newsletter;
+};
+
+
+export type NewsletterMutationCreateOneArgs = {
+  data: NewsLetterCreateInput;
+};
+
+export type Notify = {
+  __typename?: 'Notify';
+  createdAt: Scalars['DateTime']['output'];
+  isRead: Scalars['Boolean']['output'];
+  notifyId: Scalars['UUID']['output'];
+  notifyType: NotifyType;
+  payload: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  userId: Scalars['UUID']['output'];
+};
+
+export type NotifyByUserIdFilter = {
+  isRead?: InputMaybe<Scalars['Boolean']['input']>;
+  notifyType?: InputMaybe<NotifyType>;
+  userId: Scalars['UUID']['input'];
+};
+
+export type NotifyQuery = {
+  __typename?: 'NotifyQuery';
+  findByPk: Notify;
+  findByUserId: Array<Notify>;
+};
+
+
+export type NotifyQueryFindByPkArgs = {
+  notifyId: Scalars['UUID']['input'];
+};
+
+
+export type NotifyQueryFindByUserIdArgs = {
+  data: NotifyByUserIdFilter;
+};
+
+export type NotifySub = {
+  __typename?: 'NotifySub';
+  notifyId: Scalars['UUID']['output'];
+};
+
+export enum NotifyType {
+  Daly = 'DALY'
+}
 
 export type Query = {
   __typename?: 'Query';
+  notify: NotifyQuery;
   user: UserQuery;
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  notifyDelay: NotifySub;
 };
 
 export type User = {
@@ -93,5 +192,13 @@ export type UserLoginMutationVariables = Exact<{
 
 export type UserLoginMutation = { __typename?: 'Mutation', auth: { __typename?: 'AuthMutation', login: { __typename?: 'LoginResult', jwt: string, user: { __typename?: 'User', userId: any, firstName?: string | null, lastName?: string | null, photoUrl?: string | null } } } };
 
+export type GetAllNotifyQueryVariables = Exact<{
+  data: NotifyByUserIdFilter;
+}>;
+
+
+export type GetAllNotifyQuery = { __typename?: 'Query', notify: { __typename?: 'NotifyQuery', findByUserId: Array<{ __typename?: 'Notify', notifyId: any, title: string, payload: string }> } };
+
 
 export const UserLoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"userLogin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LoginInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"auth"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"jwt"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"photoUrl"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UserLoginMutation, UserLoginMutationVariables>;
+export const GetAllNotifyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAllNotify"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"NotifyByUserIdFilter"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notify"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findByUserId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notifyId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"payload"}}]}}]}}]}}]} as unknown as DocumentNode<GetAllNotifyQuery, GetAllNotifyQueryVariables>;

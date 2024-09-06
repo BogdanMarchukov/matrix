@@ -1,4 +1,3 @@
-import { Chat, User } from "../types/telegram";
 import { useMutation } from "@apollo/client";
 import { gql } from "../../__generated__/gql";
 
