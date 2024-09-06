@@ -18,20 +18,20 @@ declare global {
 }
 
 const httpLink = createHttpLink({
-  uri: "https://6f19-217-61-23-85.ngrok-free.app/gql",
+  uri: "https://ad49-217-61-23-85.ngrok-free.app/gql",
 });
 
 const authLink = setContext((_, { headers }) => {
-  const jwt = useUserStore((state) => state.auth.jwt);
+  const token = localStorage.getItem("jwt");
   return {
     headers: {
       ...headers,
-      Authorization: jwt || "",
+      Authorization: token || "",
     },
   };
 });
 const client = new ApolloClient({
-  link: httpLink.concat(authLink),
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 

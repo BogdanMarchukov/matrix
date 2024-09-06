@@ -1,9 +1,9 @@
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Puff, ThreeDots } from "react-loader-spinner";
 import { useLogin } from "../../common/hooks/useLogin";
-import { useNotify } from "../../common/hooks/useNotify";
 import { useUserStore } from "../../common/store/userStore";
 import AnimatedText from "../animation-text/AnimationText";
+import Message from "../message/Message";
 import Card from "./svg/card";
 import NextButton from "./svg/nextButton";
 import TelegramLogo from "./svg/telegramLogo";
@@ -11,7 +11,9 @@ import classes from "./userBar.module.css";
 
 function UserBar() {
   const { login, loading, error, data } = useLogin();
-  const { setJwt, setFirstName, auth } = useUserStore((state) => state);
+  const { setJwt, setFirstName, auth, setUserId } = useUserStore(
+    (state) => state,
+  );
   const firstName =
     data?.auth?.login?.user?.firstName ||
     data?.auth?.login?.user?.lastName ||
@@ -27,6 +29,8 @@ function UserBar() {
     if (loading === false && data?.auth?.login?.jwt) {
       setJwt(data.auth.login.jwt);
       setFirstName(firstName);
+      setUserId(data.auth.login.user.userId);
+      localStorage.setItem("jwt", data.auth.login.jwt);
     }
   }, [loading, data?.auth?.login?.jwt, setJwt, firstName, setFirstName]);
 
@@ -54,19 +58,7 @@ function UserBar() {
           <NextButton />
         </div>
       </div>
-      <div className={classes.message}>
-        <div className={classes.card}>
-          <Card animate={true} />
-        </div>
-        <div className={classes.messageTextBlock}>
-          <span className={classes.messageTop}>
-            <AnimatedText text={"тебе"} animation={true}></AnimatedText>
-          </span>
-          <span className={classes.messageBottom}>
-            <AnimatedText text={"послание"} animation={true}></AnimatedText>
-          </span>
-        </div>
-      </div>
+      <Message />
       <div className={classes.rightItem}>
         <div className={classes.telegramLogo}>
           <div className={classes.logoBg} />

@@ -8,11 +8,17 @@ impl Guard for AuthGuard {
     async fn check(&self, ctx: &async_graphql::Context<'_>) -> Result<(), Error> {
         let user = match ctx.data::<GqlCtx>() {
             Ok(data) => &data.user,
-            Err(_) => return Err(GqlError::Unauthorized.extend()),
+            Err(_) => {
+                println!("auth error");
+                return Err(GqlError::Unauthorized.extend());
+            }
         };
         match user {
             Some(_) => Ok(()),
-            None => Err(GqlError::Unauthorized.extend()),
+            None => {
+                println!("auth error =============");
+                Err(GqlError::Unauthorized.extend())
+            }
         }
     }
 }
