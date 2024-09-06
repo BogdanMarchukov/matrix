@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNotify } from "../../common/hooks/useNotify";
 import { useUserStore } from "../../common/store/userStore";
 import { NotifyType } from "../../__generated__/graphql";

@@ -15,12 +15,11 @@ query GetAllNotify($data: NotifyByUserIdFilter!) {
  `);
 
 export const useNotify = (notifyFilter: NotifyByUserIdFilter) => {
-  const {client, error, loading, data } = useQuery(NOTIFY, {
+  const { error, loading, data } = useQuery(NOTIFY, {
     variables: {
       data: notifyFilter,
     },
   });
-
 
   return {
     error,

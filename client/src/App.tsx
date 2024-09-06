@@ -9,7 +9,6 @@ import {
   ApolloProvider,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import { useUserStore } from "./common/store/userStore";
 
 declare global {
   interface Window {
