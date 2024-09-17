@@ -10,13 +10,17 @@ type UserState = {
   firstName: string | null;
   userId: string | null;
   notify: Partial<Notify> | null;
+  showNotifyPayload: boolean;
 };
 
 type Actions = {
   setJwt: (jwt: string) => void;
-  setFirstName: (firstName: UserState['firstName']) => void;
-  setUserId: (userId: UserState['userId']) => void;
-  setNotify: (notify: UserState['notify']) => void;
+  setFirstName: (firstName: UserState["firstName"]) => void;
+  setUserId: (userId: UserState["userId"]) => void;
+  setNotify: (notify: UserState["notify"]) => void;
+  setShowNotifyPayload: (
+    showNotifyPayload: UserState["showNotifyPayload"],
+  ) => void;
 };
 
 export const useUserStore = create<UserState & Actions>((set) => ({
@@ -26,8 +30,11 @@ export const useUserStore = create<UserState & Actions>((set) => ({
   firstName: null,
   userId: null,
   notify: null,
+  showNotifyPayload: false,
   setJwt: (jwt) => set((state) => ({ ...state, auth: { jwt } })),
   setFirstName: (firstName) => set((state) => ({ ...state, firstName })),
   setUserId: (userId) => set((state) => ({ ...state, userId })),
   setNotify: (notify) => set((state) => ({ ...state, notify })),
+  setShowNotifyPayload: (showNotifyPayload) =>
+    set((state) => ({ ...state, showNotifyPayload })),
 }));

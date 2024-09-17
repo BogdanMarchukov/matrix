@@ -1,0 +1,62 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 8px;
+  width: 335px;
+  height: 147px;
+  top: 130px;
+}
+
+.union {
+  margin-top: 8px;
+  width: 335px;
+  height: 147px;
+  position: relative;
+  border-radius: 8px;
+  background: #151518;
+  border: solid #151518;
+  box-shadow: 0px 0px 24px #9747ff;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  z-index: 0;
+}
+
+.union::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 12px solid #151518;
+}
+
+.union span {
+  position: absolute;
+  width: 307px;
+  height: 76px;
+  left: 14px;
+  top: 42px;
+
+  font-family: "Ubuntu";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 130%;
+  /* or 19px */
+
+  /* white */
+  color: #ffffff;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  z-index: 1;
+}

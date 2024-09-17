@@ -8,7 +8,8 @@ import Card from "./svg/card";
 
 export default function () {
   const [animal, setAnimal] = useState(false);
-  const { userId, setNotify, notify } = useUserStore((state) => state);
+  const { userId, setNotify, notify, setShowNotifyPayload, showNotifyPayload } =
+    useUserStore((state) => state);
   const { loading, error, data } = useNotify({
     userId,
     isRead: false,
@@ -30,7 +31,10 @@ export default function () {
   }, [notify]);
 
   return (
-    <div className={classes.message}>
+    <div
+      onClick={() => setShowNotifyPayload(!showNotifyPayload)}
+      className={classes.message}
+    >
       <div className={classes.card}>
         <Card animate={animal} />
       </div>
