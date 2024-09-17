@@ -3,7 +3,7 @@ import classes from "./payload.module.css";
 
 export default function () {
   const { notify, showNotifyPayload } = useUserStore((state) => state);
-  if (!notify && !showNotifyPayload) {
+  if (!notify || !showNotifyPayload) {
     return null;
   }
   return (

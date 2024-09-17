@@ -32,7 +32,7 @@ export default function () {
 
   return (
     <div
-      onClick={() => setShowNotifyPayload(!showNotifyPayload)}
+      onTouchStart={() => setShowNotifyPayload(!showNotifyPayload)}
       className={classes.message}
     >
       <div className={classes.card}>
