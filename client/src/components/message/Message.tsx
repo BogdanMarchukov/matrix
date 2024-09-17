@@ -8,7 +8,7 @@ import Card from "./svg/card";
 
 export default function () {
   const [animal, setAnimal] = useState(false);
-  const { userId } = useUserStore((state) => state);
+  const { userId, setNotify, notify } = useUserStore((state) => state);
   const { loading, error, data } = useNotify({
     userId,
     isRead: false,
@@ -17,9 +17,17 @@ export default function () {
 
   useEffect(() => {
     if (loading === false && data?.notify?.findByUserId?.length) {
-      setAnimal(true);
+      setNotify(data.notify.findByUserId[0]);
     }
   }, [useNotify, loading, error, data]);
+
+  useEffect(() => {
+    if (notify?.isRead === false) {
+      setAnimal(true);
+    } else {
+      setAnimal(false);
+    }
+  }, [notify]);
 
   return (
     <div className={classes.message}>

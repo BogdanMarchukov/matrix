@@ -14,7 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "\n  mutation userLogin ($data: LoginInput!) {\n    auth {\n      login(data: $data) {\n        jwt\n        user {\n          userId\n          firstName\n          lastName\n          photoUrl\n        }\n      }\n    }\n  }\n": types.UserLoginDocument,
-    "\nquery GetAllNotify($data: NotifyByUserIdFilter!) {\n  notify {\n    findByUserId(data: $data) {\n      notifyId\n      title\n      payload\n    }\n  }\n}\n ": types.GetAllNotifyDocument,
+    "\nquery GetAllNotify($data: NotifyByUserIdFilter!) {\n  notify {\n    findByUserId(data: $data) {\n      notifyId\n      title\n      payload\n      isRead\n    }\n  }\n}\n ": types.GetAllNotifyDocument,
 };
 
 /**
@@ -38,7 +38,7 @@ export function gql(source: "\n  mutation userLogin ($data: LoginInput!) {\n    
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\nquery GetAllNotify($data: NotifyByUserIdFilter!) {\n  notify {\n    findByUserId(data: $data) {\n      notifyId\n      title\n      payload\n    }\n  }\n}\n "): (typeof documents)["\nquery GetAllNotify($data: NotifyByUserIdFilter!) {\n  notify {\n    findByUserId(data: $data) {\n      notifyId\n      title\n      payload\n    }\n  }\n}\n "];
+export function gql(source: "\nquery GetAllNotify($data: NotifyByUserIdFilter!) {\n  notify {\n    findByUserId(data: $data) {\n      notifyId\n      title\n      payload\n      isRead\n    }\n  }\n}\n "): (typeof documents)["\nquery GetAllNotify($data: NotifyByUserIdFilter!) {\n  notify {\n    findByUserId(data: $data) {\n      notifyId\n      title\n      payload\n      isRead\n    }\n  }\n}\n "];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

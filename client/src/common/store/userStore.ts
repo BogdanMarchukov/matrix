@@ -9,14 +9,14 @@ type UserState = {
   auth: AuthState;
   firstName: string | null;
   userId: string | null;
-  notify: Notify | null;
+  notify: Partial<Notify> | null;
 };
 
 type Actions = {
   setJwt: (jwt: string) => void;
-  setFirstName: (firstName: string) => void;
-  setUserId: (userId: string) => void;
-  setNotify: (notify: Notify) => void;
+  setFirstName: (firstName: UserState['firstName']) => void;
+  setUserId: (userId: UserState['userId']) => void;
+  setNotify: (notify: UserState['notify']) => void;
 };
 
 export const useUserStore = create<UserState & Actions>((set) => ({

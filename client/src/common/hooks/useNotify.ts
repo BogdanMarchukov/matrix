@@ -9,6 +9,7 @@ query GetAllNotify($data: NotifyByUserIdFilter!) {
       notifyId
       title
       payload
+      isRead
     }
   }
 }
