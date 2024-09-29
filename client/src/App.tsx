@@ -25,6 +25,7 @@ const authLink = setContext((_, { headers }) => {
   return {
     headers: {
       ...headers,
+      ["x-api-key"]: "secret-api-key",
       Authorization: token || "",
     },
   };
