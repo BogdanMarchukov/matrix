@@ -1,0 +1,17 @@
+.primary {
+    display: flex;
+    flex-direction: column;
+    padding: var(--spaces-smm);
+    background: var(--color-bg-dark);
+    box-shadow: var(--box-shadow-primary-dark);
+    border-radius: var(--spaces-smm);
+}
+
+.secondary {
+    display: flex;
+    flex-direction: column;
+    padding: var(--spaces-smm);
+    background: var(--radial-gradient-primary);
+    box-shadow: var(--box-shadow-primary-light);
+    border-radius: var(--spaces-smm);
+}

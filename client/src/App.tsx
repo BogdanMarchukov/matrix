@@ -1,14 +1,13 @@
 import "./App.css";
-import Header from "./components/header/header";
-import MainLayout from "./components/layout/main/main.layout";
-import MainPage from "./pages/main/main";
 import {
   ApolloClient,
   InMemoryCache,
   createHttpLink,
   ApolloProvider,
 } from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
+import {setContext} from "@apollo/client/link/context";
+import {RouterProvider, createBrowserRouter} from 'react-router-dom';
+import {ROUTES} from "./common/routes";
 
 declare global {
   interface Window {
@@ -20,7 +19,7 @@ const httpLink = createHttpLink({
   uri: "https://3767-217-61-23-85.ngrok-free.app/gql",
 });
 
-const authLink = setContext((_, { headers }) => {
+const authLink = setContext((_, {headers}) => {
   const token = localStorage.getItem("jwt");
   return {
     headers: {
@@ -30,20 +29,18 @@ const authLink = setContext((_, { headers }) => {
     },
   };
 });
+
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 
-function App() {
+const router = createBrowserRouter(ROUTES);
+
+export const App = () => {
   return (
     <ApolloProvider client={client}>
-      <MainLayout>
-        <Header />
-        <MainPage />
-      </MainLayout>
+      <RouterProvider router={router}/>
     </ApolloProvider>
   );
 }
-
-export default App;

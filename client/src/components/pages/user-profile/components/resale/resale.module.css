@@ -1,0 +1,51 @@
+.root {
+    width: 100%;
+    border-radius: var(--spaces-smm);
+    padding: var(--spaces-md);
+    background-color: var(--color-bg-dark);
+}
+
+.title {
+    font-weight: 600;
+    font-size: var(--font-sm);
+    text-transform: uppercase;
+    margin-bottom: var(--spaces-xsm);
+}
+
+.conditionsBox {
+    margin-bottom: var(--spaces-lg);
+}
+
+.accentText {
+    font-weight: 400;
+    font-size: var(--font-sm);
+    margin-bottom: var(--spaces-xsm);
+    color: var(--color-primary-middle);
+}
+
+.link {
+    display: block;
+    font-weight: 400;
+    font-size: var(--font-sm);
+    margin-bottom: var(--spaces-smm);
+    color: var(--color-link-gray);
+}
+
+.text {
+    font-weight: 400;
+    font-size: var(--font-sm);
+    margin-bottom: var(--spaces-xsm)
+}
+
+.param {
+    font-weight: 400;
+    font-size: var(--font-sm);
+    margin-bottom: var(--spaces-xsm);
+}
+
+.accentParam {
+    font-weight: 400;
+    font-size: var(--font-sm);
+    margin-bottom: var(--spaces-xsm);
+    color: var(--color-primary-light);
+}

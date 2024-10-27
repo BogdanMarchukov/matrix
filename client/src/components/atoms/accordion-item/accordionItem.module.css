@@ -1,0 +1,29 @@
+.accordionItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spaces-xs);
+    padding: var(--spaces-xsm);
+    cursor: pointer;
+}
+
+.textBox {
+    display: flex;
+    gap: var(--spaces-xsm);
+    align-items: center;
+}
+
+.text {
+    font-family: "Unbounded";
+    font-style: normal;
+    font-weight: 500;
+    font-size: var(--font-sm);
+    line-height: 130%;
+    text-align: center;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+    color: var(--color-white);
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}

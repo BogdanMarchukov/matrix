@@ -1,0 +1,31 @@
+.root {
+    width: 100%;
+    border-radius: var(--spaces-smm);
+    padding: var(--spaces-md);
+    background-color: var(--color-bg-dark);
+}
+
+.bonusInfo {
+    font-weight: 400;
+    font-size: var(--font-sm);
+    margin-bottom: var(--spaces-xsm)
+}
+
+.bonusInfoAccent {
+    font-weight: 500;
+    font-size: var(--font-sm);
+    color: var(--color-primary-dark);
+    margin: 0 var(--spaces-xsm)
+}
+
+.bonusInfoValue {
+    font-weight: 400;
+    font-size: var(--font-sm);
+    color: var(--color-primary-light);
+    margin: 0 var(--spaces-sm) var(--spaces-xsm);
+}
+
+.bonusInfoBold {
+    font-weight: 500;
+    font-size: var(--font-sm);
+}

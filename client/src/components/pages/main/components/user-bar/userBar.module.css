@@ -1,0 +1,133 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spaces-xsm);
+    max-width: 450px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 var(--spaces-mdm);
+}
+
+.item {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+}
+
+.avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    background: var(--color-primary-dark);
+    border-radius: 50%;
+    color: var(--color-white);
+    font-weight: 600;
+}
+
+.nextButton {
+    text-align: center;
+    width: 16px;
+    height: 16px;
+}
+
+.telegramLogo {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    background: rgb(42, 171, 238);
+    background: linear-gradient(
+            90deg,
+            rgba(42, 171, 238, 1) 100%,
+            rgba(34, 158, 217, 1) 100%
+    );
+    border-radius: 50%;
+}
+
+.telegramText {
+    display: flex;
+    flex-direction: column;
+    font-size: var(--font-xs);
+    line-height: 100%;
+    text-align: center;
+}
+
+.telegramTextAccent {
+    color: var(--color-primary-light);
+}
+
+.message {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0;
+    width: 95px;
+    height: 28px;
+}
+
+.avatar span {
+    width: 12px;
+    height: 19px;
+    left: calc(50% - 12px / 2);
+    top: calc(50% - 19px / 2 - 0.5px);
+    font-family: "SF Pro Text";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 19px;
+    text-align: center;
+    letter-spacing: -0.24px;
+    text-transform: uppercase;
+}
+
+.usernameBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.username {
+    font-family: "Unbounded";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 15px;
+    text-align: center;
+    letter-spacing: -0.24px;
+    color: #ffffff;
+}
+
+.userStatus {
+    width: 51px;
+    height: 12px;
+    font-weight: 300;
+    font-size: 10px;
+    line-height: 12px;
+    text-align: center;
+    letter-spacing: -0.24px;
+    color: var(--color-white);
+}
+
+.userStatus {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0px 2px;
+    gap: 8px;
+    width: 55px;
+    height: 12px;
+    background: var(--color-primary-light);
+    border-radius: 100px;
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}

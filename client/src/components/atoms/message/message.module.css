@@ -1,0 +1,14 @@
+
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  max-width: 95px;
+  width: 100%;
+  gap: 4px;
+}
+
+.messageBox {
+  display: flex;
+  flex-direction: column;
+}

@@ -1,0 +1,9 @@
+.outlinedButton {
+    border: 2px solid var(--color-primary-bright);
+    border-radius: 100px;
+    background-color: rgba(var(--color-button-bg), 0.25);
+    padding: var(--spaces-md) var(--spaces-lgm);
+    color: var(--color-white);
+    font-size: 14px;
+    font-weight: 500;
+}

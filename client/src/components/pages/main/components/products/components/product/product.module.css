@@ -1,0 +1,24 @@
+.rootBox {
+    padding: var(--spaces-md) var(--spaces-md) var(--spaces-md) 0;
+}
+
+.contentBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spaces-xsm);
+}
+
+.img {
+    width: 100%;
+    aspect-ratio: 1;
+}
+
+.title {
+    text-align: center;
+}
+
+.price {
+    font-size: var(--font-smm);
+    font-weight: 700;
+}

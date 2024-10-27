@@ -1,0 +1,39 @@
+.firstRoot {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: var(--spaces-xsm);
+    background: var(--radial-gradient-news-first);
+    border-radius: var(--spaces-smm);
+    padding: var(--spaces-smm) var(--spaces-xsm)
+}
+
+.secondRoot {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: var(--spaces-xsm);
+    background: var(--radial-gradient-news-second);
+    border-radius: var(--spaces-smm);
+    padding: var(--spaces-smm) var(--spaces-xsm)
+}
+
+.thirdRoot {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: var(--spaces-xsm);
+    background: var(--radial-gradient-news-third);
+    border-radius: var(--spaces-smm);
+    padding: var(--spaces-smm) var(--spaces-xsm)
+}
+
+.title {
+    font-size: var(--font-xsm);
+    font-weight: 500;
+}
+
+.img {
+    width: 100%;
+    aspect-ratio: 1;
+}

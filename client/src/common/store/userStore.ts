@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { Notify } from "../../__generated__/graphql";
+import {create} from "zustand";
+import {Notify} from "../../__generated__/graphql";
 
 type AuthState = {
   jwt: string | null;
@@ -8,6 +8,7 @@ type AuthState = {
 type UserState = {
   auth: AuthState;
   firstName: string | null;
+  avatarUrl: string | null;
   userId: string | null;
   notify: Partial<Notify> | null;
   showNotifyPayload: boolean;
@@ -16,6 +17,7 @@ type UserState = {
 type Actions = {
   setJwt: (jwt: string) => void;
   setFirstName: (firstName: UserState["firstName"]) => void;
+  setAvatarUrl: (avatar: string) => void;
   setUserId: (userId: UserState["userId"]) => void;
   setNotify: (notify: UserState["notify"]) => void;
   setShowNotifyPayload: (
@@ -28,13 +30,15 @@ export const useUserStore = create<UserState & Actions>((set) => ({
     jwt: null,
   },
   firstName: null,
+  avatarUrl: null,
   userId: null,
   notify: null,
   showNotifyPayload: false,
-  setJwt: (jwt) => set((state) => ({ ...state, auth: { jwt } })),
-  setFirstName: (firstName) => set((state) => ({ ...state, firstName })),
-  setUserId: (userId) => set((state) => ({ ...state, userId })),
-  setNotify: (notify) => set((state) => ({ ...state, notify })),
+  setJwt: (jwt) => set((state) => ({...state, auth: {jwt}})),
+  setFirstName: (firstName) => set((state) => ({...state, firstName})),
+  setAvatarUrl: (avatarUrl) => set((state) => ({...state, avatarUrl})),
+  setUserId: (userId) => set((state) => ({...state, userId})),
+  setNotify: (notify) => set((state) => ({...state, notify})),
   setShowNotifyPayload: (showNotifyPayload) =>
-    set((state) => ({ ...state, showNotifyPayload })),
+    set((state) => ({...state, showNotifyPayload})),
 }));

@@ -1,0 +1,96 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--spaces-lg);
+  padding: 0 var(--spaces-mdm);
+}
+
+.input {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spaces-md) var(--spaces-lgm);
+  gap: var(--spaces-xsm);
+  max-width: 270px;
+  width: 100%;
+  margin: 0 auto;
+  background-color: var(--color-bg-input);
+  border: 2px solid #8e61ef;
+  border-radius: var(--spaces-smm);
+  font-size: var(--font-sm);
+  color: var(--color-primary-middle);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  color: var(--color-primary-middle);
+  cursor: pointer;
+}
+
+.contentBox {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--spaces-md);
+}
+
+.horizontalBox {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spaces-md);
+  width: 100%;
+}
+
+.verticalBox {
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  gap: var(--spaces-md)
+}
+
+.contentItemBox {
+  background: var(--radial-gradient-primary);
+  box-shadow: var(--box-shadow-primary-light);
+  border-radius: var(--spaces-smm)
+}
+
+.titleBox {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spaces-xsm);
+  align-items: center;
+  margin-bottom: var(--spaces-xsm)
+}
+
+.scoreTitle {
+  font-weight: 500;
+  font-size: var(--font-sm);
+}
+
+.sumBox {
+  display: flex;
+  align-items: center;
+  gap: var(--spaces-xsm)
+}
+
+.sum {
+  font-weight: 500;
+  font-size: var(--font-mdm);
+  text-align: center;
+  letter-spacing: -0.24px;
+}
+
+.friendsBonusTitle {
+  font-weight: 600;
+  font-size: var(--font-xsm);
+}
+
+.friendsBonusText {
+  font-size: var(--font-xs);
+}
+
+.orderTitle {
+  font-weight: 600;
+  font-size: var(--font-sm);
+  margin-bottom: auto;
+}

@@ -20,6 +20,7 @@ export const useNotify = (notifyFilter: NotifyByUserIdFilter) => {
     variables: {
       data: notifyFilter,
     },
+    skip: !notifyFilter.userId
   });
 
   return {

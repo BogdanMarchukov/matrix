@@ -42,6 +42,7 @@ mod helpers;
 mod newsletter;
 mod notify;
 use uuid::Uuid;
+use actix_cors::Cors;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 
@@ -161,11 +162,18 @@ async fn main() -> std::io::Result<()> {
     let pool: DatabaseConnection = get_pool().await;
     HttpServer::new(move || {
         let schema = Schema::build(Query, Mutation, Subscription).finish();
+
+        let cors = Cors::default()
+            .allow_any_origin()
+            .allow_any_method()
+            .allow_any_header();
+
         App::new()
             .app_data(web::Data::new(AppState {
                 db: pool.clone(),
                 schema: schema.clone(),
             }))
+            .wrap(cors)
             .service(
                 web::resource("/gql")
                     .guard(guard::Get())

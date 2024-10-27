@@ -1,0 +1,10 @@
+.rootBox {
+  padding: 0 var(--spaces-mdm);
+}
+
+.contentBox {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spaces-xsm);
+  align-items: center;
+}

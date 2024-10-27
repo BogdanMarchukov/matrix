@@ -1,0 +1,19 @@
+.root {
+    width: 100%;
+    border-radius: var(--spaces-smm);
+    padding: var(--spaces-md);
+    background-color: var(--color-bg-dark);
+}
+
+.title {
+    font-weight: 600;
+    font-size: var(--font-sm);
+    text-transform: uppercase;
+    margin-bottom: var(--spaces-xsm);
+}
+
+.text {
+    font-weight: 400;
+    font-size: var(--font-sm);
+    margin-bottom: var(--spaces-lg)
+}

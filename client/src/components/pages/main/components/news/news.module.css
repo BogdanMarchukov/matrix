@@ -1,0 +1,12 @@
+.rootBox {
+    width: 100%;
+    display: flex;
+    padding: var(--spaces-md);
+}
+
+.contentBox {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spaces-smm);
+}
