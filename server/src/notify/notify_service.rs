@@ -1,5 +1,5 @@
 use super::{
-    notify_gql::NotifyByUserIdFilter,
+    notify_gql::{NotifyByUserIdFilter, NotifyUpdateData},
     notify_gql_model::NotifyGqlModel,
     notify_repository::{self, find_many},
 };
@@ -30,12 +30,29 @@ pub async fn find_many_by_user_id(
     Ok(all_notify)
 }
 
+pub async fn update_one(
+    notify_id: Uuid,
+    data: NotifyUpdateData,
+    user: UserGqlModel,
+    conn: &DatabaseConnection,
+) -> FieldResult<NotifyGqlModel> {
+    find_by_pk(notify_id, user, conn).await?;
+    notify_repository::update_one(
+        notify_id,
+        notify_repository::NotifyUpdateData {
+            is_read: data.is_read,
+        },
+        conn,
+    )
+    .await
+}
+
 pub async fn find_by_pk(
     notify_id: Uuid,
     user: UserGqlModel,
     conn: &DatabaseConnection,
 ) -> FieldResult<NotifyGqlModel> {
     let notify = notify_repository::find_by_pk(notify_id, conn).await?;
-    notify.check_role(&user);
+    notify.check_role(&user)?;
     Ok(notify)
 }

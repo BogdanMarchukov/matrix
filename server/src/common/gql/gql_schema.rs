@@ -1,6 +1,8 @@
 use crate::{
-    auth::auth_gql::AuthMutation, newsletter::newsletter_gql::NewsletterMutation,
-    notify::notify_gql::NotifyQuery, user::user_gql::UserQuery,
+    auth::auth_gql::AuthMutation,
+    newsletter::newsletter_gql::NewsletterMutation,
+    notify::notify_gql::{NotifyMutation, NotifyQuery},
+    user::user_gql::UserQuery,
 };
 use async_graphql::{FieldResult, Object};
 
@@ -18,6 +20,10 @@ impl Mutation {
 
     async fn newsletter(&self) -> FieldResult<NewsletterMutation> {
         Ok(NewsletterMutation)
+    }
+
+    async fn notify(&self) -> FieldResult<NotifyMutation> {
+        Ok(NotifyMutation)
     }
 }
 
