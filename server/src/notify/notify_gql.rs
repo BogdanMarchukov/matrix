@@ -1,5 +1,5 @@
 use super::notify_gql_model::{NotifyGqlModel, NotifyTypeGql};
-use super::notify_service;
+use super::{notify_repository, notify_service};
 use crate::guards::auth_guard::AuthGuard;
 use crate::{gql_schema::Subscription, user::user_service};
 use crate::{GqlCtx, TX_NOTIFY};
@@ -9,6 +9,7 @@ use async_graphql::{Context, FieldResult, InputObject, Object, SimpleObject, Sub
 use uuid::Uuid;
 
 pub struct NotifyQuery;
+pub struct NotifyMutation;
 
 #[derive(InputObject)]
 pub struct NotifyByUserIdFilter {
@@ -20,6 +21,11 @@ pub struct NotifyByUserIdFilter {
 #[derive(SimpleObject)]
 pub struct NotifySub {
     pub notify_id: Uuid,
+}
+
+#[derive(InputObject)]
+pub struct NotifyUpdateData {
+    pub is_read: bool,
 }
 
 #[Object]
@@ -42,6 +48,20 @@ impl NotifyQuery {
     ) -> FieldResult<NotifyGqlModel> {
         let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
         notify_service::find_by_pk(notify_id, request_user, &conn).await
+    }
+}
+
+#[Object]
+impl NotifyMutation {
+    #[graphql(guard = "AuthGuard")]
+    async fn update_one<'ctx>(
+        &self,
+        ctx: &Context<'ctx>,
+        notify_id: Uuid,
+        data: NotifyUpdateData,
+    ) -> FieldResult<NotifyGqlModel> {
+        let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
+        notify_service::update_one(notify_id, data, request_user, &conn).await
     }
 }
 

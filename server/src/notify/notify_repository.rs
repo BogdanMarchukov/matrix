@@ -11,8 +11,14 @@ use async_graphql::{ErrorExtensions, FieldResult};
 use chrono::Local;
 use migration::Expr;
 use sea_orm::ActiveValue::Set;
-use sea_orm::{ColumnTrait, Condition, DatabaseConnection, EntityTrait, QueryFilter};
+use sea_orm::{
+    ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, QueryFilter,
+};
 use uuid::Uuid;
+
+pub struct NotifyUpdateData {
+    pub is_read: bool,
+}
 
 pub async fn find_many(
     filter: Condition,
@@ -34,6 +40,24 @@ pub async fn find_by_pk(notify_id: Uuid, conn: &DatabaseConnection) -> FieldResu
         Ok(NotifyGqlModel::new(notify))
     } else {
         Err(GqlError::NotFound("notify not found".to_string()).extend())
+    }
+}
+
+pub async fn update_one(
+    notify_id: Uuid,
+    data: NotifyUpdateData,
+    conn: &DatabaseConnection,
+) -> FieldResult<NotifyGqlModel> {
+    if let Ok(Some(notify)) = Notify::find_by_id(notify_id).one(conn).await {
+        let mut notify: notify::ActiveModel = notify.into();
+        notify.is_read = Set(data.is_read);
+        if let Ok(notify) = notify.update(conn).await {
+            Ok(NotifyGqlModel::new(notify))
+        } else {
+            Err(GqlError::ServerError(("Database error".to_string())).extend())
+        }
+    } else {
+        Err(GqlError::NotFound("Notify not found".to_string()).extend())
     }
 }
 
