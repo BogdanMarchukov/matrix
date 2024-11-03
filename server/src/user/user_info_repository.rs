@@ -58,3 +58,13 @@ pub async fn user_info_update_one(
         false
     }
 }
+
+pub async fn create_one_by_user_id(user_id: Uuid, conn: &DatabaseConnection) -> FieldResult<bool> {
+    let new_user_info = user_info::ActiveModel {
+        user_info_id: Set(Uuid::new_v4()),
+        user_id: Set(user_id),
+        ..Default::default()
+    };
+    user_info::Entity::insert(new_user_info).exec(conn).await?;
+    Ok(true)
+}
