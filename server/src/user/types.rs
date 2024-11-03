@@ -5,5 +5,6 @@ use chrono::NaiveDate;
 pub struct UserInfoUpdateInput {
     pub city: Option<String>,
     pub date_of_birth: Option<NaiveDate>,
-    pub time_of_birth: Option<NaiveDate>,
+    pub hour_of_birth: Option<i32>,
+    pub min_of_birth: Option<i32>,
 }

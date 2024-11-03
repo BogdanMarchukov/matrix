@@ -9,7 +9,8 @@ pub struct Model {
     pub user_info_id: Uuid,
     pub city: Option<String>,
     pub date_of_birth: Option<Date>,
-    pub time_of_birth: Option<Date>,
+    pub hour_of_birth: Option<i32>,
+    pub min_of_birth: Option<i32>,
     pub user_id: Uuid,
 }
 

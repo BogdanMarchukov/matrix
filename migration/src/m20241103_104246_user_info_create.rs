@@ -19,7 +19,8 @@ impl MigrationTrait for Migration {
                     )
                     .col(ColumnDef::new(UserInfo::City).string())
                     .col(ColumnDef::new(UserInfo::DateOfBirth).date())
-                    .col(ColumnDef::new(UserInfo::TimeOfBirth).date())
+                    .col(ColumnDef::new(UserInfo::HourOfBirth).integer())
+                    .col(ColumnDef::new(UserInfo::MinOfBirth).integer())
                     .col(ColumnDef::new(UserInfo::UserId).uuid().not_null())
                     .foreign_key(
                         ForeignKey::create()
@@ -45,7 +46,8 @@ enum UserInfo {
     UserInfoId,
     City,
     DateOfBirth,
-    TimeOfBirth,
+    HourOfBirth,
+    MinOfBirth,
     UserId,
 }
 

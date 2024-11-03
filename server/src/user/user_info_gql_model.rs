@@ -12,7 +12,8 @@ pub struct UserInfoGqlModel {
     pub user_info_id: Uuid,
     pub city: Option<String>,
     pub date_of_birth: Option<NaiveDate>,
-    pub time_of_birth: Option<NaiveDate>,
+    pub hour_of_birth: Option<i32>,
+    pub min_of_birth: Option<i32>,
     pub user_id: Uuid,
 }
 
@@ -34,7 +35,8 @@ impl UserInfoGqlModel {
             user_info_id: user_info.user_info_id,
             city: user_info.city,
             date_of_birth: user_info.date_of_birth,
-            time_of_birth: user_info.time_of_birth,
+            hour_of_birth: user_info.hour_of_birth,
+            min_of_birth: user_info.hour_of_birth,
             user_id: user_info.user_id,
         }
     }

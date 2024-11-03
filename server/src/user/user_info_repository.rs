@@ -50,8 +50,11 @@ pub async fn user_info_update_one(
         if let Some(date_of_birth) = data.date_of_birth {
             user_info_active.date_of_birth = Set(Some(date_of_birth));
         }
-        if let Some(time_of_birth) = data.time_of_birth {
-            user_info_active.time_of_birth = Set(Some(time_of_birth));
+        if let Some(hour_of_birth) = data.hour_of_birth {
+            user_info_active.hour_of_birth = Set(Some(hour_of_birth));
+        }
+        if let Some(min_of_birth) = data.min_of_birth {
+            user_info_active.min_of_birth = Set(Some(min_of_birth));
         }
         user_info_active.update(conn).await.is_ok()
     } else {
