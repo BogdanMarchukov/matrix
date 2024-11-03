@@ -1,71 +1,50 @@
-.primarySmallIconButton {
+.root {
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 50%;
+    box-shadow: none;
+}
+
+.primarySmallIconButton {
     width: 16px;
     height: 16px;
-    border-radius: 50%;
     background-color: transparent;
     color: var(--color-link-gray);
-    box-shadow: none;
 }
 
 .primaryMediumIconButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 24px;
     height: 24px;
     border-radius: 50%;
     background-color: transparent;
     color: var(--color-link-gray);
-    box-shadow: none;
 }
 
 .primaryLargeIconButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 64px;
     height: 64px;
-    border-radius: 50%;
     background-color: var(--color-primary-bright);
     color: var(--color-white);
-    box-shadow: none;
 }
 
 .secondarySmallIconButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 16px;
     height: 16px;
-    border-radius: 50%;
     background-color: var(--color-white);
     color: var(--color-link-gray);
-    box-shadow: none;
 }
 
 .secondaryMediumIconButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 24px;
     height: 24px;
-    border-radius: 50%;
     background-color: var(--color-white);
     color: var(--color-link-gray);
-    box-shadow: none;
 }
 
 .secondaryLargeIconButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 64px;
     height: 64px;
-    border-radius: 50%;
     background-color: var(--color-white);
     color: var(--color-link-gray);
-    box-shadow: none;
 }

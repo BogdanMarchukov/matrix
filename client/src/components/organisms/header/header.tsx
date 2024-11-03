@@ -15,15 +15,15 @@ export const Header = () => {
   };
 
   return (
-    <header className={classes.container}>
-      <div className={classes.headerItem}>
+    <header className={classes.root}>
+      <div className={classes.item}>
         <Button variant="text">Назад</Button>
       </div>
-      <div className={classes.headerItem}>
+      <div className={classes.item}>
         <div className={classes.title}>KYMATICA</div>
         <div className={classes.subtitle}>бот</div>
       </div>
-      <div className={classes.headerItem}>
+      <div className={classes.item}>
         <div className={classes.icon}>
           <IconButton onClick={onMenuBtnClick} size="medium"><MenuIcon/></IconButton>
         </div>

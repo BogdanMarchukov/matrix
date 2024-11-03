@@ -1,9 +1,9 @@
-import {Scores} from "./components/scores/scores";
-import {PriceCalc} from "./components/price-calc/price-calc";
-import {Products} from "./components/products/products";
-import {UserBar} from "./components/user-bar/userBar";
+import {Scores} from "./components/scores";
+import {PriceCalc} from "./components/price-calc";
+import {Products} from "./components/products";
+import {UserBar} from "./components/user-bar";
 import classes from './main-page.module.css'
-import {News} from "./components/news/news";
+import {News} from "./components/news";
 
 export const MainPage = () => {
   return (

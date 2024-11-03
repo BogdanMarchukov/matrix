@@ -1,5 +1,5 @@
 import classes from './accordion.module.css'
-import {AccordionItem} from "../../../../atoms/accordion-item/accordionItem";
+import {AccordionItem} from "../../../../atoms/accordion-item";
 import {BonusIcon} from "../../icons/bonusIcon";
 import {TrainingIcon} from "../../icons/trainingIcon";
 import {TestsIcon} from "../../icons/testsIcon";
@@ -9,10 +9,7 @@ import {NewsIcon} from "../../icons/newsIcon";
 import {AboutIcon} from "../../icons/aboutIcon";
 
 
-const {
-  root,
-  accordion
-} = classes;
+const { root, accordion } = classes;
 
 const navigateList = [
   {

@@ -1,10 +1,22 @@
-.rootBox {
+.root {
   padding: 0 var(--spaces-mdm);
 }
 
-.contentBox {
+.content {
   display: flex;
   justify-content: space-between;
   gap: var(--spaces-xsm);
   align-items: center;
+}
+
+
+.title {
+  font-size: var(--font-xsm);
+  font-weight: 500;
+  font-family: var(--font-unbounded);
+}
+
+.subtitle {
+  font-size: var(--font-xsm);;
+  font-weight: 400;
 }

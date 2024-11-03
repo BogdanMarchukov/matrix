@@ -1,7 +1,7 @@
 import React from "react";
 import classes from "./product.module.css";
-import {Card} from "../../../../../../atoms/card/card";
-import {Button} from "../../../../../../atoms/buttons/button/button";
+import {Card} from "../../../../../../atoms/card";
+import {Button} from "../../../../../../atoms/buttons/button";
 
 export interface Product {
   id: string;

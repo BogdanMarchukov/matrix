@@ -1,5 +1,5 @@
 import React from "react";
-import {Product} from "./components/product/product";
+import {Product} from "./components/product";
 import classes from "./products.module.css";
 import {Swiper, SwiperSlide} from 'swiper/react';
 import 'swiper/css';
@@ -7,6 +7,8 @@ import main from "./png/main.png";
 import compatibility from './png/compatibility.png';
 import finance from './png/finance.png';
 import destiny from './png/destiny.png';
+
+const { root, swiperBox } = classes;
 
 const productsList: Product[] = [
   {
@@ -38,11 +40,11 @@ const productsList: Product[] = [
 export const Products = () => {
   return (
     <div>
-      <div className={classes.rootBox}>
+      <div className={root}>
         <h3>Все продукты</h3>
       </div>
       <div>
-        <div className={classes.swiperBox}>
+        <div className={swiperBox}>
           <Swiper
             slidesOffsetBefore={16}
             slidesPerView={2.5}

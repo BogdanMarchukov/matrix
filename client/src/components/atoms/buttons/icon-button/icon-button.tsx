@@ -23,6 +23,11 @@ const buttonClassNames = {
 
 export const IconButton = ({children, style, onClick, variant = 'primary', size = 'small'}: IconButtonProps) => {
   return (
-    <button className={classes[buttonClassNames[variant][size]]} onClick={onClick} style={style}>{children}</button>
+    <button
+      className={`${classes.root} ${classes[buttonClassNames[variant][size]]}`}
+      onClick={onClick} style={style}
+    >
+      {children}
+    </button>
   )
 }

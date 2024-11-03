@@ -50,9 +50,7 @@ p {
 
 body, p {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    font-family: var(--font-ubuntu);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-style: normal;
@@ -62,16 +60,15 @@ body, p {
     color: var(--color-white);
 }
 
-code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
 :root {
     /* fonts */
+    --font-unbounded: 'Unbounded', sans-serif;
+    --font-ubuntu: 'Ubuntu', sans-serif;
+
     /*--body-xsmall-regular: Aeonik;*/
 
     /* font sizes */
+    --font-xxs: 10px;
     --font-xs: 12px;
     --font-xsm: 14px;
     --font-sm: 16px;

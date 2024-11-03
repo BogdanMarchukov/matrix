@@ -1,4 +1,4 @@
-import {New} from "./components/new/new";
+import {New} from "./components/new";
 import classes from './news.module.css'
 import newsFirst from './png/news-first.png';
 import newsSecond from './png/news-second.png';
@@ -25,8 +25,8 @@ const newsList = [
 
 export const News = () => {
   return (
-    <div className={classes.rootBox}>
-      <div className={classes.contentBox}>
+    <div className={classes.root}>
+      <div className={classes.content}>
         {newsList.map((newItem) => (
           <New newItem={newItem} key={newItem.id}/>
         ))}

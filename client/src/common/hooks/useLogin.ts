@@ -7,7 +7,8 @@ import {
   UserLoginMutation,
   UserLoginMutationVariables
 } from "../../__generated__/graphql";
-import {useLayoutEffect, useMemo} from "react";
+import {useEffect, useLayoutEffect, useMemo} from "react";
+import {useUserStore} from "../store/userStore";
 
 const LOGIN = gql(/* GraphQl */ `
   mutation userLogin ($data: LoginInput!) {
@@ -52,6 +53,7 @@ const getVariables = (isDev: boolean): UserLoginMutationVariables | UserDevLogin
 export const useLogin = () => {
   const {isDev} = useUIStore((state) => state);
   const LOGIN_QUERY = isDev ? DEV_LOGIN : LOGIN;
+  const {setUserId} = useUserStore((state) => state);
 
   const [login, {loading, error, data}] = useMutation<
     UserLoginMutation | UserDevLoginMutation,
@@ -67,6 +69,12 @@ export const useLogin = () => {
   const userData = useMemo(() => isDev
     ? (data?.auth as UserDevLoginMutation['auth'])?.devLogin
     : (data?.auth as UserLoginMutation['auth'])?.login, [data, isDev]);
+
+  useEffect(() => {
+    if (setUserId) {
+      setUserId(userData?.user?.userId)
+    }
+  }, [userData]);
 
   return {
     data: userData,

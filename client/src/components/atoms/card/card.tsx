@@ -5,6 +5,7 @@ interface CardProps extends PropsWithChildren {
   variant?: 'primary' | 'secondary';
 }
 
-export const Card = ({children, variant = 'primary'}: CardProps) => {
-  return <div className={variant === 'primary' ? classes.primary : classes.secondary}>{children}</div>
-}
+export const Card = ({ children, variant = 'primary' }: CardProps) => {
+  const variantClass = variant === 'primary' ? classes.primary : classes.secondary;
+  return <div className={`${classes.base} ${variantClass}`}>{children}</div>;
+};

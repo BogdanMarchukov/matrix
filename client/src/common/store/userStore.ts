@@ -10,8 +10,6 @@ type UserState = {
   firstName: string | null;
   avatarUrl: string | null;
   userId: string | null;
-  notify: Partial<Notify> | null;
-  showNotifyPayload: boolean;
 };
 
 type Actions = {
@@ -19,10 +17,6 @@ type Actions = {
   setFirstName: (firstName: UserState["firstName"]) => void;
   setAvatarUrl: (avatar: string) => void;
   setUserId: (userId: UserState["userId"]) => void;
-  setNotify: (notify: UserState["notify"]) => void;
-  setShowNotifyPayload: (
-    showNotifyPayload: UserState["showNotifyPayload"],
-  ) => void;
 };
 
 export const useUserStore = create<UserState & Actions>((set) => ({
@@ -32,13 +26,8 @@ export const useUserStore = create<UserState & Actions>((set) => ({
   firstName: null,
   avatarUrl: null,
   userId: null,
-  notify: null,
-  showNotifyPayload: false,
   setJwt: (jwt) => set((state) => ({...state, auth: {jwt}})),
   setFirstName: (firstName) => set((state) => ({...state, firstName})),
   setAvatarUrl: (avatarUrl) => set((state) => ({...state, avatarUrl})),
   setUserId: (userId) => set((state) => ({...state, userId})),
-  setNotify: (notify) => set((state) => ({...state, notify})),
-  setShowNotifyPayload: (showNotifyPayload) =>
-    set((state) => ({...state, showNotifyPayload})),
 }));

@@ -1,0 +1,75 @@
+.root {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spaces-xsm);
+    max-width: 450px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 var(--spaces-mdm);
+}
+
+.item {
+    display: flex;
+    flex-direction: row;
+    gap: var(--spaces-xsm);
+}
+
+.telegramLogo {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    background: rgb(42, 171, 238);
+    background: linear-gradient(
+            90deg,
+            rgba(42, 171, 238, 1) 100%,
+            rgba(34, 158, 217, 1) 100%
+    );
+    border-radius: 50%;
+}
+
+.telegramText {
+    display: flex;
+    flex-direction: column;
+    font-size: var(--font-xs);
+    line-height: 100%;
+    text-align: center;
+}
+
+.telegramTextAccent {
+    color: var(--color-primary-light);
+}
+
+.usernameBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.username {
+    font-family: var(--font-unbounded);
+    font-weight: 500;
+    font-size: var(--font-xs);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 124%;
+    text-align: center;
+    letter-spacing: -0.24px;
+    color: #ffffff;
+}
+
+.userStatus {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 300;
+    font-size: var(--font-xxs);
+    font-family: var(--font-unbounded);
+    line-height: 124%;
+    padding: 0 var(--spaces-xs);
+    background: var(--color-primary-light);
+    border-radius: 100px;
+}

@@ -2,40 +2,42 @@ import React from "react";
 import classes from "./scores.module.css";
 import ButtonSvg from "./svg/button";
 import MiniBtnSvg from "./svg/miniBtn";
-import {IconButton} from "../../../../atoms/buttons/icon-button/icon-button";
-import {Card} from "../../../../atoms/card/card";
-import {Currency} from "../../../../atoms/currency/currency";
-import {DateInput} from "../../../../atoms/date-input/date-input";
+import {IconButton} from "../../../../atoms/buttons/icon-button";
+import {Card} from "../../../../atoms/card";
+import {Currency} from "../../../../atoms/currency";
+import {DateInput} from "../../../../atoms/date-input";
+
+const {root, input, content, horizontalBox, verticalBox, titleBox, scoreTitle, sumBox, sum, friendsBonusTitle, friendsBonusText, orderTitle} = classes;
 
 export const Scores = () => {
   return (
-    <div className={classes.container}>
-      <DateInput className={classes.input} placeholder="Введите дату рождения"/>
-      <div className={classes.contentBox}>
-        <div className={classes.horizontalBox}>
-          <div className={classes.verticalBox}>
+    <div className={root}>
+      <DateInput className={input} placeholder="Введите дату рождения"/>
+      <div className={content}>
+        <div className={horizontalBox}>
+          <div className={verticalBox}>
             <Card>
-              <div className={classes.titleBox}>
-                <p className={classes.scoreTitle}>Баллы</p>
+              <div className={titleBox}>
+                <p className={scoreTitle}>Баллы</p>
                 <IconButton><MiniBtnSvg/></IconButton>
               </div>
-              <div className={classes.sumBox}>
+              <div className={sumBox}>
                 <Currency/>
-                <p className={classes.sum}>0</p>
+                <p className={sum}>0</p>
               </div>
             </Card>
             <Card>
-              <div className={classes.titleBox}>
-                <p className={classes.friendsBonusTitle}>Зови друзей</p>
+              <div className={titleBox}>
+                <p className={friendsBonusTitle}>Зови друзей</p>
                 <IconButton><MiniBtnSvg/></IconButton>
               </div>
-              <p className={classes.friendsBonusText}>
-                Дарим по 500 ₽ - тебе и приведенному другу
+              <p className={friendsBonusText}>
+                Дарим по <span>500 ₽</span> - тебе и приведенному другу
               </p>
             </Card>
           </div>
           <Card variant="secondary">
-            <p className={classes.orderTitle}>Выбрать и заказать</p>
+            <p className={orderTitle}>Выбрать и заказать</p>
             <IconButton variant="secondary" size="large">
               <ButtonSvg/>
             </IconButton>

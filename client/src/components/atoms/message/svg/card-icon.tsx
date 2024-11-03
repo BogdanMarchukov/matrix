@@ -31,7 +31,7 @@ const Svg = styled.svg.attrs(() => ({
   }
 `;
 
-const Card = ({ animate }: SvgProps) => (
+export const CardIcon = ({ animate }: SvgProps) => (
   <Svg animate={animate}>
     <g filter="url(#a)">
       <path
@@ -97,4 +97,3 @@ const Card = ({ animate }: SvgProps) => (
     </defs>
   </Svg>
 );
-export default Card;

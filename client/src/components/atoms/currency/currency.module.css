@@ -8,4 +8,5 @@
     background-color: var(--color-primary-dark);
     font-size: var(--font-smm);
     font-weight: 500;
+    font-family: var(--font-unbounded);
 }

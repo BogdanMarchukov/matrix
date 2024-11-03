@@ -1,36 +1,29 @@
-.firstRoot {
+.root {
     display: flex;
     align-items: center;
     flex-direction: column;
     gap: var(--spaces-xsm);
+    border-radius: var(--spaces-smm);
+    padding: var(--spaces-smm) var(--spaces-xsm)
+}
+
+
+.first {
     background: var(--radial-gradient-news-first);
-    border-radius: var(--spaces-smm);
-    padding: var(--spaces-smm) var(--spaces-xsm)
 }
 
-.secondRoot {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    gap: var(--spaces-xsm);
+.second {
     background: var(--radial-gradient-news-second);
-    border-radius: var(--spaces-smm);
-    padding: var(--spaces-smm) var(--spaces-xsm)
 }
 
-.thirdRoot {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    gap: var(--spaces-xsm);
+.third {
     background: var(--radial-gradient-news-third);
-    border-radius: var(--spaces-smm);
-    padding: var(--spaces-smm) var(--spaces-xsm)
 }
 
 .title {
     font-size: var(--font-xsm);
     font-weight: 500;
+    font-family: var(--font-unbounded);
 }
 
 .img {

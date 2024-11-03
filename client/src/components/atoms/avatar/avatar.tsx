@@ -1,4 +1,4 @@
-import classes from "./Avatar.module.css";
+import classes from "./avatar.module.css";
 import {Puff} from "react-loader-spinner";
 
 interface AvatarProps {

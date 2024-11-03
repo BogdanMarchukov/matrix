@@ -75,6 +75,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   auth: AuthMutation;
   newsletter: NewsletterMutation;
+  notify: NotifyMutation;
 };
 
 export type NewsLetterCreateInput = {
@@ -120,6 +121,17 @@ export type NotifyByUserIdFilter = {
   userId: Scalars['UUID']['input'];
 };
 
+export type NotifyMutation = {
+  __typename?: 'NotifyMutation';
+  updateOne: Notify;
+};
+
+
+export type NotifyMutationUpdateOneArgs = {
+  data: NotifyUpdateData;
+  notifyId: Scalars['UUID']['input'];
+};
+
 export type NotifyQuery = {
   __typename?: 'NotifyQuery';
   findByPk: Notify;
@@ -144,6 +156,10 @@ export type NotifySub = {
 export enum NotifyType {
   Daly = 'DALY'
 }
+
+export type NotifyUpdateData = {
+  isRead: Scalars['Boolean']['input'];
+};
 
 export type Query = {
   __typename?: 'Query';
@@ -185,19 +201,19 @@ export enum UserRoleType {
   Owner = 'OWNER'
 }
 
-export type UserDevLoginMutationVariables = Exact<{
-  data: DevLoginInput;
-}>;
-
-
-export type UserDevLoginMutation = { __typename?: 'Mutation', auth: { __typename?: 'AuthMutation', devLogin: { __typename?: 'LoginResult', jwt: string, user: { __typename?: 'User', userId: any, firstName?: string | null, lastName?: string | null, photoUrl?: string | null } } } };
-
 export type UserLoginMutationVariables = Exact<{
   data: LoginInput;
 }>;
 
 
 export type UserLoginMutation = { __typename?: 'Mutation', auth: { __typename?: 'AuthMutation', login: { __typename?: 'LoginResult', jwt: string, user: { __typename?: 'User', userId: any, firstName?: string | null, lastName?: string | null, photoUrl?: string | null } } } };
+
+export type UserDevLoginMutationVariables = Exact<{
+  data: DevLoginInput;
+}>;
+
+
+export type UserDevLoginMutation = { __typename?: 'Mutation', auth: { __typename?: 'AuthMutation', devLogin: { __typename?: 'LoginResult', jwt: string, user: { __typename?: 'User', userId: any, firstName?: string | null, lastName?: string | null, photoUrl?: string | null } } } };
 
 export type GetAllNotifyQueryVariables = Exact<{
   data: NotifyByUserIdFilter;
@@ -206,7 +222,16 @@ export type GetAllNotifyQueryVariables = Exact<{
 
 export type GetAllNotifyQuery = { __typename?: 'Query', notify: { __typename?: 'NotifyQuery', findByUserId: Array<{ __typename?: 'Notify', notifyId: any, title: string, payload: string, isRead: boolean }> } };
 
+export type SetNotifyIsReadMutationVariables = Exact<{
+  data: NotifyUpdateData;
+  notifyId: Scalars['UUID']['input'];
+}>;
 
-export const UserDevLoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"userDevLogin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DevLoginInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"auth"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"devLogin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"jwt"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"photoUrl"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UserDevLoginMutation, UserDevLoginMutationVariables>;
+
+export type SetNotifyIsReadMutation = { __typename?: 'Mutation', notify: { __typename?: 'NotifyMutation', updateOne: { __typename?: 'Notify', notifyId: any } } };
+
+
 export const UserLoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"userLogin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LoginInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"auth"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"jwt"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"photoUrl"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UserLoginMutation, UserLoginMutationVariables>;
+export const UserDevLoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"userDevLogin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DevLoginInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"auth"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"devLogin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"jwt"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"photoUrl"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UserDevLoginMutation, UserDevLoginMutationVariables>;
 export const GetAllNotifyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAllNotify"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"NotifyByUserIdFilter"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notify"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findByUserId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notifyId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"payload"}},{"kind":"Field","name":{"kind":"Name","value":"isRead"}}]}}]}}]}}]} as unknown as DocumentNode<GetAllNotifyQuery, GetAllNotifyQueryVariables>;
+export const SetNotifyIsReadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetNotifyIsRead"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"NotifyUpdateData"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"notifyId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notify"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOne"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}},{"kind":"Argument","name":{"kind":"Name","value":"notifyId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"notifyId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notifyId"}}]}}]}}]}}]} as unknown as DocumentNode<SetNotifyIsReadMutation, SetNotifyIsReadMutationVariables>;

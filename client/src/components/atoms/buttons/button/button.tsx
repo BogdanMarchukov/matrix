@@ -1,4 +1,4 @@
-import React, {CSSProperties, PropsWithChildren, useMemo} from "react";
+import React, {CSSProperties, PropsWithChildren} from "react";
 import classes from './button.module.css';
 
 interface ButtonProps extends PropsWithChildren {
@@ -17,7 +17,7 @@ const buttonClassNames = {
 export const Button = ({children, fullWidth, style, onClick, variant = 'primary'}: ButtonProps) => {
   return (
     <button
-      className={classes[buttonClassNames[variant]]}
+      className={`${classes.root} ${classes[buttonClassNames[variant]]}`}
       onClick={onClick}
       style={{...style, ...(fullWidth && ({width: '100%'}))}}
     >

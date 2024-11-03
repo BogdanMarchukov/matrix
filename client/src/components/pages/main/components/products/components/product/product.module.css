@@ -16,9 +16,13 @@
 
 .title {
     text-align: center;
+    font-size: var(--font-xs);
+    font-family: var(--font-unbounded);
+    letter-spacing: -0.24px;
 }
 
 .price {
     font-size: var(--font-smm);
     font-weight: 700;
+    font-family: var(--font-unbounded);
 }

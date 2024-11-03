@@ -1,14 +1,32 @@
 
-.container {
+.root {
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
-  max-width: 95px;
-  width: 100%;
   gap: 4px;
+  cursor: pointer;
 }
 
-.messageBox {
+.title {
   display: flex;
   flex-direction: column;
+}
+
+.popup {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.popup::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 12px solid var(--color-bg-dark);
 }

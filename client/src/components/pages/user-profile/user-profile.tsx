@@ -1,14 +1,13 @@
-import {Avatar} from "../../atoms/avatar/Avatar";
+import {Avatar} from "../../atoms/avatar";
 import {useUserStore} from "../../../common/store/userStore";
 import {DEFAULT_USER_NAME} from "../../../common/constants";
-import classes from './userProfile.module.css'
-import {Accordion} from "./components/accordion/accordion";
-import {LinkPhone} from "./components/link-phone/link-phone";
-import {Delivery} from "./components/delivery/delivery";
-import {Resale} from "./components/resale/resale";
-import {BonusCount} from "./components/bonus-count/bonus-count";
-import {BonusInfo} from "./components/bonus-info/bonus-info";
-
+import classes from './user-profile.module.css'
+import {Accordion} from "./components/accordion";
+import {LinkPhone} from "./components/link-phone";
+import {Delivery} from "./components/delivery";
+import {Resale} from "./components/resale";
+import {BonusCount} from "./components/bonus-count";
+import {BonusInfo} from "./components/bonus-info";
 
 const {
   userNameBox,

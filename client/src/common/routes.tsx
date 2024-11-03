@@ -1,6 +1,6 @@
 import {PATHS} from "./constants";
 import {MainPage} from "../components/pages/main/main-page";
-import {UserProfilePage} from "../components/pages/user-profile/userProfile";
+import {UserProfilePage} from "../components/pages/user-profile/user-profile";
 import {MainLayout} from "../components/layouts/main/main.layout";
 
 export const ROUTES = [

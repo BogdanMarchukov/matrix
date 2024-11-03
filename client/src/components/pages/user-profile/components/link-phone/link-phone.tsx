@@ -1,11 +1,7 @@
 import classes from "./link-phone.module.css";
 import {ButtonOutlined} from "../../../../atoms/outlined-button/outlined-button";
 
-const {
-  root,
-  title,
-  text
-} = classes;
+const { root, title, text } = classes;
 
 export const LinkPhone  = () => {
   return (
