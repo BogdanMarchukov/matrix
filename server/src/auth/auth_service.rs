@@ -6,7 +6,7 @@ use crate::errors::gql_error::GqlError;
 use crate::secret::secret_service;
 use crate::secret::secret_service::JwtPayload;
 use crate::user::user_gql_model::UserGqlModel;
-use crate::user::user_repository;
+use crate::user::{user_info_repository, user_repository};
 use crate::{auth::web_app_data::InitDataTgWebApp, secret};
 use actix_web::HttpRequest;
 use async_graphql::{ErrorExtensions, FieldResult};
@@ -41,7 +41,10 @@ pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<
         let user = match user {
             Some(v) => v,
             None => match user_repository::create_one_by_tg(init_user, conn).await {
-                Ok(data) => data,
+                Ok(data) => {
+                    user_info_repository::create_one_by_user_id(data.user_id, conn).await?;
+                    data
+                }
                 Err(err) => return Err(GqlError::ServerError(format!("{}", err)).extend()),
             },
         };
@@ -73,7 +76,10 @@ pub async fn get_user_from_request(
 ) -> (HashMap<String, String>, Option<UserGqlModel>) {
     let mut headers: HashMap<String, String> = HashMap::new();
     for (key, value) in http_request.headers().iter() {
-        headers.insert(key.to_string().to_lowercase(), value.to_str().unwrap_or("").to_string());
+        headers.insert(
+            key.to_string().to_lowercase(),
+            value.to_str().unwrap_or("").to_string(),
+        );
     }
     let jwt_payload: Option<TokenData<JwtPayload>> = match headers.get("authorization") {
         Some(token) => match secret_service::verify_jwt(token.to_owned()) {

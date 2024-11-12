@@ -35,7 +35,7 @@ impl MigrationTrait for Migration {
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk-notify-user_id")
-                            .from(Notify::Title, Notify::UserId)
+                            .from(Notify::Table, Notify::UserId)
                             .to(Users::Table, Users::UserId),
                     )
                     .to_owned(),
