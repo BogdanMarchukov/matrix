@@ -5,7 +5,9 @@ import {Header} from "../../organisms/header";
 import {IconButton} from "../../atoms/buttons/icon-button";
 import {HomeIcon} from "../icons/home-icon";
 
+
 export const MainLayout = () => {
+
   return (
     <div className={classes.app}>
       <Header/>

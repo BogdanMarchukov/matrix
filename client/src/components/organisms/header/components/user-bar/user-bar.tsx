@@ -5,11 +5,13 @@ import {Message} from "../../../../atoms/message";
 import NextButton from "./svg/nextButton";
 import {ThreeDots} from "react-loader-spinner";
 import {Avatar} from "../../../../atoms/avatar";
-import {DEFAULT_USER_NAME} from "../../../../../common/constants";
+import {DEFAULT_USER_NAME, PATHS} from "../../../../../common/constants";
+import {useNavigate} from "react-router-dom";
 
 const {root, item, usernameBox, username, userStatus, telegramLogo, telegramText, telegramTextAccent} = classes;
 
 export const UserBar = () => {
+  const navigate = useNavigate();
   const {data, loading} = useLogin();
 
   const userFirstName = data?.user?.firstName || data?.user?.lastName || DEFAULT_USER_NAME;
@@ -18,7 +20,7 @@ export const UserBar = () => {
 
   return (
     <div className={root}>
-      <div className={item}>
+      <div className={item} onClick={() => navigate(PATHS.PROFILE)}>
         <Avatar loading={loading} url={avatarUrl}/>
         <div className={usernameBox}>
           <div>

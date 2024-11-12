@@ -1,6 +1,6 @@
 import classes from './accordionItem.module.css';
 import {ElementType} from "react";
-import {NextIcon} from "../../pages/user-profile/icons/nextIcon";
+import {NextIcon} from "../../pages/preferences/icons/nextIcon";
 
 export interface IAccordionItem {
   icon: ElementType;

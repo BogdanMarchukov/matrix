@@ -1,7 +1,7 @@
 import {Avatar} from "../../atoms/avatar";
 import {useUserStore} from "../../../common/store/userStore";
 import {DEFAULT_USER_NAME} from "../../../common/constants";
-import classes from './user-profile.module.css'
+import classes from './preferences.module.css'
 import {Accordion} from "./components/accordion";
 import {LinkPhone} from "./components/link-phone";
 import {Delivery} from "./components/delivery";
@@ -15,7 +15,7 @@ const {
   settingsBox,
 } = classes;
 
-export const UserProfilePage = () => {
+export const PreferencesPage = () => {
   const {avatarUrl, firstName} = useUserStore((state) => state);
   return (
     <>

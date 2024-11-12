@@ -3,6 +3,13 @@
   top: -1px;
   left: 0;
   right: 0;
+  z-index: 997;
+  background-color: var(--color-bg-light);
+  min-height: 58px;
+}
+
+.main {
+  position: relative;
   display: flex;
   justify-content: space-between;
   padding: var(--spaces-md) var(--spaces-lg) 0;

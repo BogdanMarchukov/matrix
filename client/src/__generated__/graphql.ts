@@ -21,6 +21,16 @@ export type Scalars = {
    */
   DateTime: { input: any; output: any; }
   /**
+   * ISO 8601 calendar date without timezone.
+   * Format: %Y-%m-%d
+   *
+   * # Examples
+   *
+   * * `1994-11-13`
+   * * `2000-02-24`
+   */
+  NaiveDate: { input: any; output: any; }
+  /**
    * ISO 8601 combined date and time without timezone.
    *
    * # Examples
@@ -76,6 +86,7 @@ export type Mutation = {
   auth: AuthMutation;
   newsletter: NewsletterMutation;
   notify: NotifyMutation;
+  userInfo: UserInfoMutation;
 };
 
 export type NewsLetterCreateInput = {
@@ -165,6 +176,7 @@ export type Query = {
   __typename?: 'Query';
   notify: NotifyQuery;
   user: UserQuery;
+  userInfo: UserInfoQuery;
 };
 
 export type Subscription = {
@@ -183,6 +195,44 @@ export type User = {
   telegramId: Scalars['Int']['output'];
   userId: Scalars['UUID']['output'];
   username?: Maybe<Scalars['String']['output']>;
+};
+
+export type UserInfo = {
+  __typename?: 'UserInfo';
+  city?: Maybe<Scalars['String']['output']>;
+  dateOfBirth?: Maybe<Scalars['NaiveDate']['output']>;
+  hourOfBirth?: Maybe<Scalars['Int']['output']>;
+  minOfBirth?: Maybe<Scalars['Int']['output']>;
+  userId: Scalars['UUID']['output'];
+  userInfoId: Scalars['UUID']['output'];
+};
+
+export type UserInfoMutation = {
+  __typename?: 'UserInfoMutation';
+  updateOne: UserInfo;
+};
+
+
+export type UserInfoMutationUpdateOneArgs = {
+  data: UserInfoUpdateInput;
+  userInfoId: Scalars['UUID']['input'];
+};
+
+export type UserInfoQuery = {
+  __typename?: 'UserInfoQuery';
+  fundByUserId: UserInfo;
+};
+
+
+export type UserInfoQueryFundByUserIdArgs = {
+  userId: Scalars['UUID']['input'];
+};
+
+export type UserInfoUpdateInput = {
+  city?: InputMaybe<Scalars['String']['input']>;
+  dateOfBirth?: InputMaybe<Scalars['NaiveDate']['input']>;
+  hourOfBirth?: InputMaybe<Scalars['Int']['input']>;
+  minOfBirth?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UserQuery = {
@@ -230,8 +280,25 @@ export type SetNotifyIsReadMutationVariables = Exact<{
 
 export type SetNotifyIsReadMutation = { __typename?: 'Mutation', notify: { __typename?: 'NotifyMutation', updateOne: { __typename?: 'Notify', notifyId: any } } };
 
+export type GetUserInfoQueryVariables = Exact<{
+  userId: Scalars['UUID']['input'];
+}>;
+
+
+export type GetUserInfoQuery = { __typename?: 'Query', userInfo: { __typename?: 'UserInfoQuery', fundByUserId: { __typename?: 'UserInfo', userInfoId: any, city?: string | null, dateOfBirth?: any | null, hourOfBirth?: number | null, minOfBirth?: number | null, userId: any } } };
+
+export type UpdateUserInfoMutationVariables = Exact<{
+  data: UserInfoUpdateInput;
+  userInfoId: Scalars['UUID']['input'];
+}>;
+
+
+export type UpdateUserInfoMutation = { __typename?: 'Mutation', userInfo: { __typename?: 'UserInfoMutation', updateOne: { __typename?: 'UserInfo', userId: any } } };
+
 
 export const UserLoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"userLogin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LoginInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"auth"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"jwt"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"photoUrl"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UserLoginMutation, UserLoginMutationVariables>;
 export const UserDevLoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"userDevLogin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DevLoginInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"auth"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"devLogin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"jwt"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"photoUrl"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UserDevLoginMutation, UserDevLoginMutationVariables>;
 export const GetAllNotifyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAllNotify"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"NotifyByUserIdFilter"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notify"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findByUserId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notifyId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"payload"}},{"kind":"Field","name":{"kind":"Name","value":"isRead"}}]}}]}}]}}]} as unknown as DocumentNode<GetAllNotifyQuery, GetAllNotifyQueryVariables>;
 export const SetNotifyIsReadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetNotifyIsRead"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"NotifyUpdateData"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"notifyId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notify"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOne"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}},{"kind":"Argument","name":{"kind":"Name","value":"notifyId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"notifyId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notifyId"}}]}}]}}]}}]} as unknown as DocumentNode<SetNotifyIsReadMutation, SetNotifyIsReadMutationVariables>;
+export const GetUserInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fundByUserId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userInfoId"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"hourOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"minOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}}]}}]}}]} as unknown as DocumentNode<GetUserInfoQuery, GetUserInfoQueryVariables>;
+export const UpdateUserInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateUserInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserInfoUpdateInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userInfoId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOne"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}},{"kind":"Argument","name":{"kind":"Name","value":"userInfoId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userInfoId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateUserInfoMutation, UpdateUserInfoMutationVariables>;

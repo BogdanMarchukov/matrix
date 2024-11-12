@@ -17,6 +17,8 @@ const documents = {
     "\n  mutation userDevLogin ($data: DevLoginInput!) {\n    auth {\n      devLogin(data: $data) {\n        jwt\n        user {\n          userId\n          firstName\n          lastName\n          photoUrl\n        }\n      }\n    }\n  }\n": types.UserDevLoginDocument,
     "\n  query GetAllNotify($data: NotifyByUserIdFilter!) {\n    notify {\n      findByUserId(data: $data) {\n        notifyId\n        title\n        payload\n        isRead\n      }\n    }\n  }\n": types.GetAllNotifyDocument,
     "\n  mutation SetNotifyIsRead($data: NotifyUpdateData!, $notifyId: UUID!) {\n    notify {\n      updateOne(data: $data, notifyId: $notifyId) {\n        notifyId\n      }\n    }\n  }\n": types.SetNotifyIsReadDocument,
+    "\n  query GetUserInfo($userId: UUID!) {\n    userInfo {\n      fundByUserId(userId: $userId) {\n        userInfoId\n        city\n        dateOfBirth\n        hourOfBirth\n        minOfBirth\n        userId\n      }\n    }\n  }\n": types.GetUserInfoDocument,
+    "\n  mutation UpdateUserInfo($data: UserInfoUpdateInput!, $userInfoId: UUID!) {\n    userInfo {\n      updateOne(data: $data, userInfoId: $userInfoId) {\n        userId\n      }\n    }\n  }\n": types.UpdateUserInfoDocument,
 };
 
 /**
@@ -49,6 +51,14 @@ export function gql(source: "\n  query GetAllNotify($data: NotifyByUserIdFilter!
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation SetNotifyIsRead($data: NotifyUpdateData!, $notifyId: UUID!) {\n    notify {\n      updateOne(data: $data, notifyId: $notifyId) {\n        notifyId\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation SetNotifyIsRead($data: NotifyUpdateData!, $notifyId: UUID!) {\n    notify {\n      updateOne(data: $data, notifyId: $notifyId) {\n        notifyId\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query GetUserInfo($userId: UUID!) {\n    userInfo {\n      fundByUserId(userId: $userId) {\n        userInfoId\n        city\n        dateOfBirth\n        hourOfBirth\n        minOfBirth\n        userId\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetUserInfo($userId: UUID!) {\n    userInfo {\n      fundByUserId(userId: $userId) {\n        userInfoId\n        city\n        dateOfBirth\n        hourOfBirth\n        minOfBirth\n        userId\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation UpdateUserInfo($data: UserInfoUpdateInput!, $userInfoId: UUID!) {\n    userInfo {\n      updateOne(data: $data, userInfoId: $userInfoId) {\n        userId\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateUserInfo($data: UserInfoUpdateInput!, $userInfoId: UUID!) {\n    userInfo {\n      updateOne(data: $data, userInfoId: $userInfoId) {\n        userId\n      }\n    }\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};
