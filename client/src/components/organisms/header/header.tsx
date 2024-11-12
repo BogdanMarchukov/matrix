@@ -15,7 +15,7 @@ export const Header = () => {
   const isHomePage = location.pathname === PATHS.HOME
 
   const onMenuBtnClick = useCallback(() => {
-    if (isHomePage) navigate(PATHS.PROFILE);
+    if (isHomePage) navigate(PATHS.PREFERENCES);
     else navigate(PATHS.HOME)
   }, [isHomePage, navigate]);
 
