@@ -21,7 +21,7 @@ export const Header = () => {
 
   const {scrollY} = useScroll();
 
-  const offsetY = [0, 300];
+  const offsetY = [0, 100];
 
   const opacity = useTransform(scrollY, offsetY, [1, 0])
   const marginTop = useTransform(scrollY, offsetY, [0, -34])
@@ -38,7 +38,7 @@ export const Header = () => {
         </div>
         <div className={classes.item}>
           <div className={classes.icon}>
-            <IconButton onClick={onMenuBtnClick} size="medium"><MenuIcon/></IconButton>
+            {isHomePage && <IconButton onClick={onMenuBtnClick} size="medium"><MenuIcon/></IconButton>}
           </div>
         </div>
       </div>

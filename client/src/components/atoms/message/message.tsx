@@ -2,20 +2,21 @@ import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useNotify} from "../../../common/hooks/useNotify";
 import {useUserStore} from "../../../common/store/userStore";
 import {NotifyType} from "../../../__generated__/graphql";
-import {AnimatedText} from "../animation-text/animation-text";
+import {AnimatedText} from "../animation-text";
 import classes from "./message.module.css";
 import {CardIcon} from "./svg/card-icon";
 import {Card} from "../card";
+import {AnimatePresence, motion} from "motion/react"
 
 export const Message = () => {
   const [showNotify, setShowNotify] = useState(false)
-  const {userId} =
+  const {userInfo} =
     useUserStore((state) => state);
 
   const popupRef = useRef<HTMLDivElement>(null);
 
   const {loading, data, setNotifyIsRead} = useNotify({
-    userId,
+    userId: userInfo?.userId,
     isRead: false,
     notifyType: NotifyType.Daly,
   });
@@ -46,17 +47,27 @@ export const Message = () => {
   return (
     <div className={classes.root} onTouchStart={onMessageClick} ref={popupRef}>
       <CardIcon animate={loading || !!notifies?.length}/>
+      <AnimatePresence>
+        {showNotify && (
+          <motion.div
+            initial={{height: 0, opacity: 0}}
+            animate={{height: 'auto', opacity: 1}}
+            exit={{height: 0, opacity: 0}}
+            style={{overflow: 'hidden'}}
+            transition={{duration: 0.2}}
+          >
+            <div className={classes.popup}>
+              <Card>
+                {`«${payload}»`}
+              </Card>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <p className={classes.title}>
         <AnimatedText animation={!!notifies?.length}>{loading ? 'загрузка' : 'тебе'}</AnimatedText>
         {!loading && <AnimatedText animation={!!notifies?.length}>послание</AnimatedText>}
       </p>
-      {showNotify && (
-        <div className={classes.popup}>
-          <Card>
-            {`«${payload}»`}
-          </Card>
-        </div>
-      )}
     </div>
   );
 }

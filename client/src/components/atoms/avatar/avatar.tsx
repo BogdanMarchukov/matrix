@@ -4,15 +4,18 @@ import {Puff} from "react-loader-spinner";
 interface AvatarProps {
   loading: boolean;
   url: string;
+  size?: "normal" | "large";
 }
 
-export const Avatar = ({loading, url}: AvatarProps) => {
-  const loaderConfig = {height: 20, width: 30, color: "#ffffff"};
+export const Avatar = ({loading, url, size}: AvatarProps) => {
+  const isLarge = size === 'large';
+  const sizeValue = isLarge ? 64 : 24;
+  const loaderConfig = {height: sizeValue * 85 / 100, width: 30 * 1.25, color: "#ffffff"};
 
   return (
-    <div className={classes.avatar}>
+    <div className={`${classes.avatar} ${classes[isLarge ? "large" : "normal"]}`}>
       {loading ? (
-        <Puff {...loaderConfig} height={24} width={24}/>
+        <Puff {...loaderConfig} height={sizeValue} width={sizeValue}/>
       ) : (url)}
     </div>
   )

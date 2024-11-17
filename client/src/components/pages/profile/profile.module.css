@@ -1,0 +1,73 @@
+.flexBox {
+    display: flex;
+    align-items: center;
+    gap: var(--spaces-md)
+}
+
+.title {
+    font-size: var(--font-md);
+    margin-bottom: var(--spaces-md);
+}
+
+.userName {
+    font-size: var(--font-smm);
+}
+
+.cardTitle {
+    font-size: var(--font-smm);
+    min-width: 60px;
+}
+
+.input {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spaces-md) var(--spaces-lgm);
+    gap: var(--spaces-xsm);
+    max-width: 270px;
+    width: 100%;
+    background-color: var(--color-bg-input);
+    border: 2px solid #8e61ef;
+    border-radius: var(--spaces-lgm);
+    font-size: var(--font-sm);
+    color: var(--color-primary-middle);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    color: var(--color-primary-middle);
+    cursor: pointer;
+}
+
+.select {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: var(--spaces-md) var(--spaces-lg);
+    gap: var(--spaces-xsm);
+    max-width: 270px;
+    width: 100%;
+    background-color: var(--color-bg-input);
+    border: 2px solid #8e61ef;
+    border-radius: var(--spaces-lgm);
+    font-size: var(--font-mdm);
+    color: var(--color-primary-middle);
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    overflow-y: auto;
+}
+
+.select::-ms-expand {
+    display: none;
+}
+
+select:focus {
+    outline: none;
+}
+
+select option {
+    max-height: 150px;
+    overflow-y: auto;
+}

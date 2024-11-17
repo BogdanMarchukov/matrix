@@ -10,3 +10,14 @@
     color: var(--color-white);
     font-weight: 600;
 }
+
+.normal {
+    width: 24px;
+    height: 24px;
+}
+
+.large {
+    width: 64px;
+    height: 64px;
+    font-size: 40px;
+}

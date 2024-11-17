@@ -12,20 +12,18 @@ const {root, item, usernameBox, username, userStatus, telegramLogo, telegramText
 
 export const UserBar = () => {
   const navigate = useNavigate();
-  const {data, loading} = useLogin();
+  const {userInfo, loading} = useLogin();
 
-  const userFirstName = data?.user?.firstName || data?.user?.lastName || DEFAULT_USER_NAME;
-  const avatarUrl = data?.user?.photoUrl || userFirstName[0];
   const loaderConfig = {height: 20, width: 30, color: 'var(--color-white)'};
 
   return (
     <div className={root}>
       <div className={item} onClick={() => navigate(PATHS.PROFILE)}>
-        <Avatar loading={loading} url={avatarUrl}/>
+        <Avatar loading={loading} url={userInfo?.avatarUrl || ''}/>
         <div className={usernameBox}>
           <div>
             <div className={username}>
-              {loading ? <ThreeDots {...loaderConfig} /> : userFirstName}
+              {loading ? <ThreeDots {...loaderConfig} /> : userInfo?.firstName || ''}
             </div>
           </div>
           <div className={userStatus}>Новичок</div>

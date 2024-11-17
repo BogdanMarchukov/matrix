@@ -8,6 +8,9 @@ import {Delivery} from "./components/delivery";
 import {Resale} from "./components/resale";
 import {BonusCount} from "./components/bonus-count";
 import {BonusInfo} from "./components/bonus-info";
+import {motion} from "motion/react"
+
+import {routerMotionVariants} from "../../../common/routerMotionVariants";
 
 const {
   userNameBox,
@@ -16,12 +19,12 @@ const {
 } = classes;
 
 export const PreferencesPage = () => {
-  const {avatarUrl, firstName} = useUserStore((state) => state);
+  const {userInfo} = useUserStore((state) => state);
   return (
-    <>
+    <motion.div initial="out" animate="in" exit="out" variants={routerMotionVariants}>
       <div className={userNameBox}>
-        <Avatar loading={false} url={avatarUrl || (firstName || DEFAULT_USER_NAME)?.[0]}/>
-        <p className={userName}>{firstName || DEFAULT_USER_NAME}</p>
+        <Avatar loading={false} url={userInfo?.avatarUrl || (userInfo?.firstName || DEFAULT_USER_NAME)?.[0]}/>
+        <p className={userName}>{userInfo?.firstName || DEFAULT_USER_NAME}</p>
         <div className={settingsBox}>
           <Accordion/>
           <BonusInfo/>
@@ -31,6 +34,6 @@ export const PreferencesPage = () => {
           <Resale/>
         </div>
       </div>
-    </>
+    </motion.div>
   );
 }

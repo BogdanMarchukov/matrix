@@ -1,33 +1,43 @@
 import {create} from "zustand";
-import {Notify} from "../../__generated__/graphql";
 
 type AuthState = {
   jwt: string | null;
 };
 
-type UserState = {
-  auth: AuthState;
+type UserInfoState = {
   firstName: string | null;
   avatarUrl: string | null;
   userId: string | null;
+}
+
+type UserState = {
+  auth: AuthState;
+  userInfo: UserInfoState;
 };
+
+type UserInfoActions = {
+  firstName: UserInfoState["firstName"],
+  avatarUrl: UserInfoState["avatarUrl"],
+  userId: UserInfoState["userId"],
+}
 
 type Actions = {
   setJwt: (jwt: string) => void;
-  setFirstName: (firstName: UserState["firstName"]) => void;
-  setAvatarUrl: (avatar: string) => void;
-  setUserId: (userId: UserState["userId"]) => void;
+  setUserInfo: ({firstName, avatarUrl, userId}: UserInfoActions) => void;
 };
 
 export const useUserStore = create<UserState & Actions>((set) => ({
   auth: {
     jwt: null,
   },
-  firstName: null,
-  avatarUrl: null,
-  userId: null,
+  userInfo: {
+    firstName: null,
+    avatarUrl: null,
+    userId: null,
+  },
   setJwt: (jwt) => set((state) => ({...state, auth: {jwt}})),
-  setFirstName: (firstName) => set((state) => ({...state, firstName})),
-  setAvatarUrl: (avatarUrl) => set((state) => ({...state, avatarUrl})),
-  setUserId: (userId) => set((state) => ({...state, userId})),
+  setUserInfo: (userInfo) => set((state) => ({
+    ...state,
+    userInfo: {...state.userInfo, ...userInfo}
+  })),
 }));
