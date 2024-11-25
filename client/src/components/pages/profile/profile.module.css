@@ -1,7 +1,13 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spaces-md)
+}
+
 .flexBox {
     display: flex;
     align-items: center;
-    gap: var(--spaces-md)
+    gap: var(--spaces-smm)
 }
 
 .title {

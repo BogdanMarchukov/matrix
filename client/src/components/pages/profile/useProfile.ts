@@ -1,6 +1,7 @@
 import {gql} from "../../../__generated__";
 import {useMutation, useQuery} from "@apollo/client";
 import {useUserStore} from "../../../common/store/userStore";
+import {UserInfo} from "../../../__generated__/graphql";
 
 const GET_USER_INFO = gql(/* GraphQl */ `
   query GetUserInfo($userId: UUID!) {
@@ -30,7 +31,7 @@ const UPDATE_USER_INFO = gql(/* GraphQl */ `
 export const useProfile = () => {
   const {userInfo} = useUserStore((state) => state);
   const {userId, avatarUrl, firstName} = userInfo;
-  const {data, loading} = useQuery(GET_USER_INFO, {
+  const {data, loading, refetch} = useQuery(GET_USER_INFO, {
     variables: {
       userId,
     },
@@ -41,7 +42,8 @@ export const useProfile = () => {
 
   return {
     loading,
-    data: data?.userInfo?.fundByUserId || {},
+    data: (data?.userInfo?.fundByUserId || {}) as UserInfo,
+    refetch,
     updateUserInfo,
     avatarUrl: avatarUrl || '',
     firstName: firstName || ''
