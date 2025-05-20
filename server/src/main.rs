@@ -41,8 +41,8 @@ mod errors;
 mod helpers;
 mod newsletter;
 mod notify;
-use uuid::Uuid;
 use actix_cors::Cors;
+use uuid::Uuid;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 
@@ -99,14 +99,12 @@ pub struct GqlCtx {
 }
 
 async fn gql_playgound() -> HttpResponse {
-    HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body(
-            GraphiQLSource::build()
-                .endpoint("/gql")
-                .subscription_endpoint("/gql")
-                .finish(),
-        )
+    HttpResponse::Found()
+        .append_header((
+            "Location",
+            "https://studio.apollographql.com/sandbox/explorer?endpoint=http://localhost:5000/gql",
+        ))
+        .finish()
 }
 
 async fn index_ws(
