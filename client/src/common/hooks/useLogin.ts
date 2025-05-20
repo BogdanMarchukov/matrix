@@ -1,14 +1,14 @@
-import {useMutation} from "@apollo/client";
-import {gql} from "../../__generated__";
-import {useUIStore} from "../store/UIStore";
+import { useMutation } from "@apollo/client";
+import { gql } from "../../__generated__";
+import { useUIStore } from "../store/UIStore";
 import {
   UserDevLoginMutation,
   UserDevLoginMutationVariables,
   UserLoginMutation,
   UserLoginMutationVariables
 } from "../../__generated__/graphql";
-import {useEffect, useLayoutEffect, useMemo} from "react";
-import {useUserStore} from "../store/userStore";
+import { useEffect, useLayoutEffect, useMemo } from "react";
+import { useUserStore } from "../store/userStore";
 
 const LOGIN = gql(/* GraphQl */ `
   mutation userLogin ($data: LoginInput!) {
@@ -44,22 +44,21 @@ const DEV_LOGIN = gql(/* GraphQl */ `
 
 const getVariables = (isDev: boolean): UserLoginMutationVariables | UserDevLoginMutationVariables => {
   if (isDev) {
-    return {data: {userId: 'afc79ab8-6dc8-4eea-baa7-6a98f48ade92'}};
+    return { data: { userId: 'afc79ab8-6dc8-4eea-baa7-6a98f48ade92' } };
   } else {
-    return {data: {initData: window?.Telegram?.WebApp?.initData}};
+    return { data: { initData: window?.Telegram?.WebApp?.initData } };
   }
 }
 
 export const useLogin = () => {
-  const {isDev} = useUIStore((state) => state);
-  console.log(isDev, 'isDev');
+  const { isDev } = useUIStore((state) => state);
   const LOGIN_QUERY = isDev ? DEV_LOGIN : LOGIN;
-  const {setUserId} = useUserStore((state) => state);
+  const { setUserId } = useUserStore((state) => state);
 
-  const [login, {loading, error, data}] = useMutation<
+  const [login, { loading, error, data }] = useMutation<
     UserLoginMutation | UserDevLoginMutation,
     UserLoginMutationVariables | UserDevLoginMutationVariables
-  >(LOGIN_QUERY, {variables: getVariables(isDev)});
+  >(LOGIN_QUERY, { variables: getVariables(isDev) });
 
   useLayoutEffect(() => {
     if (!data) {
