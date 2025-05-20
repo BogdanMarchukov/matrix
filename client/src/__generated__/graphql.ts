@@ -21,6 +21,16 @@ export type Scalars = {
    */
   DateTime: { input: any; output: any; }
   /**
+   * ISO 8601 calendar date without timezone.
+   * Format: %Y-%m-%d
+   *
+   * # Examples
+   *
+   * * `1994-11-13`
+   * * `2000-02-24`
+   */
+  NaiveDate: { input: any; output: any; }
+  /**
    * ISO 8601 combined date and time without timezone.
    *
    * # Examples
@@ -76,6 +86,7 @@ export type Mutation = {
   auth: AuthMutation;
   newsletter: NewsletterMutation;
   notify: NotifyMutation;
+  userInfo: UserInfoMutation;
 };
 
 export type NewsLetterCreateInput = {
@@ -165,6 +176,7 @@ export type Query = {
   __typename?: 'Query';
   notify: NotifyQuery;
   user: UserQuery;
+  userInfo: UserInfoQuery;
 };
 
 export type Subscription = {
@@ -183,6 +195,44 @@ export type User = {
   telegramId: Scalars['Int']['output'];
   userId: Scalars['UUID']['output'];
   username?: Maybe<Scalars['String']['output']>;
+};
+
+export type UserInfo = {
+  __typename?: 'UserInfo';
+  city?: Maybe<Scalars['String']['output']>;
+  dateOfBirth?: Maybe<Scalars['NaiveDate']['output']>;
+  hourOfBirth?: Maybe<Scalars['Int']['output']>;
+  minOfBirth?: Maybe<Scalars['Int']['output']>;
+  userId: Scalars['UUID']['output'];
+  userInfoId: Scalars['UUID']['output'];
+};
+
+export type UserInfoMutation = {
+  __typename?: 'UserInfoMutation';
+  updateOne: UserInfo;
+};
+
+
+export type UserInfoMutationUpdateOneArgs = {
+  data: UserInfoUpdateInput;
+  userInfoId: Scalars['UUID']['input'];
+};
+
+export type UserInfoQuery = {
+  __typename?: 'UserInfoQuery';
+  fundByUserId: UserInfo;
+};
+
+
+export type UserInfoQueryFundByUserIdArgs = {
+  userId: Scalars['UUID']['input'];
+};
+
+export type UserInfoUpdateInput = {
+  city?: InputMaybe<Scalars['String']['input']>;
+  dateOfBirth?: InputMaybe<Scalars['NaiveDate']['input']>;
+  hourOfBirth?: InputMaybe<Scalars['Int']['input']>;
+  minOfBirth?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UserQuery = {

@@ -44,7 +44,7 @@ const DEV_LOGIN = gql(/* GraphQl */ `
 
 const getVariables = (isDev: boolean): UserLoginMutationVariables | UserDevLoginMutationVariables => {
   if (isDev) {
-    return {data: {userId: '233e2a86-fea6-43ff-bf22-17b8fbb9a088'}};
+    return {data: {userId: 'afc79ab8-6dc8-4eea-baa7-6a98f48ade92'}};
   } else {
     return {data: {initData: window?.Telegram?.WebApp?.initData}};
   }
@@ -52,6 +52,7 @@ const getVariables = (isDev: boolean): UserLoginMutationVariables | UserDevLogin
 
 export const useLogin = () => {
   const {isDev} = useUIStore((state) => state);
+  console.log(isDev, 'isDev');
   const LOGIN_QUERY = isDev ? DEV_LOGIN : LOGIN;
   const {setUserId} = useUserStore((state) => state);
 
