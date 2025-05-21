@@ -53,7 +53,7 @@ const getVariables = (isDev: boolean): UserLoginMutationVariables | UserDevLogin
 export const useLogin = () => {
   const { isDev } = useUIStore((state) => state);
   const LOGIN_QUERY = isDev ? DEV_LOGIN : LOGIN;
-  const { setUserId } = useUserStore((state) => state);
+  const { setUserId, setJwt } = useUserStore((state) => state);
 
   const [login, { loading, error, data }] = useMutation<
     UserLoginMutation | UserDevLoginMutation,
@@ -72,7 +72,11 @@ export const useLogin = () => {
 
   useEffect(() => {
     if (setUserId) {
-      setUserId(userData?.user?.userId)
+      setUserId(userData?.user?.userId);
+    }
+    if (userData?.jwt) {
+      setJwt(userData.jwt);
+      localStorage.setItem('jwt', userData.jwt);
     }
   }, [userData]);
 
