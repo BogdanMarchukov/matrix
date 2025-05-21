@@ -1,27 +1,34 @@
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {useNotify} from "../../../common/hooks/useNotify";
-import {useUserStore} from "../../../common/store/userStore";
-import {NotifyType} from "../../../__generated__/graphql";
-import {AnimatedText} from "../animation-text/animation-text";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { NotifyType } from "../../../__generated__/graphql";
+import { useNotify } from "../../../common/hooks/useNotify";
+import { useUserStore } from "../../../common/store/userStore";
+import { AnimatedText } from "../animation-text/animation-text";
+import { Card } from "../card";
 import classes from "./message.module.css";
-import {CardIcon} from "./svg/card-icon";
-import {Card} from "../card";
+import { CardIcon } from "./svg/card-icon";
 
 export const Message = () => {
   const [showNotify, setShowNotify] = useState(false)
-  const {userId} =
+  const { userId, setLastNotify, lastNotify } =
     useUserStore((state) => state);
 
   const popupRef = useRef<HTMLDivElement>(null);
 
-  const {loading, data, setNotifyIsRead} = useNotify({
+  const { loading, data, setNotifyIsRead } = useNotify({
     userId,
     isRead: false,
     notifyType: NotifyType.Daly,
   });
 
+
   const notifies = useMemo(() => data?.notify?.findByUserId || [], [data])
-  const {notifyId, payload} = useMemo(() => ({...notifies?.[0]}), [notifies]);
+  const { notifyId, payload, title } = useMemo(() => ({ ...lastNotify }), [lastNotify]);
+
+  useEffect(() => {
+    if (notifies.length) {
+      setLastNotify(notifies[0])
+    }
+  }, [notifies, setLastNotify])
 
   useEffect(() => {
     const handleClickOutside = (event: TouchEvent) => {
@@ -38,14 +45,14 @@ export const Message = () => {
   }, [showNotify, notifyId, setNotifyIsRead]);
 
   const onMessageClick = useCallback(() => {
-    if (notifies?.length && !showNotify) {
+    if (notifyId && !showNotify) {
       setShowNotify(true)
     }
-  }, [notifies, showNotify])
+  }, [notifyId, showNotify])
 
   return (
     <div className={classes.root} onTouchStart={onMessageClick} ref={popupRef}>
-      <CardIcon animate={loading || !!notifies?.length}/>
+      <CardIcon animate={loading || !!notifies?.length} />
       <p className={classes.title}>
         <AnimatedText animation={!!notifies?.length}>{loading ? 'загрузка' : 'тебе'}</AnimatedText>
         {!loading && <AnimatedText animation={!!notifies?.length}>послание</AnimatedText>}
@@ -53,7 +60,8 @@ export const Message = () => {
       {showNotify && (
         <div className={classes.popup}>
           <Card>
-            {`«${payload}»`}
+            {`«${title}»
+              ${payload}`}
           </Card>
         </div>
       )}

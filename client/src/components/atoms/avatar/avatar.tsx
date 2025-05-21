@@ -13,7 +13,7 @@ export const Avatar = ({ loading, url }: AvatarProps) => {
     <div className={classes.avatar}>
       {loading ? (
         <Puff {...loaderConfig} height={24} width={24} />
-      ) : (<img src={url} />)}
+      ) : (<img src={url} alt="A" />)}
     </div>
   )
 }
