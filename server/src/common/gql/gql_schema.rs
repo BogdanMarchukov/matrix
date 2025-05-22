@@ -7,13 +7,19 @@ use crate::{
         user_info_gql::{UserInfoMutation, UserInfoQuery},
     },
 };
-use async_graphql::{FieldResult, Object};
+use async_graphql::{Enum, FieldResult, InputObject, Object};
 
 pub struct Query;
 
 pub struct Mutation;
 
 pub struct Subscription;
+
+#[derive(Enum, Copy, Clone, Eq, PartialEq)]
+pub enum GqlOrder {
+    Asc,
+    Desc,
+}
 
 #[Object]
 impl Mutation {

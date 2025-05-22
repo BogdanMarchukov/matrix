@@ -12,7 +12,8 @@ use chrono::Local;
 use migration::Expr;
 use sea_orm::ActiveValue::Set;
 use sea_orm::{
-    ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, QueryFilter,
+    ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, Order, QueryFilter,
+    QueryOrder, QuerySelect,
 };
 use uuid::Uuid;
 
@@ -23,8 +24,20 @@ pub struct NotifyUpdateData {
 pub async fn find_many(
     filter: Condition,
     conn: &DatabaseConnection,
+    limit: Option<u64>,
+    order: Option<Order>,
+    order_by: Option<notify::Column>,
 ) -> FieldResult<Vec<NotifyGqlModel>> {
-    let notify_all: Vec<notify::Model> = match Notify::find().filter(filter).all(conn).await {
+    let notify_all: Vec<notify::Model> = match Notify::find()
+        .order_by(
+            order_by.unwrap_or(notify::Column::CreatedAt),
+            order.unwrap_or(Order::Desc),
+        )
+        .filter(filter)
+        .limit(limit.unwrap_or(20))
+        .all(conn)
+        .await
+    {
         Ok(value) => value,
         Err(_) => return Err(GqlError::ServerError("database error".to_string()).into()),
     };

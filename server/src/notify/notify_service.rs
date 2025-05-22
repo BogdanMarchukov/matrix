@@ -1,19 +1,21 @@
 use super::{
-    notify_gql::{NotifyByUserIdFilter, NotifyUpdateData},
+    notify_gql::{NotifyByUserIdFilter, NotifyOrderBy, NotifyUpdateData, Sort},
     notify_gql_model::NotifyGqlModel,
     notify_repository::{self, find_many},
 };
 use crate::{
     entity::{notify, sea_orm_active_enums::NotifyTypeEnum},
+    gql_schema::GqlOrder,
     user::user_gql_model::UserGqlModel,
 };
 use async_graphql::FieldResult;
-use sea_orm::{ColumnTrait, Condition, DatabaseConnection};
+use sea_orm::{ColumnTrait, Condition, DatabaseConnection, Order};
 use uuid::Uuid;
 
 pub async fn find_many_by_user_id(
     user: UserGqlModel,
     input_data: NotifyByUserIdFilter,
+    input_sort: Sort,
     conn: &DatabaseConnection,
 ) -> FieldResult<Vec<NotifyGqlModel>> {
     let mut filter = Condition::all().add(notify::Column::UserId.eq(input_data.user_id));
@@ -23,7 +25,20 @@ pub async fn find_many_by_user_id(
     if let Some(notify_type) = input_data.notify_type {
         filter = filter.add(notify::Column::NotifyType.eq(NotifyTypeEnum::from(notify_type)));
     }
-    let all_notify = find_many(filter, conn).await?;
+    let order = match input_sort.order {
+        Some(sort) => match sort {
+            GqlOrder::Asc => Some(Order::Asc),
+            GqlOrder::Desc => Some(Order::Desc),
+        },
+        None => None,
+    };
+    let order_by = match input_sort.order_by {
+        Some(order_by) => match order_by {
+            NotifyOrderBy::CreatedAt => Some(notify::Column::CreatedAt),
+        },
+        None => None,
+    };
+    let all_notify = find_many(filter, conn, input_sort.limit, order, order_by).await?;
     for n in all_notify.iter() {
         n.check_role(&user)?;
     }

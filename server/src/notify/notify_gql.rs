@@ -1,5 +1,6 @@
 use super::notify_gql_model::{NotifyGqlModel, NotifyTypeGql};
-use super::{notify_repository, notify_service};
+use super::notify_service;
+use crate::gql_schema::GqlOrder;
 use crate::guards::auth_guard::AuthGuard;
 use crate::{gql_schema::Subscription, user::user_service};
 use crate::{GqlCtx, TX_NOTIFY};
@@ -18,6 +19,11 @@ pub struct NotifyByUserIdFilter {
     pub notify_type: Option<NotifyTypeGql>,
 }
 
+#[derive(Enum, Copy, Clone, Eq, PartialEq)]
+pub enum NotifyOrderBy {
+    CreatedAt,
+}
+
 #[derive(SimpleObject)]
 pub struct NotifySub {
     pub notify_id: Uuid,
@@ -28,6 +34,13 @@ pub struct NotifyUpdateData {
     pub is_read: bool,
 }
 
+#[derive(InputObject)]
+pub struct Sort {
+    pub order: Option<GqlOrder>,
+    pub limit: Option<u64>,
+    pub order_by: Option<NotifyOrderBy>,
+}
+
 #[Object]
 impl NotifyQuery {
     #[graphql(guard = "AuthGuard")]
@@ -35,9 +48,10 @@ impl NotifyQuery {
         &self,
         ctx: &Context<'ctx>,
         data: NotifyByUserIdFilter,
+        sort: Sort,
     ) -> FieldResult<Vec<NotifyGqlModel>> {
         let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
-        notify_service::find_many_by_user_id(request_user, data, &conn).await
+        notify_service::find_many_by_user_id(request_user, data, sort, &conn).await
     }
 
     #[graphql(guard = "AuthGuard")]
