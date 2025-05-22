@@ -48,7 +48,7 @@ impl NotifyQuery {
         &self,
         ctx: &Context<'ctx>,
         data: NotifyByUserIdFilter,
-        sort: Sort,
+        sort: Option<Sort>,
     ) -> FieldResult<Vec<NotifyGqlModel>> {
         let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
         notify_service::find_many_by_user_id(request_user, data, sort, &conn).await

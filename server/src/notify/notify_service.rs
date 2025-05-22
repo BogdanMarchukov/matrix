@@ -15,7 +15,7 @@ use uuid::Uuid;
 pub async fn find_many_by_user_id(
     user: UserGqlModel,
     input_data: NotifyByUserIdFilter,
-    input_sort: Sort,
+    input_sort: Option<Sort>,
     conn: &DatabaseConnection,
 ) -> FieldResult<Vec<NotifyGqlModel>> {
     let mut filter = Condition::all().add(notify::Column::UserId.eq(input_data.user_id));
@@ -25,20 +25,30 @@ pub async fn find_many_by_user_id(
     if let Some(notify_type) = input_data.notify_type {
         filter = filter.add(notify::Column::NotifyType.eq(NotifyTypeEnum::from(notify_type)));
     }
-    let order = match input_sort.order {
-        Some(sort) => match sort {
-            GqlOrder::Asc => Some(Order::Asc),
-            GqlOrder::Desc => Some(Order::Desc),
+    let order = match &input_sort {
+        Some(sort) => match sort.order {
+            Some(order) => match order {
+                GqlOrder::Desc => Some(Order::Desc),
+                GqlOrder::Asc => Some(Order::Asc),
+            },
+            None => None,
         },
         None => None,
     };
-    let order_by = match input_sort.order_by {
-        Some(order_by) => match order_by {
-            NotifyOrderBy::CreatedAt => Some(notify::Column::CreatedAt),
+    let order_by = match &input_sort {
+        Some(sort) => match sort.order_by {
+            Some(order_by) => match order_by {
+                NotifyOrderBy::CreatedAt => Some(notify::Column::CreatedAt),
+            },
+            None => None,
         },
         None => None,
     };
-    let all_notify = find_many(filter, conn, input_sort.limit, order, order_by).await?;
+    let limit = match input_sort {
+        Some(sort) => sort.limit,
+        None => None
+    };
+    let all_notify = find_many(filter, conn, limit, order, order_by).await?;
     for n in all_notify.iter() {
         n.check_role(&user)?;
     }
