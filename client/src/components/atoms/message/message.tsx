@@ -38,7 +38,7 @@ export const Message = () => {
     return () => {
       document.removeEventListener("touchstart", handleClickOutside);
     };
-  }, [showNotify, notifyId, setNotifyIsRead]);
+  }, [showNotify, notifyId, setNotifyIsRead, isRead]);
 
   const onMessageClick = useCallback(() => {
     if (notifyId && !showNotify) {
