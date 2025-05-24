@@ -9,31 +9,27 @@ import { CardIcon } from "./svg/card-icon";
 
 export const Message = () => {
   const [showNotify, setShowNotify] = useState(false)
-  const { userId, setLastNotify, lastNotify } =
+  const { userId } =
     useUserStore((state) => state);
 
   const popupRef = useRef<HTMLDivElement>(null);
 
   const { loading, data, setNotifyIsRead } = useNotify({
     userId,
-    isRead: false,
     notifyType: NotifyType.Daly,
   });
 
 
   const notifies = useMemo(() => data?.notify?.findByUserId || [], [data])
-  const { notifyId, payload, title } = useMemo(() => ({ ...lastNotify }), [lastNotify]);
-
-  useEffect(() => {
-    if (notifies.length) {
-      setLastNotify(notifies[0])
-    }
-  }, [notifies, setLastNotify])
+  const { notifyId, payload, title, isRead } = useMemo(() => ({ ...notifies[0] }), [notifies]);
+  const isAnimal = !!(notifies?.length && !notifies[0].isRead);
 
   useEffect(() => {
     const handleClickOutside = (event: TouchEvent) => {
       if (showNotify && popupRef?.current && !popupRef?.current?.contains(event.target as Node)) {
-        setNotifyIsRead(notifyId);
+        if (!isRead) {
+          setNotifyIsRead(notifyId);
+        }
         setShowNotify(false);
       }
     };
@@ -52,10 +48,10 @@ export const Message = () => {
 
   return (
     <div className={classes.root} onTouchStart={onMessageClick} ref={popupRef}>
-      <CardIcon animate={loading || !!notifies?.length} />
+      <CardIcon animate={loading || isAnimal} />
       <p className={classes.title}>
-        <AnimatedText animation={!!notifies?.length}>{loading ? 'загрузка' : 'тебе'}</AnimatedText>
-        {!loading && <AnimatedText animation={!!notifies?.length}>послание</AnimatedText>}
+        <AnimatedText animation={isAnimal}>{loading ? 'загрузка' : 'тебе'}</AnimatedText>
+        {!loading && <AnimatedText animation={isAnimal}>послание</AnimatedText>}
       </p>
       {showNotify && (
         <div className={classes.popup}>

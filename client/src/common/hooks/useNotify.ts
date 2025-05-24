@@ -1,14 +1,16 @@
-import {useMutation, useQuery} from "@apollo/client";
-import {gql} from "../../__generated__";
+import { useMutation, useQuery } from "@apollo/client";
+import { gql } from "../../__generated__";
 import {
-  NotifyByUserIdFilter
+  GqlOrder,
+  NotifyByUserIdFilter,
+  NotifyOrderBy
 } from "../../__generated__/graphql";
-import {useCallback} from 'react';
+import { useCallback } from 'react';
 
 const NOTIFY = gql(/* GraphQl */ `
-  query GetAllNotify($data: NotifyByUserIdFilter!) {
+  query GetAllNotify($data: NotifyByUserIdFilter!, $sort: Sort) {
     notify {
-      findByUserId(data: $data) {
+      findByUserId(data: $data, sort: $sort) {
         notifyId
         title
         payload
@@ -29,9 +31,14 @@ const UPDATE_NOTIFY = gql(/* GraphQl */ `
 `);
 
 export const useNotify = (notifyFilter: NotifyByUserIdFilter) => {
-  const {error, loading, data, refetch} = useQuery(NOTIFY, {
+  const { error, loading, data, refetch } = useQuery(NOTIFY, {
     variables: {
       data: notifyFilter,
+      sort: {
+        limit: 1,
+        order: GqlOrder.Desc,
+        orderBy: NotifyOrderBy.CreatedAt
+      }
     },
     skip: !notifyFilter.userId
   });

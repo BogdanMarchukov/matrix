@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { GetAllNotifyQuery } from "../../__generated__/graphql";
 
 type AuthState = {
   jwt: string | null;
@@ -10,7 +9,6 @@ type UserState = {
   firstName: string | null;
   avatarUrl: string | null;
   userId: string | null;
-  lastNotify: GetAllNotifyQuery['notify']['findByUserId'][number] | null
 };
 
 type Actions = {
@@ -18,7 +16,6 @@ type Actions = {
   setFirstName: (firstName: UserState["firstName"]) => void;
   setAvatarUrl: (avatar: string) => void;
   setUserId: (userId: UserState["userId"]) => void;
-  setLastNotify: (lastNotify: UserState['lastNotify']) => void;
 };
 
 export const useUserStore = create<UserState & Actions>((set) => ({
@@ -33,5 +30,4 @@ export const useUserStore = create<UserState & Actions>((set) => ({
   setFirstName: (firstName) => set((state) => ({ ...state, firstName })),
   setAvatarUrl: (avatarUrl) => set((state) => ({ ...state, avatarUrl })),
   setUserId: (userId) => set((state) => ({ ...state, userId })),
-  setLastNotify: (lastNotify) => set((state) => ({ ...state, lastNotify })),
 }));
