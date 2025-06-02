@@ -102,7 +102,7 @@ pub async fn create_for_all_users(
                 .await
             {
                 println!("update all notify success: {:?}", update_result);
-                match Notify::insert_many(insert_data.clone()).exec(&txn).await {
+                match Notify::insert_many(insert_data.to_owned()).exec(&txn).await {
                     Ok(_) => {
                         txn.commit().await.ok();
                         for notify in insert_data.iter() {

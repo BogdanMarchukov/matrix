@@ -43,7 +43,7 @@ impl InitDataTgWebApp {
         };
         Ok(Self {
             user: Some(result_user),
-            hash: Some(hash_value.clone()),
+            hash: Some(hash_value.to_owned()),
             query_id: None,
             receiver: None,
             chat: None,

@@ -19,7 +19,7 @@ impl NotifySender {
     pub fn send(self) {
         match self {
             NotifySender::Dely(tx_sender) => {
-                let tx = TX_NOTIFY.clone();
+                let tx = TX_NOTIFY.to_owned();
                 publish(tx, tx_sender)
             }
         }

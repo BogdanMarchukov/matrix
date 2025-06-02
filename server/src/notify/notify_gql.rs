@@ -84,7 +84,7 @@ impl Subscription {
     #[graphql(guard = "AuthGuard")]
     async fn notify_delay(&self, ctx: &Context<'_>) -> impl Stream<Item = NotifySub> {
         let data = ctx.data::<GqlCtx>().unwrap();
-        let mut sender = TX_NOTIFY.clone().subscribe();
+        let mut sender = TX_NOTIFY.to_owned().subscribe();
         let user = data.user.to_owned();
         async_stream::stream! {
             while let Ok(message) = sender.recv().await {

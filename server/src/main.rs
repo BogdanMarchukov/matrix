@@ -112,7 +112,7 @@ async fn index_ws(
     req: HttpRequest,
     payload: web::Payload,
 ) -> Result<HttpResponse, Error> {
-    GraphQLSubscription::new(app_data.schema.clone())
+    GraphQLSubscription::new(app_data.schema.to_owned())
         .on_connection_init(|value: serde_json::Value| async move {
             let mut data = Data::default();
             if let Some(auth_header) = value.get("Authorization") {
@@ -140,7 +140,7 @@ async fn gql_index(
     http_request: HttpRequest,
 ) -> GraphQLResponse {
     let (headers, user) = auth_service::get_user_from_request(&http_request, &app_data.db).await;
-    let schema = app_data.schema.clone();
+    let schema = app_data.schema.to_owned();
     let request = gql_request.into_inner().data(GqlCtx {
         db: app_data.db.to_owned(),
         headers,
@@ -168,8 +168,8 @@ async fn main() -> std::io::Result<()> {
 
         App::new()
             .app_data(web::Data::new(AppState {
-                db: pool.clone(),
-                schema: schema.clone(),
+                db: pool.to_owned(),
+                schema: schema.to_owned(),
             }))
             .wrap(cors)
             .service(
