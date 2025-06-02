@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { gql } from "../../__generated__";
 import {
   GqlOrder,
@@ -67,5 +67,6 @@ export const useNotify = (notifyFilter: NotifyByUserIdFilter) => {
     loading,
     data,
     setNotifyIsRead,
+    refetch
   };
 };

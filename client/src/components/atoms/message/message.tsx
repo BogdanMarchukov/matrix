@@ -6,6 +6,16 @@ import { AnimatedText } from "../animation-text/animation-text";
 import { Card } from "../card";
 import classes from "./message.module.css";
 import { CardIcon } from "./svg/card-icon";
+import { gql } from "../../../__generated__/gql";
+import { useSubscription } from "@apollo/client";
+
+const SUBSCRIPTION_NOTIFY = gql(/* GraphQl */ `
+  subscription NotifyDelay {
+  notifyDelay {
+    notifyId
+   }
+  }
+`);
 
 export const Message = () => {
   const [showNotify, setShowNotify] = useState(false)
@@ -14,11 +24,12 @@ export const Message = () => {
 
   const popupRef = useRef<HTMLDivElement>(null);
 
-  const { loading, data, setNotifyIsRead } = useNotify({
+  const { loading, data, setNotifyIsRead, refetch } = useNotify({
     userId,
     notifyType: NotifyType.Daly,
   });
 
+  const { data: subscriptionData, loading: load } = useSubscription(SUBSCRIPTION_NOTIFY)
 
   const notifies = useMemo(() => data?.notify?.findByUserId || [], [data])
   const { notifyId, payload, title, isRead } = useMemo(() => ({ ...notifies[0] }), [notifies]);
@@ -39,6 +50,10 @@ export const Message = () => {
       document.removeEventListener("touchstart", handleClickOutside);
     };
   }, [showNotify, notifyId, setNotifyIsRead, isRead]);
+
+  useEffect(() => {
+    refetch()
+  }, [subscriptionData, refetch, load])
 
   const onMessageClick = useCallback(() => {
     if (notifyId && !showNotify) {
