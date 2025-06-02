@@ -5,13 +5,13 @@ use uuid::Uuid;
 use crate::errors::gql_error::GqlError;
 
 use super::{
-    types::UserInfoUpdateInput, user_gql_model::UserGqlModel,
+    types::UserInfoUpdateInput, user_gql_model::{UserGqlModel, User},
     user_info_gql_model::UserInfoGqlModel, user_info_repository,
 };
 
 pub async fn find_by_user_id(
     user_id: Uuid,
-    user: UserGqlModel,
+    user: User,
     conn: &DatabaseConnection,
 ) -> FieldResult<UserInfoGqlModel> {
     let user_info = user_info_repository::find_one_by_user_id(user_id, conn).await?;
@@ -21,7 +21,7 @@ pub async fn find_by_user_id(
 
 pub async fn update_one(
     user_info_id: Uuid,
-    user: UserGqlModel,
+    user: User,
     data: UserInfoUpdateInput,
     conn: &DatabaseConnection,
 ) -> FieldResult<UserInfoGqlModel> {

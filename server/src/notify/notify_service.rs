@@ -6,14 +6,14 @@ use super::{
 use crate::{
     entity::{notify, sea_orm_active_enums::NotifyTypeEnum},
     gql_schema::GqlOrder,
-    user::user_gql_model::UserGqlModel,
+    user::user_gql_model::{UserGqlModel, User},
 };
 use async_graphql::FieldResult;
 use sea_orm::{ColumnTrait, Condition, DatabaseConnection, Order};
 use uuid::Uuid;
 
 pub async fn find_many_by_user_id(
-    user: UserGqlModel,
+    user: User,
     input_data: NotifyByUserIdFilter,
     input_sort: Option<Sort>,
     conn: &DatabaseConnection,
@@ -58,7 +58,7 @@ pub async fn find_many_by_user_id(
 pub async fn update_one(
     notify_id: Uuid,
     data: NotifyUpdateData,
-    user: UserGqlModel,
+    user: User,
     conn: &DatabaseConnection,
 ) -> FieldResult<NotifyGqlModel> {
     find_by_pk(notify_id, user, conn).await?;
@@ -74,7 +74,7 @@ pub async fn update_one(
 
 pub async fn find_by_pk(
     notify_id: Uuid,
-    user: UserGqlModel,
+    user: User,
     conn: &DatabaseConnection,
 ) -> FieldResult<NotifyGqlModel> {
     let notify = notify_repository::find_by_pk(notify_id, conn).await?;

@@ -14,7 +14,7 @@ use sea_orm::DatabaseConnection;
 use secret::secret_service;
 use std::collections::HashMap;
 use tokio::sync::broadcast::{self};
-use user::user_gql_model::UserGqlModel;
+use user::user_gql_model::{UserGqlModel, User};
 #[path = "auth/mod.rs"]
 mod auth;
 #[path = "common/config/config.rs"]
@@ -95,7 +95,7 @@ impl AppState {
 pub struct GqlCtx {
     pub db: DatabaseConnection,
     pub headers: HashMap<String, String>,
-    pub user: Option<UserGqlModel>,
+    pub user: Option<User>,
 }
 
 async fn gql_playgound() -> HttpResponse {

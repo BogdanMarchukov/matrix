@@ -1,6 +1,6 @@
 use crate::{
     auth::auth_service, guards::system_guard::SystemGuard, helpers,
-    user::user_gql_model::UserGqlModel,
+    user::user_gql_model::User,
 };
 use async_graphql::{Context, FieldResult, InputObject, Object, SimpleObject};
 use uuid::Uuid;
@@ -13,7 +13,7 @@ pub struct LoginInput {
 #[derive(SimpleObject)]
 pub struct LoginResult {
     pub jwt: String,
-    pub user: UserGqlModel,
+    pub user: User,
 }
 
 #[derive(InputObject)]

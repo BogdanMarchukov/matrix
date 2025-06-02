@@ -1,12 +1,11 @@
 use crate::entity::sea_orm_active_enums::UserRoleType;
 use crate::entity::users;
 use crate::errors::gql_error::GqlError;
+use async_graphql::FieldResult;
 use async_graphql::*;
-use async_graphql::{FieldResult, SimpleObject};
 use uuid::Uuid;
 
-#[derive(SimpleObject, Clone, Debug)]
-#[graphql(name = "User")]
+#[derive(Clone, Debug)]
 pub struct UserGqlModel {
     pub user_id: Uuid,
     pub telegram_id: i64,
@@ -17,6 +16,53 @@ pub struct UserGqlModel {
     pub is_premium: Option<bool>,
     pub photo_url: Option<String>,
     pub role: UserRoleGqlType,
+}
+
+#[derive(Clone)]
+pub struct User(pub UserGqlModel);
+
+#[Object]
+impl User {
+    async fn user_info(&self, ctx: &Context<'_>) -> FieldResult<String> {
+        Ok(String::from("test"))
+    }
+
+    async fn user_id(&self) -> &Uuid {
+        &self.0.user_id
+    }
+
+    async fn telegram_id(&self) -> &i64 {
+        &self.0.telegram_id
+    }
+
+    async fn first_name(&self) -> &Option<String> {
+        &self.0.first_name
+    }
+
+    async fn last_name(&self) -> &Option<String> {
+        &self.0.last_name
+    }
+
+    async fn username(&self) -> &Option<String> {
+        &self.0.username
+    }
+
+    async fn language_code(&self) -> &Option<String> {
+        &self.0.language_code
+    }
+
+    async  fn is_premium(&self) -> &Option<bool> {
+        &self.0.is_premium
+    }
+
+    async fn photo_url(&self) -> &Option<String> {
+        &self.0.photo_url
+    }
+
+    async fn role(&self) -> &UserRoleGqlType {
+        &self.0.role
+    }
+
 }
 
 #[derive(Enum, Copy, Clone, Eq, PartialEq, Debug)]
@@ -40,7 +86,7 @@ impl UserGqlModel {
         Err(GqlError::Forbidden.into())
     }
 
-    pub fn new(user_model: users::Model ) -> Self {
+    pub fn new(user_model: users::Model) -> Self {
         Self {
             user_id: user_model.user_id,
             telegram_id: user_model.telegram_id,

@@ -2,11 +2,11 @@ use crate::errors::gql_error::GqlError;
 use crate::GqlCtx;
 use async_graphql::{Context, ErrorExtensions, FieldResult};
 use sea_orm::DatabaseConnection;
-use super::user_gql_model::UserGqlModel;
+use super::user_gql_model::{UserGqlModel, User};
 
 pub fn get_auth_user_from_ctx(
     ctx: &Context,
-) -> FieldResult<(UserGqlModel, DatabaseConnection)> {
+) -> FieldResult<(User, DatabaseConnection)> {
     let ctx_data = match ctx.data::<GqlCtx>() {
         Ok(data) => data,
         Err(_) => return Err(GqlError::ServerError("get cxt error".to_string()).into()),
