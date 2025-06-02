@@ -10,11 +10,11 @@ use super::{
 };
 
 pub async fn find_by_user_id(
-    user_id: Uuid,
+    user_id: &Uuid,
     user: User,
     conn: &DatabaseConnection,
 ) -> FieldResult<UserInfoGqlModel> {
-    let user_info = user_info_repository::find_one_by_user_id(user_id, conn).await?;
+    let user_info = user_info_repository::find_one_by_user_id(user_id.to_owned(), conn).await?;
     UserInfoGqlModel::check_role(&user_info, &user)?;
     Ok(user_info)
 }

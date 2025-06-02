@@ -5,6 +5,10 @@ use async_graphql::FieldResult;
 use async_graphql::*;
 use uuid::Uuid;
 
+use super::user_info_gql_model::UserInfoGqlModel;
+use super::user_info_service::find_by_user_id;
+use super::user_service;
+
 #[derive(Clone, Debug)]
 pub struct UserGqlModel {
     pub user_id: Uuid,
@@ -23,8 +27,9 @@ pub struct User(pub UserGqlModel);
 
 #[Object]
 impl User {
-    async fn user_info(&self, ctx: &Context<'_>) -> FieldResult<String> {
-        Ok(String::from("test"))
+    async fn user_info(&self, ctx: &Context<'_>) -> FieldResult<UserInfoGqlModel> {
+        let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
+        find_by_user_id(&self.0.user_id, request_user, &conn).await
     }
 
     async fn user_id(&self) -> &Uuid {
@@ -51,7 +56,7 @@ impl User {
         &self.0.language_code
     }
 
-    async  fn is_premium(&self) -> &Option<bool> {
+    async fn is_premium(&self) -> &Option<bool> {
         &self.0.is_premium
     }
 
@@ -62,7 +67,6 @@ impl User {
     async fn role(&self) -> &UserRoleGqlType {
         &self.0.role
     }
-
 }
 
 #[derive(Enum, Copy, Clone, Eq, PartialEq, Debug)]
