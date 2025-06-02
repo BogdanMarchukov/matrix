@@ -46,7 +46,6 @@ const authLink = setContext((_, { headers }) => {
 
 const splitLink = split(
   ({ query }) => {
-    console.log('query', query);
     const definition = getMainDefinition(query);
     return (
       definition.kind === "OperationDefinition" &&
