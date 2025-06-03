@@ -4,11 +4,17 @@ type AuthState = {
   jwt: string | null;
 };
 
+type UserInfo = {
+  userInfoId: string | null;
+  dateOfBirth?: Date | null;
+}
+
 type UserState = {
   auth: AuthState;
   firstName: string | null;
   avatarUrl: string | null;
   userId: string | null;
+  userInfo: UserInfo;
 };
 
 type Actions = {
@@ -16,11 +22,15 @@ type Actions = {
   setFirstName: (firstName: UserState["firstName"]) => void;
   setAvatarUrl: (avatar: string) => void;
   setUserId: (userId: UserState["userId"]) => void;
+  setUserInfo: (userInfo: UserInfo) => void;
 };
 
 export const useUserStore = create<UserState & Actions>((set) => ({
   auth: {
     jwt: null,
+  },
+  userInfo: {
+    userInfoId: null,
   },
   firstName: null,
   avatarUrl: null,
@@ -30,4 +40,5 @@ export const useUserStore = create<UserState & Actions>((set) => ({
   setFirstName: (firstName) => set((state) => ({ ...state, firstName })),
   setAvatarUrl: (avatarUrl) => set((state) => ({ ...state, avatarUrl })),
   setUserId: (userId) => set((state) => ({ ...state, userId })),
+  setUserInfo: (userInfo) => set((state) => ({ ...state, userInfo }))
 }));
