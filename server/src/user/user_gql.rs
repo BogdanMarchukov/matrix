@@ -3,6 +3,7 @@ use super::user_repository;
 use super::user_service;
 use crate::errors::gql_error::GqlError;
 use crate::guards::auth_guard::AuthGuard;
+use async_graphql::ErrorExtensions;
 use async_graphql::{Context, FieldResult, Object};
 use uuid::Uuid;
 
@@ -20,7 +21,7 @@ impl UserQuery {
         let fined_user = user_repository::find_by_uuid(user_id, &conn).await?;
         let result_user = match fined_user {
             Some(u) => u,
-            None => return Err(GqlError::NotFound("user not found".to_string()).into()),
+            None => return Err(GqlError::NotFound("user not found".to_string()).extend()),
         };
         result_user.check_role(&request_user.0.user_id)?;
         Ok(User(result_user))
