@@ -79,14 +79,16 @@ export const useLogin = () => {
     : (data?.auth as UserLoginMutation['auth'])?.login, [data, isDev]);
 
   useEffect(() => {
-    setUserId(userData?.user?.userId);
+    if (userData?.user?.userId) {
+      setUserId(userData?.user?.userId);
+    }
     if (userData?.jwt) {
       setJwt(userData.jwt);
       localStorage.setItem('jwt', userData.jwt);
     }
     if (userData?.user?.userInfo) {
       console.log('userInfo:', userData.user.userInfo);
-      setUserInfo(userData.user.userInfo)
+      setUserInfo(userData.user.userInfo);
     }
   }, [userData, setUserId, setUserInfo, setJwt]);
 
