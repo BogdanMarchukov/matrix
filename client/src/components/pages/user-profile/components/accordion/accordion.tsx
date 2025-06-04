@@ -1,51 +1,65 @@
 import classes from './accordion.module.css'
-import {AccordionItem} from "../../../../atoms/accordion-item";
-import {BonusIcon} from "../../icons/bonusIcon";
-import {TrainingIcon} from "../../icons/trainingIcon";
-import {TestsIcon} from "../../icons/testsIcon";
-import {CommunityIcon} from "../../icons/communityIcon";
-import {TeamIcon} from "../../icons/teamIcon";
-import {NewsIcon} from "../../icons/newsIcon";
-import {AboutIcon} from "../../icons/aboutIcon";
+import { AccordionItem } from "../../../../atoms/accordion-item";
+import { BonusIcon } from "../../icons/bonusIcon";
+import { TrainingIcon } from "../../icons/trainingIcon";
+import { TestsIcon } from "../../icons/testsIcon";
+import { CommunityIcon } from "../../icons/communityIcon";
+import { TeamIcon } from "../../icons/teamIcon";
+import { NewsIcon } from "../../icons/newsIcon";
+import { AboutIcon } from "../../icons/aboutIcon";
+import TextField from '../../../../atoms/tixt-field/text-field';
 
 
 const { root, accordion } = classes;
 
-const navigateList = [
+// const navigateList = [
+//   {
+//     icon: BonusIcon,
+//     text: "Бонусы",
+//     url: "Бонусы"
+//   },
+//   {
+//     icon: TrainingIcon,
+//     text: "Обучение",
+//     url: "Обучение"
+//   },
+//   {
+//     icon: TestsIcon,
+//     text: "Тесты",
+//     url: "Тесты"
+//   },
+//   {
+//     icon: CommunityIcon,
+//     text: "Сообщество",
+//     url: "Сообщество"
+//   },
+//   {
+//     icon: TeamIcon,
+//     text: "Команда",
+//     url: "Команда"
+//   },
+//   {
+//     icon: NewsIcon,
+//     text: "Новости",
+//     url: "Новости"
+//   },
+//   {
+//     icon: AboutIcon,
+//     text: "О нас",
+//     url: "О нас"
+//   }
+// ]
+//
+const inputList = [
   {
-    icon: BonusIcon,
-    text: "Бонусы",
-    url: "Бонусы"
+    label: "text",
+    value: "test",
+    onChange: () => true
   },
   {
-    icon: TrainingIcon,
-    text: "Обучение",
-    url: "Обучение"
-  },
-  {
-    icon: TestsIcon,
-    text: "Тесты",
-    url: "Тесты"
-  },
-  {
-    icon: CommunityIcon,
-    text: "Сообщество",
-    url: "Сообщество"
-  },
-  {
-    icon: TeamIcon,
-    text: "Команда",
-    url: "Команда"
-  },
-  {
-    icon: NewsIcon,
-    text: "Новости",
-    url: "Новости"
-  },
-  {
-    icon: AboutIcon,
-    text: "О нас",
-    url: "О нас"
+    label: "text2",
+    value: "",
+    onChange: () => true
   }
 ]
 
@@ -53,7 +67,8 @@ export const Accordion = () => {
   return (
     <div className={root}>
       <ul className={accordion}>
-        {navigateList.map((item) => <AccordionItem item={item} key={item.url}/>)}
+        {/* {navigateList.map((item) => <AccordionItem item={item} key={item.url}/>)} */}
+        {inputList.map(({ label, value, onChange }) => <TextField label={label} value={value} onChange={onChange} />)}
       </ul>
     </div>
   )
