@@ -42,7 +42,6 @@ export const DateInput = forwardRef<HTMLInputElement, DateInputProps>((props, re
 
   useEffect(() => {
     if (date) {
-      console.log('date', date.toISOString())
       updateUserInfo({
         variables: {
           userInfoId,

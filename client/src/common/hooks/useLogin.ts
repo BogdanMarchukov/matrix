@@ -87,7 +87,6 @@ export const useLogin = () => {
       localStorage.setItem('jwt', userData.jwt);
     }
     if (userData?.user?.userInfo) {
-      console.log('userInfo:', userData.user.userInfo);
       setUserInfo(userData.user.userInfo);
     }
   }, [userData, setUserId, setUserInfo, setJwt]);
