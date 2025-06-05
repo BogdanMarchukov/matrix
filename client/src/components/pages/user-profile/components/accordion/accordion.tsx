@@ -50,25 +50,15 @@ const { root, accordion } = classes;
 //   }
 // ]
 //
-const inputList = [
-  {
-    label: "text",
-    value: "test",
-    onChange: () => true
-  },
-  {
-    label: "text2",
-    value: "",
-    onChange: () => true
-  }
-]
 
 export const Accordion = () => {
   return (
     <div className={root}>
       <ul className={accordion}>
         {/* {navigateList.map((item) => <AccordionItem item={item} key={item.url}/>)} */}
-        {inputList.map(({ label, value, onChange }) => <TextField label={label} value={value} onChange={onChange} />)}
+        <TextField type='text' label={"Место рождения"} />
+        <TextField max={24} type='number' label={'Час рождения'} />
+        <TextField type='number' label={'Минуты рождения'} />
       </ul>
     </div>
   )

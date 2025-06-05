@@ -1,14 +1,13 @@
-import { Avatar } from "../../atoms/avatar";
-import { useUserStore } from "../../../common/store/userStore";
 import { DEFAULT_USER_NAME } from "../../../common/constants";
-import classes from './user-profile.module.css'
+import { useUserStore } from "../../../common/store/userStore";
+import { Avatar } from "../../atoms/avatar";
 import { Accordion } from "./components/accordion";
-import { LinkPhone } from "./components/link-phone";
-import { Delivery } from "./components/delivery";
-import { Resale } from "./components/resale";
 import { BonusCount } from "./components/bonus-count";
 import { BonusInfo } from "./components/bonus-info";
-import TextField from "../../atoms/tixt-field/text-field";
+import { Delivery } from "./components/delivery";
+import { LinkPhone } from "./components/link-phone";
+import { Resale } from "./components/resale";
+import classes from './user-profile.module.css';
 
 const {
   userNameBox,
@@ -24,7 +23,6 @@ export const UserProfilePage = () => {
         <Avatar loading={false} url={avatarUrl || (firstName || DEFAULT_USER_NAME)?.[0]} />
         <p className={userName}>{firstName || DEFAULT_USER_NAME}</p>
         <div className={settingsBox}>
-          <TextField label="text" value="" onChange={() => true} />
           <Accordion />
           <BonusInfo />
           <BonusCount />
