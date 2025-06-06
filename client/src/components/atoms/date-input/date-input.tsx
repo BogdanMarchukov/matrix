@@ -27,7 +27,7 @@ export const DateInput = forwardRef<HTMLInputElement, DateInputProps>((props, re
     placeholder = 'ДД.ММ.ГГГГ',
     onFocus = () => { },
     onBlur = (e) => {
-      if (!date) {
+      if (!date && e.target.value) {
         setDate(new Date(e.target.value))
       }
     },
