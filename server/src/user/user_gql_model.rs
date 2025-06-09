@@ -1,3 +1,4 @@
+use crate::db_utils::get_connection_from_gql_ctx;
 use crate::entity::sea_orm_active_enums::UserRoleType;
 use crate::entity::users;
 use crate::errors::gql_error::GqlError;
@@ -7,7 +8,6 @@ use uuid::Uuid;
 
 use super::user_info_gql_model::UserInfoGqlModel;
 use super::user_info_service::find_by_user_id;
-use super::user_service;
 
 #[derive(Clone, Debug)]
 pub struct UserGqlModel {
@@ -28,8 +28,8 @@ pub struct User(pub UserGqlModel);
 #[Object]
 impl User {
     async fn user_info(&self, ctx: &Context<'_>) -> FieldResult<UserInfoGqlModel> {
-        let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
-        find_by_user_id(&self.0.user_id, request_user, &conn).await
+        let conn = get_connection_from_gql_ctx(ctx)?;
+        find_by_user_id(&self.0.user_id, &self, &conn).await
     }
 
     async fn user_id(&self) -> &Uuid {
