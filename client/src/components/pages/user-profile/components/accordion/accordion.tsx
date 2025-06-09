@@ -92,7 +92,7 @@ export const Accordion = () => {
       setMinOfBirth(data?.userInfo?.fundByUserId?.minOfBirth?.toString() || '');
 
     }
-  }, [loading, error, setHourOfBirth, setMinOfBirth, setCity, setHourOfBirth]);
+  }, [data, loading, error, setMinOfBirth, setCity, setHourOfBirth]);
 
   const handelClick = () => {
     setDisable((prev) => !prev)
