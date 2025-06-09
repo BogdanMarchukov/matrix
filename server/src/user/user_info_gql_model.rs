@@ -36,7 +36,7 @@ impl UserInfoGqlModel {
             city: user_info.city,
             date_of_birth: user_info.date_of_birth,
             hour_of_birth: user_info.hour_of_birth,
-            min_of_birth: user_info.hour_of_birth,
+            min_of_birth: user_info.min_of_birth,
             user_id: user_info.user_id,
         }
     }

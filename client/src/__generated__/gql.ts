@@ -19,6 +19,8 @@ const documents = {
     "\n  mutation SetNotifyIsRead($data: NotifyUpdateData!, $notifyId: UUID!) {\n    notify {\n      updateOne(data: $data, notifyId: $notifyId) {\n        notifyId\n      }\n    }\n  }\n": types.SetNotifyIsReadDocument,
     "\n      mutation UpdateOne($userInfoId: UUID!, $data: UserInfoUpdateInput!) {\n        userInfo {\n          updateOne(userInfoId: $userInfoId, data: $data) {\n            dateOfBirth\n            userInfoId\n          }\n        }\n      }\n": types.UpdateOneDocument,
     "\n  subscription NotifyDelay {\n  notifyDelay {\n    notifyId\n   }\n  }\n": types.NotifyDelayDocument,
+    "query GetUserInfoByUserId($userId: UUID!) {\n    userInfo {\n      fundByUserId(userId: $userId) {\n        city\n        dateOfBirth\n        hourOfBirth\n        minOfBirth\n      }\n    }\n  }\n": types.GetUserInfoByUserIdDocument,
+    "mutation UserInfoUpdateOne($userInfoId: UUID!, $data: UserInfoUpdateInput!) {\n    userInfo {\n      updateOne(userInfoId: $userInfoId, data: $data) {\n        city\n        dateOfBirth\n        hourOfBirth\n        minOfBirth\n    }\n  }\n}": types.UserInfoUpdateOneDocument,
 };
 
 /**
@@ -59,6 +61,14 @@ export function gql(source: "\n      mutation UpdateOne($userInfoId: UUID!, $dat
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  subscription NotifyDelay {\n  notifyDelay {\n    notifyId\n   }\n  }\n"): (typeof documents)["\n  subscription NotifyDelay {\n  notifyDelay {\n    notifyId\n   }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "query GetUserInfoByUserId($userId: UUID!) {\n    userInfo {\n      fundByUserId(userId: $userId) {\n        city\n        dateOfBirth\n        hourOfBirth\n        minOfBirth\n      }\n    }\n  }\n"): (typeof documents)["query GetUserInfoByUserId($userId: UUID!) {\n    userInfo {\n      fundByUserId(userId: $userId) {\n        city\n        dateOfBirth\n        hourOfBirth\n        minOfBirth\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "mutation UserInfoUpdateOne($userInfoId: UUID!, $data: UserInfoUpdateInput!) {\n    userInfo {\n      updateOne(userInfoId: $userInfoId, data: $data) {\n        city\n        dateOfBirth\n        hourOfBirth\n        minOfBirth\n    }\n  }\n}"): (typeof documents)["mutation UserInfoUpdateOne($userInfoId: UUID!, $data: UserInfoUpdateInput!) {\n    userInfo {\n      updateOne(userInfoId: $userInfoId, data: $data) {\n        city\n        dateOfBirth\n        hourOfBirth\n        minOfBirth\n    }\n  }\n}"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};
