@@ -28,12 +28,12 @@ pub async fn update_one(
     let user_info = user_info_repository::find_one_by_pk(user_info_id, conn).await?;
     user_info.check_role(&user)?;
     if let Some(hour) = data.hour_of_birth {
-        if !(0..24).contains(&hour) {
+        if !(0..25).contains(&hour) {
             return Err(GqlError::BadRequest(("hour_of_birth is not valid".to_string())).extend());
         }
     }
     if let Some(min) = data.min_of_birth {
-        if !(0..60).contains(&min) {
+        if !(0..61).contains(&min) {
             return Err(GqlError::BadRequest(("min_of_birth is not valid".to_string())).extend());
         }
     }
