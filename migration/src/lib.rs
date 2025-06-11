@@ -10,6 +10,7 @@ mod m20241103_104246_user_info_create;
 mod m20241103_182645_user_info_data_create;
 mod m20250610_173639_tariff_plan_create;
 mod m20250610_181858_user_tariff_plan_create;
+mod m20250611_191338_offer_create;
 
 pub struct Migrator;
 
@@ -27,6 +28,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20241103_182645_user_info_data_create::Migration),
             Box::new(m20250610_173639_tariff_plan_create::Migration),
             Box::new(m20250610_181858_user_tariff_plan_create::Migration),
+            Box::new(m20250611_191338_offer_create::Migration),
         ]
     }
 }
