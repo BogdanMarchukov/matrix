@@ -3,34 +3,18 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "user_tariff_plan")]
+#[sea_orm(table_name = "payment")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
-    pub user_tariff_plan_id: Uuid,
-    pub tariff_plan_id: Uuid,
+    pub payment_id: Uuid,
+    pub sum: Decimal,
     pub user_id: Uuid,
     pub created_at: DateTime,
-    pub expires_at: DateTime,
-    pub tariff_plan_payment_id: Uuid,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(
-        belongs_to = "super::tariff_plan::Entity",
-        from = "Column::TariffPlanId",
-        to = "super::tariff_plan::Column::TariffPlanId",
-        on_update = "NoAction",
-        on_delete = "NoAction"
-    )]
-    TariffPlan,
-    #[sea_orm(
-        belongs_to = "super::tariff_plan_payment::Entity",
-        from = "Column::TariffPlanPaymentId",
-        to = "super::tariff_plan_payment::Column::TariffPlanPaymentId",
-        on_update = "NoAction",
-        on_delete = "NoAction"
-    )]
+    #[sea_orm(has_many = "super::tariff_plan_payment::Entity")]
     TariffPlanPayment,
     #[sea_orm(
         belongs_to = "super::users::Entity",
@@ -40,12 +24,6 @@ pub enum Relation {
         on_delete = "NoAction"
     )]
     Users,
-}
-
-impl Related<super::tariff_plan::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::TariffPlan.def()
-    }
 }
 
 impl Related<super::tariff_plan_payment::Entity> for Entity {
