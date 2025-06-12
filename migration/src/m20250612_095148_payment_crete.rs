@@ -17,7 +17,7 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Payment::Sum).not_null().money())
+                    .col(ColumnDef::new(Payment::Sum).not_null().decimal())
                     .col(ColumnDef::new(Payment::UserId).not_null().uuid())
                     .col(
                         ColumnDef::new(Payment::CreatedAt)

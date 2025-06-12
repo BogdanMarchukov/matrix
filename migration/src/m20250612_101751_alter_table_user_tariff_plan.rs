@@ -10,11 +10,7 @@ impl MigrationTrait for Migration {
             .alter_table(
                 Table::alter()
                     .table(UserTariffPlan::Table)
-                    .add_column(
-                        ColumnDef::new(UserTariffPlan::TariffPlanPaymentId)
-                            .uuid()
-                            .not_null(),
-                    )
+                    .add_column(ColumnDef::new(UserTariffPlan::TariffPlanPaymentId).uuid())
                     .add_foreign_key(
                         TableForeignKey::new()
                             .name("fk-user-tariff-plan-payment-tariff-plan")

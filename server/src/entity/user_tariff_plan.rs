@@ -11,7 +11,7 @@ pub struct Model {
     pub user_id: Uuid,
     pub created_at: DateTime,
     pub expires_at: DateTime,
-    pub tariff_plan_payment_id: Uuid,
+    pub tariff_plan_payment_id: Option<Uuid>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

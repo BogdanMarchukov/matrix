@@ -24,7 +24,7 @@ impl MigrationTrait for Migration {
                             .string_len(50),
                     )
                     .col(ColumnDef::new(TariffPlan::Description).string())
-                    .col(ColumnDef::new(TariffPlan::Price).not_null().money())
+                    .col(ColumnDef::new(TariffPlan::Price).not_null().decimal())
                     .col(
                         ColumnDef::new(TariffPlan::ExpiryDays)
                             .integer()

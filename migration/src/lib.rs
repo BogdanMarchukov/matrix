@@ -14,6 +14,7 @@ mod m20250611_191338_offer_create;
 mod m20250612_095148_payment_crete;
 mod m20250612_100633_payment_tariff_plan_create;
 mod m20250612_101751_alter_table_user_tariff_plan;
+mod m20250612_110702_create_free_tariff_plan;
 
 pub struct Migrator;
 
@@ -35,6 +36,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20250612_095148_payment_crete::Migration),
             Box::new(m20250612_100633_payment_tariff_plan_create::Migration),
             Box::new(m20250612_101751_alter_table_user_tariff_plan::Migration),
+            Box::new(m20250612_110702_create_free_tariff_plan::Migration),
         ]
     }
 }

@@ -14,7 +14,7 @@ use sea_orm::DatabaseConnection;
 use secret::secret_service;
 use std::collections::HashMap;
 use tokio::sync::broadcast::{self};
-use user::user_gql_model::{UserGqlModel, User};
+use user::user_gql_model::{User, UserGqlModel};
 #[path = "auth/mod.rs"]
 mod auth;
 #[path = "common/config/config.rs"]
@@ -27,6 +27,7 @@ mod gql_schema;
 mod guards;
 #[path = "common/secret/mod.rs"]
 mod secret;
+mod tariff_plan;
 #[path = "user/mod.rs"]
 mod user;
 use crate::gql_schema::Mutation;

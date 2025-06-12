@@ -1,5 +1,5 @@
-use async_graphql::*;
 use async_graphql::Error;
+use async_graphql::*;
 
 #[derive(Debug, thiserror::Error)]
 pub enum GqlError {
