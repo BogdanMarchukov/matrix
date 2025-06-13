@@ -1,8 +1,6 @@
 use async_graphql::{ErrorExtensions, FieldResult};
 use chrono::{Duration, NaiveDateTime, Utc};
-use sea_orm::{
-    ColumnTrait, DatabaseConnection, DatabaseTransaction, EntityTrait, QueryFilter, Set,
-};
+use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, Set};
 use uuid::Uuid;
 
 use crate::{
@@ -13,10 +11,10 @@ use crate::{
 
 use super::user_tariff_plan_gql_model::UserTariffPlanGqlModel;
 
-pub async fn find_by_user_id(
-    user_id: Uuid,
-    conn: &DatabaseConnection,
-) -> FieldResult<Vec<UserTariffPlanGqlModel>> {
+pub async fn find_by_user_id<C>(user_id: Uuid, conn: &C) -> FieldResult<Vec<UserTariffPlanGqlModel>>
+where
+    C: ConnectionTrait,
+{
     if let Ok(result) = UserTariffPlan::find()
         .filter(user_tariff_plan::Column::UserId.eq(user_id))
         .filter(user_tariff_plan::Column::ExpiresAt.gte(chrono::Utc::now()))
@@ -32,11 +30,13 @@ pub async fn find_by_user_id(
     }
 }
 
-pub async fn find_or_create_free(
+pub async fn find_or_create_free<C>(
     user_id: Uuid,
-    conn: &DatabaseConnection,
-    trn: &DatabaseTransaction,
-) -> FieldResult<Vec<UserTariffPlanGqlModel>> {
+    conn: &C,
+) -> FieldResult<Vec<UserTariffPlanGqlModel>>
+where
+    C: ConnectionTrait,
+{
     let user_tariff_plans = find_by_user_id(user_id, conn).await?;
     if user_tariff_plans.len() == 0 {
         let free_tariff_plan = tariff_plan_repository::find_free_tariff_plan(conn).await?;
@@ -49,7 +49,7 @@ pub async fn find_or_create_free(
             ..Default::default()
         };
         let result: user_tariff_plan::Model = UserTariffPlan::insert(new_user_tariff_plan)
-            .exec_with_returning(trn)
+            .exec_with_returning(conn)
             .await?;
         Ok(vec![UserTariffPlanGqlModel::new(result)])
     } else {
