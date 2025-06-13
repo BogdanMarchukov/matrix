@@ -25,6 +25,7 @@ mod db_utils;
 mod gql_schema;
 #[path = "common/guards/mod.rs"]
 mod guards;
+mod offer;
 #[path = "common/secret/mod.rs"]
 mod secret;
 mod tariff_plan;

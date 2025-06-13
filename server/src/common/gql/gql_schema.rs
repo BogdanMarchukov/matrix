@@ -2,12 +2,13 @@ use crate::{
     auth::auth_gql::AuthMutation,
     newsletter::newsletter_gql::NewsletterMutation,
     notify::notify_gql::{NotifyMutation, NotifyQuery},
+    offer::offer_gql::{OfferMutation, OfferQuery},
     user::{
         user_gql::UserQuery,
         user_info_gql::{UserInfoMutation, UserInfoQuery},
     },
 };
-use async_graphql::{Enum, FieldResult, InputObject, Object};
+use async_graphql::{Enum, FieldResult, Object};
 
 pub struct Query;
 
@@ -38,6 +39,10 @@ impl Mutation {
     async fn user_info(&self) -> FieldResult<UserInfoMutation> {
         Ok(UserInfoMutation)
     }
+
+    async fn offer(&self) -> FieldResult<OfferMutation> {
+        Ok(OfferMutation)
+    }
 }
 
 #[Object]
@@ -52,5 +57,9 @@ impl Query {
 
     async fn user_info(&self) -> FieldResult<UserInfoQuery> {
         Ok(UserInfoQuery)
+    }
+
+    async fn offer(&self) -> FieldResult<OfferQuery> {
+        Ok(OfferQuery)
     }
 }
