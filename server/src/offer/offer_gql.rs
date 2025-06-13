@@ -38,7 +38,6 @@ impl OfferMutation {
         ctx: &Context<'ctx>,
         data: OfferCreateData,
     ) -> FieldResult<OfferGqlModel> {
-        println!("log");
         let conn = db_utils::get_connection_from_gql_ctx(ctx)?;
         offer_repository::create_one(data, &conn).await
     }
