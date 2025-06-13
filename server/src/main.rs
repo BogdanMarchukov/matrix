@@ -1,4 +1,6 @@
-use actix_web::{guard, web, App, Error, HttpRequest, HttpResponse, HttpServer};
+use actix_multipart::form::tempfile::{TempFile, TempFileConfig};
+use actix_multipart::form::MultipartForm;
+use actix_web::{guard, web, App, Error, HttpRequest, HttpResponse, HttpServer, Responder};
 use async_graphql::{http::GraphiQLSource, Schema};
 use async_graphql::{Data, ErrorExtensions};
 use async_graphql_actix_web::GraphQLSubscription;
@@ -6,9 +8,11 @@ use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use auth::auth_service;
 use errors::gql_error::GqlError;
 use gql_schema::Subscription;
+use guards::http_system_guard;
 use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
 use newsletter::newsletter_scheduler::newsletter_scheduler;
+use offer::uploader::save_file;
 use once_cell::sync::Lazy;
 use sea_orm::DatabaseConnection;
 use secret::secret_service;
@@ -159,6 +163,7 @@ async fn main() -> std::io::Result<()> {
     let host = config::get_host();
     let port = config::get_port();
     newsletter_scheduler().await;
+    std::fs::create_dir_all("./tmp")?;
     let pool: DatabaseConnection = get_pool().await;
     HttpServer::new(move || {
         let schema = Schema::build(Query, Mutation, Subscription).finish();
@@ -173,12 +178,19 @@ async fn main() -> std::io::Result<()> {
                 db: pool.to_owned(),
                 schema: schema.to_owned(),
             }))
+            .app_data(TempFileConfig::default().directory("./tmp"))
             .wrap(cors)
             .service(
                 web::resource("/gql")
                     .guard(guard::Get())
                     .guard(guard::Header("upgrade", "websocket"))
                     .to(index_ws),
+            )
+            .service(
+                web::resource("/offer")
+                    .guard(guard::Put())
+                    .guard(guard::fn_guard(http_system_guard::verify_api_key))
+                    .to(save_file),
             )
             .route("/gql", web::post().to(gql_index))
             .route("/gql", web::get().to(gql_playgound))

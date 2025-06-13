@@ -3,6 +3,7 @@
 */node_modules
 */client/node_modules
 */build
+/tmp*
 
 .env
 pgdata-telegramm
