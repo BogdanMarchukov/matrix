@@ -1,7 +1,10 @@
 use crate::entity::user_info;
 use crate::{entity::prelude::UserInfo, errors::gql_error::GqlError};
 use async_graphql::{ErrorExtensions, FieldResult};
-use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
+use sea_orm::{
+    ActiveModelTrait, ColumnTrait, DatabaseConnection, DatabaseTransaction, EntityTrait,
+    QueryFilter, Set,
+};
 use uuid::Uuid;
 
 use super::types::UserInfoUpdateInput;
@@ -62,7 +65,7 @@ pub async fn user_info_update_one(
     }
 }
 
-pub async fn create_one_by_user_id(user_id: Uuid, conn: &DatabaseConnection) -> FieldResult<bool> {
+pub async fn create_one_by_user_id(user_id: Uuid, conn: &DatabaseTransaction) -> FieldResult<bool> {
     let new_user_info = user_info::ActiveModel {
         user_info_id: Set(Uuid::new_v4()),
         user_id: Set(user_id),

@@ -18,7 +18,7 @@ impl UserInfoQuery {
         user_id: Uuid,
     ) -> FieldResult<UserInfoGqlModel> {
         let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
-        user_info_service::find_by_user_id(user_id, request_user, &conn).await
+        user_info_service::find_by_user_id(&user_id, &request_user, &conn).await
     }
 }
 

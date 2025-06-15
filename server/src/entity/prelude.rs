@@ -2,5 +2,10 @@
 
 pub use super::newsletter::Entity as Newsletter;
 pub use super::notify::Entity as Notify;
+pub use super::offer::Entity as Offer;
+pub use super::payment::Entity as Payment;
+pub use super::tariff_plan::Entity as TariffPlan;
+pub use super::tariff_plan_payment::Entity as TariffPlanPayment;
 pub use super::user_info::Entity as UserInfo;
+pub use super::user_tariff_plan::Entity as UserTariffPlan;
 pub use super::users::Entity as Users;

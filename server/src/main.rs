@@ -1,4 +1,6 @@
-use actix_web::{guard, web, App, Error, HttpRequest, HttpResponse, HttpServer};
+use actix_multipart::form::tempfile::{TempFile, TempFileConfig};
+use actix_multipart::form::MultipartForm;
+use actix_web::{guard, web, App, Error, HttpRequest, HttpResponse, HttpServer, Responder};
 use async_graphql::{http::GraphiQLSource, Schema};
 use async_graphql::{Data, ErrorExtensions};
 use async_graphql_actix_web::GraphQLSubscription;
@@ -6,15 +8,17 @@ use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use auth::auth_service;
 use errors::gql_error::GqlError;
 use gql_schema::Subscription;
+use guards::http_system_guard;
 use include_dir::{include_dir as include_d, Dir};
 use mime_guess::from_path;
 use newsletter::newsletter_scheduler::newsletter_scheduler;
+use offer::uploader::save_file;
 use once_cell::sync::Lazy;
 use sea_orm::DatabaseConnection;
 use secret::secret_service;
 use std::collections::HashMap;
 use tokio::sync::broadcast::{self};
-use user::user_gql_model::UserGqlModel;
+use user::user_gql_model::{User, UserGqlModel};
 #[path = "auth/mod.rs"]
 mod auth;
 #[path = "common/config/config.rs"]
@@ -25,8 +29,10 @@ mod db_utils;
 mod gql_schema;
 #[path = "common/guards/mod.rs"]
 mod guards;
+mod offer;
 #[path = "common/secret/mod.rs"]
 mod secret;
+mod tariff_plan;
 #[path = "user/mod.rs"]
 mod user;
 use crate::gql_schema::Mutation;
@@ -95,7 +101,7 @@ impl AppState {
 pub struct GqlCtx {
     pub db: DatabaseConnection,
     pub headers: HashMap<String, String>,
-    pub user: Option<UserGqlModel>,
+    pub user: Option<User>,
 }
 
 async fn gql_playgound() -> HttpResponse {
@@ -112,7 +118,7 @@ async fn index_ws(
     req: HttpRequest,
     payload: web::Payload,
 ) -> Result<HttpResponse, Error> {
-    GraphQLSubscription::new(app_data.schema.clone())
+    GraphQLSubscription::new(app_data.schema.to_owned())
         .on_connection_init(|value: serde_json::Value| async move {
             let mut data = Data::default();
             if let Some(auth_header) = value.get("Authorization") {
@@ -140,7 +146,7 @@ async fn gql_index(
     http_request: HttpRequest,
 ) -> GraphQLResponse {
     let (headers, user) = auth_service::get_user_from_request(&http_request, &app_data.db).await;
-    let schema = app_data.schema.clone();
+    let schema = app_data.schema.to_owned();
     let request = gql_request.into_inner().data(GqlCtx {
         db: app_data.db.to_owned(),
         headers,
@@ -157,6 +163,7 @@ async fn main() -> std::io::Result<()> {
     let host = config::get_host();
     let port = config::get_port();
     newsletter_scheduler().await;
+    std::fs::create_dir_all("./tmp")?;
     let pool: DatabaseConnection = get_pool().await;
     HttpServer::new(move || {
         let schema = Schema::build(Query, Mutation, Subscription).finish();
@@ -168,15 +175,22 @@ async fn main() -> std::io::Result<()> {
 
         App::new()
             .app_data(web::Data::new(AppState {
-                db: pool.clone(),
-                schema: schema.clone(),
+                db: pool.to_owned(),
+                schema: schema.to_owned(),
             }))
+            .app_data(TempFileConfig::default().directory("./tmp"))
             .wrap(cors)
             .service(
                 web::resource("/gql")
                     .guard(guard::Get())
                     .guard(guard::Header("upgrade", "websocket"))
                     .to(index_ws),
+            )
+            .service(
+                web::resource("/offer")
+                    .guard(guard::Put())
+                    .guard(guard::fn_guard(http_system_guard::verify_api_key))
+                    .to(save_file),
             )
             .route("/gql", web::post().to(gql_index))
             .route("/gql", web::get().to(gql_playgound))

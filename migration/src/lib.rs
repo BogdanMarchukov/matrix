@@ -8,6 +8,13 @@ mod m20240820_072759_create_newslatter;
 mod m20240904_151724_add_notify_type;
 mod m20241103_104246_user_info_create;
 mod m20241103_182645_user_info_data_create;
+mod m20250610_173639_tariff_plan_create;
+mod m20250610_181858_user_tariff_plan_create;
+mod m20250611_191338_offer_create;
+mod m20250612_095148_payment_crete;
+mod m20250612_100633_payment_tariff_plan_create;
+mod m20250612_101751_alter_table_user_tariff_plan;
+mod m20250612_110702_create_free_tariff_plan;
 
 pub struct Migrator;
 
@@ -23,6 +30,13 @@ impl MigratorTrait for Migrator {
             Box::new(m20240904_151724_add_notify_type::Migration),
             Box::new(m20241103_104246_user_info_create::Migration),
             Box::new(m20241103_182645_user_info_data_create::Migration),
+            Box::new(m20250610_173639_tariff_plan_create::Migration),
+            Box::new(m20250610_181858_user_tariff_plan_create::Migration),
+            Box::new(m20250611_191338_offer_create::Migration),
+            Box::new(m20250612_095148_payment_crete::Migration),
+            Box::new(m20250612_100633_payment_tariff_plan_create::Migration),
+            Box::new(m20250612_101751_alter_table_user_tariff_plan::Migration),
+            Box::new(m20250612_110702_create_free_tariff_plan::Migration),
         ]
     }
 }

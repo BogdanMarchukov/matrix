@@ -20,6 +20,10 @@ const LOGIN = gql(/* GraphQl */ `
           firstName
           lastName
           photoUrl
+            userInfo {
+              dateOfBirth
+              userInfoId
+            }
         }
       }
     }
@@ -36,6 +40,10 @@ const DEV_LOGIN = gql(/* GraphQl */ `
           firstName
           lastName
           photoUrl
+            userInfo {
+              dateOfBirth
+              userInfoId
+            }
         }
       }
     }
@@ -53,7 +61,7 @@ const getVariables = (isDev: boolean): UserLoginMutationVariables | UserDevLogin
 export const useLogin = () => {
   const { isDev } = useUIStore((state) => state);
   const LOGIN_QUERY = isDev ? DEV_LOGIN : LOGIN;
-  const { setUserId, setJwt } = useUserStore((state) => state);
+  const { setUserId, setJwt, setUserInfo } = useUserStore((state) => state);
 
   const [login, { loading, error, data }] = useMutation<
     UserLoginMutation | UserDevLoginMutation,
@@ -71,14 +79,17 @@ export const useLogin = () => {
     : (data?.auth as UserLoginMutation['auth'])?.login, [data, isDev]);
 
   useEffect(() => {
-    if (setUserId) {
+    if (userData?.user?.userId) {
       setUserId(userData?.user?.userId);
     }
     if (userData?.jwt) {
       setJwt(userData.jwt);
       localStorage.setItem('jwt', userData.jwt);
     }
-  }, [userData]);
+    if (userData?.user?.userInfo) {
+      setUserInfo(userData.user.userInfo);
+    }
+  }, [userData, setUserId, setUserInfo, setJwt]);
 
   return {
     data: userData,

@@ -1,4 +1,4 @@
-use super::user_gql_model::{UserGqlModel, UserRoleGqlType};
+use super::user_gql_model::{UserGqlModel, User, UserRoleGqlType};
 use crate::entity::user_info;
 use crate::errors::gql_error::GqlError;
 use async_graphql::*;
@@ -18,11 +18,11 @@ pub struct UserInfoGqlModel {
 }
 
 impl UserInfoGqlModel {
-    pub fn check_role(&self, user: &UserGqlModel) -> FieldResult<&Self> {
-        let allowed = match &user.role {
+    pub fn check_role(&self, user: &User) -> FieldResult<&Self> {
+        let allowed = match &user.0.role {
             UserRoleGqlType::Owner => true,
             UserRoleGqlType::Admin => true,
-            UserRoleGqlType::Member => &self.user_id == &user.user_id,
+            UserRoleGqlType::Member => &self.user_id == &user.0.user_id,
         };
         if allowed {
             return Ok(&self);
@@ -36,7 +36,7 @@ impl UserInfoGqlModel {
             city: user_info.city,
             date_of_birth: user_info.date_of_birth,
             hour_of_birth: user_info.hour_of_birth,
-            min_of_birth: user_info.hour_of_birth,
+            min_of_birth: user_info.min_of_birth,
             user_id: user_info.user_id,
         }
     }

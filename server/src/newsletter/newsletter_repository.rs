@@ -28,7 +28,7 @@ pub async fn find_by_id(
     newsletter_id: &Uuid,
     conn: &DatabaseConnection,
 ) -> Option<newsletter::Model> {
-    let result = newsletter::Entity::find_by_id(newsletter_id.clone())
+    let result = newsletter::Entity::find_by_id(newsletter_id.to_owned())
         .one(conn)
         .await;
     match result {

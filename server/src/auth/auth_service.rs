@@ -1,12 +1,14 @@
 use std::collections::HashMap;
+use std::fmt::Debug;
 
 use super::auth_gql::LoginResult;
+use crate::db_utils::get_transaction;
 use crate::entity::users;
 use crate::errors::gql_error::GqlError;
 use crate::secret::secret_service;
 use crate::secret::secret_service::JwtPayload;
-use crate::user::user_gql_model::UserGqlModel;
-use crate::user::{user_info_repository, user_repository};
+use crate::user::user_gql_model::{User, UserGqlModel};
+use crate::user::{user_info_repository, user_repository, user_tariff_plan_repository};
 use crate::{auth::web_app_data::InitDataTgWebApp, secret};
 use actix_web::HttpRequest;
 use async_graphql::{ErrorExtensions, FieldResult};
@@ -42,13 +44,16 @@ pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<
             Some(v) => v,
             None => match user_repository::create_one_by_tg(init_user, conn).await {
                 Ok(data) => {
-                    user_info_repository::create_one_by_user_id(data.user_id, conn).await?;
+                    let trn = get_transaction().await;
+                    user_info_repository::create_one_by_user_id(data.0.user_id, &trn).await?;
+                    user_tariff_plan_repository::find_or_create_free(data.0.user_id, conn).await?;
+                    trn.commit().await?;
                     data
                 }
                 Err(err) => return Err(GqlError::ServerError(format!("{}", err)).extend()),
             },
         };
-        let jwt = match secret::secret_service::create_jwt(user.user_id.to_string()) {
+        let jwt = match secret::secret_service::create_jwt(user.0.user_id.to_string()) {
             Ok(data) => data,
             Err(err) => return Err(GqlError::ServerError(format!("{}", err)).extend()),
         };
@@ -60,7 +65,7 @@ pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<
 
 pub async fn dev_login(user_id: Uuid, conn: &DatabaseConnection) -> FieldResult<LoginResult> {
     if let Ok(Some(user)) = user_repository::find_by_id(&user_id.to_string(), conn).await {
-        let jwt = match secret::secret_service::create_jwt(user.user_id.to_string()) {
+        let jwt = match secret::secret_service::create_jwt(user.0.user_id.to_string()) {
             Ok(data) => data,
             Err(err) => return Err(GqlError::ServerError(format!("{}", err)).extend()),
         };
@@ -73,7 +78,7 @@ pub async fn dev_login(user_id: Uuid, conn: &DatabaseConnection) -> FieldResult<
 pub async fn get_user_from_request(
     http_request: &HttpRequest,
     conn: &DatabaseConnection,
-) -> (HashMap<String, String>, Option<UserGqlModel>) {
+) -> (HashMap<String, String>, Option<User>) {
     let mut headers: HashMap<String, String> = HashMap::new();
     for (key, value) in http_request.headers().iter() {
         headers.insert(

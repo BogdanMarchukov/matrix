@@ -4,6 +4,11 @@ pub mod prelude;
 
 pub mod newsletter;
 pub mod notify;
+pub mod offer;
+pub mod payment;
 pub mod sea_orm_active_enums;
+pub mod tariff_plan;
+pub mod tariff_plan_payment;
 pub mod user_info;
+pub mod user_tariff_plan;
 pub mod users;

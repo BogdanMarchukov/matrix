@@ -1,8 +1,7 @@
 use crate::{
-    entity::notify,
-    entity::sea_orm_active_enums::NotifyTypeEnum,
+    entity::{notify, sea_orm_active_enums::NotifyTypeEnum},
     errors::gql_error::GqlError,
-    user::user_gql_model::{UserGqlModel, UserRoleGqlType},
+    user::user_gql_model::{UserGqlModel, User, UserRoleGqlType},
 };
 use async_graphql::*;
 use chrono::{DateTime, Utc};
@@ -39,11 +38,11 @@ impl NotifyGqlModel {
         }
     }
 
-    pub fn check_role(&self, user: &UserGqlModel) -> FieldResult<&Self> {
-        let allowed = match user.role {
+    pub fn check_role(&self, user: &User) -> FieldResult<&Self> {
+        let allowed = match user.0.role {
             UserRoleGqlType::Owner => true,
             UserRoleGqlType::Admin => true,
-            UserRoleGqlType::Member => self.user_id == user.user_id,
+            UserRoleGqlType::Member => self.user_id == user.0.user_id,
         };
         if allowed {
             return Ok(self);
