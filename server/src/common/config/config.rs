@@ -47,3 +47,13 @@ pub fn get_node_env() -> String {
     dotenv().ok();
     std::env::var("NODE_ENV").expect("NODE_ENV must be set")
 }
+
+pub fn get_minio_access_secret_key() -> String {
+    dotenv().ok();
+    std::env::var("AWS_SECRET_ACCESS_KEY").expect("AWS_SECRET_ACCESS_KEY must be set")
+}
+
+pub fn get_minio_access_key() -> String {
+    dotenv().ok();
+    std::env::var("AWS_ACCESS_KEY_ID").expect("AWS_ACCESS_KEY_ID must be set")
+}

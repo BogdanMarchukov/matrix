@@ -1,7 +1,6 @@
-use actix_multipart::form::tempfile::{TempFile, TempFileConfig};
-use actix_multipart::form::MultipartForm;
+use actix_multipart::form::tempfile::TempFileConfig;
 use actix_web::{guard, web, App, Error, HttpRequest, HttpResponse, HttpServer, Responder};
-use async_graphql::{http::GraphiQLSource, Schema};
+use async_graphql::Schema;
 use async_graphql::{Data, ErrorExtensions};
 use async_graphql_actix_web::GraphQLSubscription;
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
@@ -14,11 +13,13 @@ use mime_guess::from_path;
 use newsletter::newsletter_scheduler::newsletter_scheduler;
 use offer::uploader::save_file;
 use once_cell::sync::Lazy;
+#[path = "common/s3/mod.rs"]
+mod s3;
 use sea_orm::DatabaseConnection;
 use secret::secret_service;
 use std::collections::HashMap;
 use tokio::sync::broadcast::{self};
-use user::user_gql_model::{User, UserGqlModel};
+use user::user_gql_model::User;
 #[path = "auth/mod.rs"]
 mod auth;
 #[path = "common/config/config.rs"]
