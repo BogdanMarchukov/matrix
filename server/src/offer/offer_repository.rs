@@ -1,5 +1,7 @@
 use async_graphql::{ErrorExtensions, FieldResult};
-use sea_orm::{ConnectionTrait, EntityTrait, Order, QueryOrder, QuerySelect, Set};
+use sea_orm::{
+    ActiveModelTrait, ConnectionTrait, EntityTrait, Order, QueryOrder, QuerySelect, Set,
+};
 use uuid::Uuid;
 
 use crate::{
@@ -8,6 +10,37 @@ use crate::{
 };
 
 use super::{offer_gql::OfferCreateData, offer_gql_model::OfferGqlModel};
+
+pub async fn find_by_pk<C>(offer_id: Uuid, conn: &C) -> FieldResult<OfferGqlModel>
+where
+    C: ConnectionTrait,
+{
+    if let Ok(Some(offer)) = Offer::find_by_id(offer_id).one(conn).await {
+        Ok(OfferGqlModel::new(offer))
+    } else {
+        Err(GqlError::NotFound("offer not found".to_string()).extend())
+    }
+}
+
+pub async fn update_img_by_pk<C>(
+    offer_id: Uuid,
+    url: String,
+    conn: &C,
+) -> FieldResult<OfferGqlModel>
+where
+    C: ConnectionTrait,
+{
+    if let Ok(Some(find_offer)) = Offer::find_by_id(offer_id).one(conn).await {
+        let mut updated: offer::ActiveModel = find_offer.into();
+        updated.img = Set(Some(url));
+        match updated.update(conn).await {
+            Ok(up_offer) => return Ok(OfferGqlModel::new(up_offer)),
+            Err(_) => return Err(GqlError::ServerError("update offer error".to_string()).extend()),
+        };
+    } else {
+        Err(GqlError::NotFound("offer not found".to_string()).extend())
+    }
+}
 
 pub async fn find_many<C>(
     conn: &C,
