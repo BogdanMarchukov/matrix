@@ -7,7 +7,6 @@ use uuid::Uuid;
 use crate::{
     entity::{offer, prelude::Offer},
     errors::gql_error::GqlError,
-    notify,
 };
 
 use super::{offer_gql::OfferCreateData, offer_gql_model::OfferGqlModel};
