@@ -1,5 +1,5 @@
 use actix_multipart::form::tempfile::TempFileConfig;
-use actix_web::{guard, web, App, Error, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web::{guard, web, App, Error, HttpRequest, HttpResponse, HttpServer};
 use async_graphql::Schema;
 use async_graphql::{Data, ErrorExtensions};
 use async_graphql_actix_web::GraphQLSubscription;
@@ -188,7 +188,7 @@ async fn main() -> std::io::Result<()> {
                     .to(index_ws),
             )
             .service(
-                web::resource("/offer")
+                web::resource("/offer/{offer_id}/upload")
                     .guard(guard::Put())
                     .guard(guard::fn_guard(http_system_guard::verify_api_key))
                     .to(save_file),

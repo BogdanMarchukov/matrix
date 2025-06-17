@@ -66,6 +66,11 @@ impl PublicBucket {
         }
     }
 
+    pub fn get_name() -> String {
+        let name: &str = BucketNames::PUBLIC.into();
+        name.to_string()
+    }
+
     fn new() -> Self {
         Self {
             ..Default::default()

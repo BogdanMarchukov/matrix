@@ -2268,6 +2268,7 @@ dependencies = [
  "async-graphql-actix-web",
  "chrono",
  "cron",
+ "derive_more 2.0.1",
  "dotenv",
  "hex",
  "hmac",
