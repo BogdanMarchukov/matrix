@@ -1,5 +1,23 @@
 use dotenv::dotenv;
 
+pub struct S3Config {
+    pub root_user: String,
+    pub root_password: String,
+    pub endpoint: String,
+}
+
+impl S3Config {
+    pub fn new() -> Self {
+        dotenv().ok();
+        Self {
+            root_user: std::env::var("MINIO_ROOT_USER").expect("MINIO_ROOT_USER must be set"),
+            root_password: std::env::var("MINIO_ROOT_PASSWORD")
+                .expect("MINIO_ROOT_PASSWORD must be set"),
+            endpoint: std::env::var("MINIO_ENDPOINT").expect("MINIO_ENDPOINT must be set"),
+        }
+    }
+}
+
 pub fn get_port() -> u16 {
     dotenv().ok();
     let mut port = 3000;
@@ -46,14 +64,4 @@ pub fn get_api_key() -> String {
 pub fn get_node_env() -> String {
     dotenv().ok();
     std::env::var("NODE_ENV").expect("NODE_ENV must be set")
-}
-
-pub fn get_minio_access_secret_key() -> String {
-    dotenv().ok();
-    std::env::var("AWS_SECRET_ACCESS_KEY").expect("AWS_SECRET_ACCESS_KEY must be set")
-}
-
-pub fn get_minio_access_key() -> String {
-    dotenv().ok();
-    std::env::var("AWS_ACCESS_KEY_ID").expect("AWS_ACCESS_KEY_ID must be set")
 }

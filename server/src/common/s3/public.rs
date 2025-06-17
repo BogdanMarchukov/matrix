@@ -2,27 +2,36 @@ use s3::{creds::Credentials, error::S3Error, Bucket, BucketConfiguration, Region
 use sea_orm::strum;
 use tokio::fs::File;
 
+use crate::config::S3Config;
+
 pub struct PublicBucket {
     bucket: Result<Bucket, S3Error>,
 }
 
 #[derive(strum::IntoStaticStr)]
-pub enum BucketNames {
+#[strum(serialize_all = "lowercase")]
+enum BucketNames {
     PUBLIC,
 }
 
 impl Default for PublicBucket {
     fn default() -> Self {
+        let s3_config = S3Config::new();
         let region = Region::Custom {
             region: "".to_string(),
-            endpoint: "http://127.0.0.1:9000".to_string(), // Используем локальный адрес
+            endpoint: s3_config.endpoint,
         };
 
-        let credentials =
-            Credentials::new(Some("root-user"), Some("root-password"), None, None, None)
-                .expect("Failed to create credentials");
+        let credentials = Credentials::new(
+            Some(&s3_config.root_user),
+            Some(&s3_config.root_password),
+            None,
+            None,
+            None,
+        )
+        .expect("Failed to create credentials");
 
-        match Bucket::new("public", region, credentials) {
+        match Bucket::new(BucketNames::PUBLIC.into(), region, credentials) {
             Ok(bucket) => Self {
                 bucket: Ok(*bucket.with_path_style()),
             },
@@ -33,15 +42,22 @@ impl Default for PublicBucket {
         }
     }
 }
+
 impl PublicBucket {
     pub async fn put_object(fs_path: &String, s3_path: &String) -> Result<bool, S3Error> {
         if let Ok(bucket) = PublicBucket::new().bucket {
-            println!("bucket: {:?}", bucket);
             let mut file_stream = File::open(fs_path).await?;
-            bucket.put_object_stream(&mut file_stream, s3_path).await?;
-            Ok(true)
+            match bucket.put_object_stream(&mut file_stream, s3_path).await {
+                Ok(_) => Ok(true),
+                Err(_) => {
+                    let new_bucket = PublicBucket::create_bucket().await?;
+                    let mut file_stream = File::open(fs_path).await?;
+                    let bucket = new_bucket.bucket?;
+                    bucket.put_object_stream(&mut file_stream, s3_path).await?;
+                    Ok(true)
+                }
+            }
         } else {
-            println!("log2");
             let new_bucket = PublicBucket::create_bucket().await?;
             let mut file_stream = File::open(fs_path).await?;
             let bucket = new_bucket.bucket?;
@@ -57,13 +73,23 @@ impl PublicBucket {
     }
 
     async fn create_bucket() -> Result<Self, S3Error> {
-        println!("log3");
-        let bucket_name: &str = BucketNames::PUBLIC.into();
-        let region = Region::UsEast1;
-        let credentials = Credentials::default()?;
-        let config = BucketConfiguration::default();
+        let s3_config = S3Config::new();
+        let region = Region::Custom {
+            region: "".to_string(),
+            endpoint: s3_config.endpoint,
+        };
+
+        let credentials = Credentials::new(
+            Some(&s3_config.root_user),
+            Some(&s3_config.root_password),
+            None,
+            None,
+            None,
+        )?;
+        let config = BucketConfiguration::public();
         let create_bucket_response =
-            Bucket::create(bucket_name, region, credentials, config).await?;
+            Bucket::create_with_path_style(BucketNames::PUBLIC.into(), region, credentials, config)
+                .await?;
         Ok(Self {
             bucket: Ok(*create_bucket_response.bucket),
         })
