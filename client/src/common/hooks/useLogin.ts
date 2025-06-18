@@ -52,7 +52,7 @@ const DEV_LOGIN = gql(/* GraphQl */ `
 
 const getVariables = (isDev: boolean): UserLoginMutationVariables | UserDevLoginMutationVariables => {
   if (isDev) {
-    return { data: { userId: 'afc79ab8-6dc8-4eea-baa7-6a98f48ade92' } };
+    return { data: { userId: '662f5b88-d8b3-4c24-943e-1df4adfe50be' } };
   } else {
     return { data: { initData: window?.Telegram?.WebApp?.initData } };
   }

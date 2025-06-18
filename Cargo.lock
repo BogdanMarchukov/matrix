@@ -2276,8 +2276,11 @@ dependencies = [
  "jsonwebtoken",
  "migration",
  "mime_guess",
+ "num-traits",
  "once_cell",
  "rust-s3",
+ "rust_decimal",
+ "rust_decimal_macros",
  "sea-orm",
  "serde",
  "serde_json",
@@ -3166,6 +3169,16 @@ dependencies = [
  "rkyv",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "rust_decimal_macros"
+version = "1.37.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f6268b74858287e1a062271b988a0c534bf85bbeb567fe09331bf40ed78113d5"
+dependencies = [
+ "quote",
+ "syn 2.0.68",
 ]
 
 [[package]]
