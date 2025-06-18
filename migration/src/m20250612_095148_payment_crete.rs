@@ -23,7 +23,7 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(Payment::CreatedAt)
                             .not_null()
                             .date_time()
-                            .default(Expr::current_date()),
+                            .default(Expr::current_timestamp()),
                     )
                     .foreign_key(
                         ForeignKey::create()
