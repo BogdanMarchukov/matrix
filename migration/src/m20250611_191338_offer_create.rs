@@ -29,7 +29,7 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(Offer::CreatedAt)
                             .not_null()
                             .date_time()
-                            .default(Expr::current_date()),
+                            .default(Expr::current_timestamp()),
                     )
                     .col(ColumnDef::new(Offer::Img).string_len(100))
                     .to_owned(),

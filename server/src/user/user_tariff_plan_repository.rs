@@ -11,12 +11,15 @@ use crate::{
 
 use super::user_tariff_plan_gql_model::UserTariffPlanGqlModel;
 
-pub async fn find_by_user_id<C>(user_id: Uuid, conn: &C) -> FieldResult<Vec<UserTariffPlanGqlModel>>
+pub async fn find_by_user_id<C>(
+    user_id: &Uuid,
+    conn: &C,
+) -> FieldResult<Vec<UserTariffPlanGqlModel>>
 where
     C: ConnectionTrait,
 {
     if let Ok(result) = UserTariffPlan::find()
-        .filter(user_tariff_plan::Column::UserId.eq(user_id))
+        .filter(user_tariff_plan::Column::UserId.eq(user_id.to_owned()))
         .filter(user_tariff_plan::Column::ExpiresAt.gte(chrono::Utc::now()))
         .all(conn)
         .await
@@ -37,7 +40,7 @@ pub async fn find_or_create_free<C>(
 where
     C: ConnectionTrait,
 {
-    let user_tariff_plans = find_by_user_id(user_id, conn).await?;
+    let user_tariff_plans = find_by_user_id(&user_id, conn).await?;
     if user_tariff_plans.len() == 0 {
         let free_tariff_plan = tariff_plan_repository::find_free_tariff_plan(conn).await?;
         let exp = Utc::now() + Duration::days(free_tariff_plan.expiry_days.into());

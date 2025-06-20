@@ -29,7 +29,7 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(Notify::CreatedAt)
                             .date_time()
                             .not_null()
-                            .default(Expr::current_date()),
+                            .default(Expr::current_timestamp()),
                     )
                     .col(ColumnDef::new(Notify::UserId).uuid().not_null())
                     .foreign_key(

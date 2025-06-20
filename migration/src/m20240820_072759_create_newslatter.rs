@@ -21,7 +21,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Newsletter::Title).string().not_null())
                     .col(ColumnDef::new(Newsletter::IsPublished).boolean().not_null().default(false))
                     .col(ColumnDef::new(Newsletter::Payload).string().not_null())
-                    .col(ColumnDef::new(Newsletter::CreatedAt).date_time().not_null().default(Expr::current_date()))
+                    .col(ColumnDef::new(Newsletter::CreatedAt).date_time().not_null().default(Expr::current_timestamp()))
                     .col(ColumnDef::new(Newsletter::PublishAt).date_time().not_null())
                     .to_owned(),
             )

@@ -1,6 +1,7 @@
+use crate::auth::auth_service::get_user_from_request;
 use crate::db_utils::get_connection_from_gql_ctx;
 use crate::entity::sea_orm_active_enums::UserRoleType;
-use crate::entity::users;
+use crate::entity::{user_tariff_plan, users};
 use crate::errors::gql_error::GqlError;
 use async_graphql::FieldResult;
 use async_graphql::*;
@@ -8,6 +9,9 @@ use uuid::Uuid;
 
 use super::user_info_gql_model::UserInfoGqlModel;
 use super::user_info_service::find_by_user_id;
+use super::user_service::get_auth_user_from_ctx;
+use super::user_tariff_plan_gql_model::UserTariffPlanGqlModel;
+use super::user_tariff_plan_repository;
 
 #[derive(Clone, Debug)]
 pub struct UserGqlModel {
@@ -66,6 +70,23 @@ impl User {
 
     async fn role(&self) -> &UserRoleGqlType {
         &self.0.role
+    }
+
+    async fn user_tariff_plan(
+        &self,
+        ctx: &Context<'_>,
+    ) -> FieldResult<Vec<UserTariffPlanGqlModel>> {
+        let (user, conn) = get_auth_user_from_ctx(ctx)?;
+        if let Ok(user_tariff_plans) =
+            user_tariff_plan_repository::find_by_user_id(&self.0.user_id, &conn).await
+        {
+            for us in user_tariff_plans.iter() {
+                us.check_role(&user)?;
+            }
+            Ok(user_tariff_plans)
+        } else {
+            Err(GqlError::ServerError("get user tariff plan error".to_string()).extend())
+        }
     }
 }
 
