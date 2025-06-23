@@ -91,6 +91,8 @@ export type Mutation = {
   auth: AuthMutation;
   newsletter: NewsletterMutation;
   notify: NotifyMutation;
+  offer: OfferMutation;
+  tariffPlan: TariffPlanMutation;
   userInfo: UserInfoMutation;
 };
 
@@ -182,9 +184,44 @@ export type NotifyUpdateData = {
   isRead: Scalars['Boolean']['input'];
 };
 
+export type Offer = {
+  __typename?: 'Offer';
+  createdAt: Scalars['DateTime']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  img?: Maybe<Scalars['String']['output']>;
+  isActive: Scalars['Boolean']['output'];
+  offerId: Scalars['UUID']['output'];
+  tariffIds: Array<Scalars['UUID']['output']>;
+  title: Scalars['String']['output'];
+};
+
+export type OfferCreateData = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  img?: InputMaybe<Scalars['String']['input']>;
+  isActive: Scalars['Boolean']['input'];
+  tariffIds: Array<Scalars['UUID']['input']>;
+  title: Scalars['String']['input'];
+};
+
+export type OfferMutation = {
+  __typename?: 'OfferMutation';
+  createOne: Offer;
+};
+
+
+export type OfferMutationCreateOneArgs = {
+  data: OfferCreateData;
+};
+
+export type OfferQuery = {
+  __typename?: 'OfferQuery';
+  findMany: Array<Offer>;
+};
+
 export type Query = {
   __typename?: 'Query';
   notify: NotifyQuery;
+  offer: OfferQuery;
   user: UserQuery;
   userInfo: UserInfoQuery;
 };
@@ -200,6 +237,32 @@ export type Subscription = {
   notifyDelay: NotifySub;
 };
 
+export type TariffPlan = {
+  __typename?: 'TariffPlan';
+  description?: Maybe<Scalars['String']['output']>;
+  expiryDays: Scalars['Int']['output'];
+  price: Scalars['Float']['output'];
+  tariffPlanId: Scalars['UUID']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type TariffPlanCreateData = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  expiryDays: Scalars['Int']['input'];
+  price: Scalars['Float']['input'];
+  title: Scalars['String']['input'];
+};
+
+export type TariffPlanMutation = {
+  __typename?: 'TariffPlanMutation';
+  createOne: TariffPlan;
+};
+
+
+export type TariffPlanMutationCreateOneArgs = {
+  data: TariffPlanCreateData;
+};
+
 export type User = {
   __typename?: 'User';
   firstName?: Maybe<Scalars['String']['output']>;
@@ -211,6 +274,7 @@ export type User = {
   telegramId: Scalars['Int']['output'];
   userId: Scalars['UUID']['output'];
   userInfo: UserInfo;
+  userTariffPlan: Array<UserTariffPlan>;
   username?: Maybe<Scalars['String']['output']>;
 };
 
@@ -268,6 +332,16 @@ export enum UserRoleType {
   Owner = 'OWNER'
 }
 
+export type UserTariffPlan = {
+  __typename?: 'UserTariffPlan';
+  createdAt: Scalars['DateTime']['output'];
+  expiresAt: Scalars['DateTime']['output'];
+  tariffPlanId: Scalars['UUID']['output'];
+  tariffPlanPaymentId?: Maybe<Scalars['UUID']['output']>;
+  userId: Scalars['UUID']['output'];
+  userTariffPlanId: Scalars['UUID']['output'];
+};
+
 export type UserLoginMutationVariables = Exact<{
   data: LoginInput;
 }>;
@@ -311,6 +385,11 @@ export type NotifyDelaySubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 export type NotifyDelaySubscription = { __typename?: 'Subscription', notifyDelay: { __typename?: 'NotifySub', notifyId: any } };
 
+export type FindManyQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindManyQuery = { __typename?: 'Query', offer: { __typename?: 'OfferQuery', findMany: Array<{ __typename?: 'Offer', img?: string | null, offerId: any, title: string, tariffIds: Array<any>, description?: string | null }> } };
+
 export type GetUserInfoByUserIdQueryVariables = Exact<{
   userId: Scalars['UUID']['input'];
 }>;
@@ -333,5 +412,6 @@ export const GetAllNotifyDocument = {"kind":"Document","definitions":[{"kind":"O
 export const SetNotifyIsReadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetNotifyIsRead"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"NotifyUpdateData"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"notifyId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notify"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOne"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}},{"kind":"Argument","name":{"kind":"Name","value":"notifyId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"notifyId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notifyId"}}]}}]}}]}}]} as unknown as DocumentNode<SetNotifyIsReadMutation, SetNotifyIsReadMutationVariables>;
 export const UpdateOneDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateOne"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userInfoId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserInfoUpdateInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOne"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userInfoId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userInfoId"}}},{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"userInfoId"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateOneMutation, UpdateOneMutationVariables>;
 export const NotifyDelayDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"NotifyDelay"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notifyDelay"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notifyId"}}]}}]}}]} as unknown as DocumentNode<NotifyDelaySubscription, NotifyDelaySubscriptionVariables>;
+export const FindManyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindMany"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"offer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findMany"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"img"}},{"kind":"Field","name":{"kind":"Name","value":"offerId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"tariffIds"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]}}]} as unknown as DocumentNode<FindManyQuery, FindManyQueryVariables>;
 export const GetUserInfoByUserIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserInfoByUserId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fundByUserId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"hourOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"minOfBirth"}}]}}]}}]}}]} as unknown as DocumentNode<GetUserInfoByUserIdQuery, GetUserInfoByUserIdQueryVariables>;
 export const UserInfoUpdateOneDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UserInfoUpdateOne"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userInfoId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserInfoUpdateInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOne"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userInfoId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userInfoId"}}},{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"hourOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"minOfBirth"}}]}}]}}]}}]} as unknown as DocumentNode<UserInfoUpdateOneMutation, UserInfoUpdateOneMutationVariables>;

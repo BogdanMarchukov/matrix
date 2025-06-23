@@ -1,10 +1,11 @@
-use async_graphql::SimpleObject;
+use async_graphql::{ComplexObject, FieldResult, SimpleObject};
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
-use crate::entity::offer;
+use crate::{config::S3Config, entity::offer};
 
 #[derive(Clone, SimpleObject)]
+#[graphql(complex)]
 #[graphql(name = "Offer")]
 pub struct OfferGqlModel {
     pub offer_id: Uuid,
@@ -13,7 +14,18 @@ pub struct OfferGqlModel {
     pub tariff_ids: Vec<Uuid>,
     pub is_active: bool,
     pub created_at: DateTime<Utc>,
-    pub img: Option<String>,
+    img_url: Option<String>,
+}
+
+#[ComplexObject]
+impl OfferGqlModel {
+    async fn img(&self) -> Option<String> {
+        let config = S3Config::new();
+        match &self.img_url {
+            Some(img) => Some(format!("{}/{}", config.endpoint, img.to_owned())),
+            None => None,
+        }
+    }
 }
 
 impl OfferGqlModel {
@@ -25,7 +37,7 @@ impl OfferGqlModel {
             tariff_ids: offer.tariff_ids,
             is_active: offer.is_active,
             created_at: DateTime::<Utc>::from_naive_utc_and_offset(offer.created_at, Utc),
-            img: offer.img,
+            img_url: offer.img,
         }
     }
 }
