@@ -78,6 +78,7 @@ where
         is_active: Set(data.is_active),
         title: Set(data.title),
         tariff_ids: Set(data.tariff_ids),
+        description: Set(data.description),
         ..Default::default()
     };
     if let Ok(result) = offer::Entity::insert(new_offer)
