@@ -1,0 +1,26 @@
+.root {
+  width: 100%;
+  border-radius: var(--spaces-smm);
+  padding: var(--spaces-md);
+  background-color: var(--color-bg-dark);
+  z-index: 10;
+  position: absolute;
+}
+
+.root>h1 {
+  text-align: center;
+}
+
+.imageWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spaces-md);
+}
+
+.image {
+  border-radius: 16px;
+  box-shadow: 0 0 20px 5px rgba(255, 0, 255, 0.4), 
+              0 0 40px 10px rgba(0, 255, 255, 0.3); /* Эффект свечения */
+  max-width: 100%;
+  height: auto;
+}
