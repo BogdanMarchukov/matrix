@@ -25,7 +25,7 @@ const OFFER_GET_ALL = gql(/* GraphQl */ `
 
 export const Products = () => {
   const { userId } = useUserStore((state) => state);
-  const { error, data, loading } = useQuery(OFFER_GET_ALL, { skip: !userId })
+  const { data } = useQuery(OFFER_GET_ALL, { skip: !userId })
   const offer = useMemo(() => data?.offer?.findMany || [], [data])
 
   return (
