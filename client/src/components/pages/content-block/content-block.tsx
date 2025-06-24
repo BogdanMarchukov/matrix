@@ -4,7 +4,6 @@ import { useUserStore } from '../../../common/store/userStore';
 import classes from './content-block.module.css';
 import matrixImg from './img/content-img.png';
 import { useMemo } from 'react';
-import { UserTariffPlan } from '../../../__generated__/graphql';
 import { Puff } from 'react-loader-spinner';
 
 const { root, imageWrapper, image, loader } = classes;
