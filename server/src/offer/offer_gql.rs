@@ -28,6 +28,16 @@ impl OfferQuery {
         let (_, conn) = user_service::get_auth_user_from_ctx(ctx)?;
         offer_repository::find_many(&conn, None, None, None).await
     }
+
+    #[graphql(guard = "AuthGuard")]
+    async fn find_by_id<'ctx>(
+        &self,
+        ctx: &Context<'ctx>,
+        offer_id: Uuid,
+    ) -> FieldResult<OfferGqlModel> {
+        let (_, conn) = user_service::get_auth_user_from_ctx(ctx)?;
+        offer_repository::find_by_pk(offer_id, &conn).await
+    }
 }
 
 #[Object]
