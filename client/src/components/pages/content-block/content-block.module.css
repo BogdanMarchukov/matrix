@@ -1,5 +1,6 @@
 .root {
   width: 100%;
+  min-height: 100vh;
   border-radius: var(--spaces-smm);
   padding: var(--spaces-md);
   background-color: var(--color-bg-dark);
@@ -15,6 +16,12 @@
   display: flex;
   justify-content: center;
   margin-bottom: var(--spaces-md);
+}
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .image {
