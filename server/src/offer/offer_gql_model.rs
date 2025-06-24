@@ -14,14 +14,15 @@ pub struct OfferGqlModel {
     pub tariff_ids: Vec<Uuid>,
     pub is_active: bool,
     pub created_at: DateTime<Utc>,
-    img_url: Option<String>,
+    #[graphql(skip)]
+    pub img: Option<String>,
 }
 
 #[ComplexObject]
 impl OfferGqlModel {
     async fn img(&self) -> Option<String> {
         let config = S3Config::new();
-        match &self.img_url {
+        match &self.img {
             Some(img) => Some(format!("{}/{}", config.endpoint, img.to_owned())),
             None => None,
         }
@@ -37,7 +38,7 @@ impl OfferGqlModel {
             tariff_ids: offer.tariff_ids,
             is_active: offer.is_active,
             created_at: DateTime::<Utc>::from_naive_utc_and_offset(offer.created_at, Utc),
-            img_url: offer.img,
+            img: offer.img,
         }
     }
 }
