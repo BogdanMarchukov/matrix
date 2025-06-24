@@ -5,6 +5,7 @@ import { Button } from "../../../../../../atoms/buttons/button";
 import { FindManyQuery } from "../../../../../../../__generated__/graphql";
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from "../../../../../../../common/constants";
+import { useUserStore } from "../../../../../../../common/store/userStore";
 
 export interface Product {
   offerId: string;
@@ -18,10 +19,11 @@ interface ProductProps {
 }
 
 export const Product = ({ offer }: ProductProps) => {
+  const { setCurrentOfferId } = useUserStore((state) => state);
   const navigate = useNavigate();
   const onProductClick = () => {
+    setCurrentOfferId(offer.offerId);
     navigate(PATHS.CONTENT);
-
   }
   return (
     <div className={classes.rootBox}>

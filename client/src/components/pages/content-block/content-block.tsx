@@ -1,16 +1,19 @@
+import { useUserStore } from '../../../common/store/userStore';
 import classes from './content-block.module.css';
 import matrixImg from './img/content-img.png';
 
 const { root, imageWrapper, image } = classes;
 
 export const ContentBlockPage = () => {
+  const { currentOfferId } = useUserStore((state) => state);
+
   return (
     <div className={root}>
-        <div className={imageWrapper}>
+      <div className={imageWrapper}>
         <img src={matrixImg} alt="Matrix Preview" className={image} />
       </div>
       <h1>Title</h1>
-      <br/>
+      <br />
       <p>{`Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut congue est. Etiam luctus consectetur lectus eget laoreet. Vivamus eu lectus non nisl pellentesque accumsan. Duis vestibulum purus sed nisl interdum malesuada. Sed molestie lectus mattis, ultricies tortor eget, malesuada eros. Donec malesuada blandit mi ac gravida. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ex eros, aliquet a dignissim pretium, dapibus nec dolor. Maecenas a ante metus. Nulla a accumsan lacus.
 
         Integer lacinia sodales convallis. Nulla vulputate, nulla porttitor lacinia lobortis, ante nunc mattis magna, vitae lobortis elit ligula nec quam. Nam non ullamcorper nunc. In iaculis, turpis a venenatis rhoncus, ex lectus aliquet ligula, et iaculis libero turpis nec dui. Quisque velit libero, fringilla ac magna pellentesque, fermentum ornare ipsum. Sed iaculis tempor turpis eu lacinia. Suspendisse volutpat nunc mauris, vitae tempus metus mollis et. Curabitur lacinia molestie ligula id rhoncus. Donec quis dui scelerisque ante tincidunt vehicula non id ex. Donec feugiat accumsan ipsum eget viverra. Mauris a diam ac lorem suscipit auctor.
