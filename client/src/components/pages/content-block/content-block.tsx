@@ -1,13 +1,13 @@
 import { useQuery } from '@apollo/client';
-import { gql } from '../../../__generated__';
-import { useUserStore } from '../../../common/store/userStore';
-import classes from './content-block.module.css';
-import matrixImg from './img/content-img.png';
 import { useMemo } from 'react';
 import { Puff } from 'react-loader-spinner';
+import { gql } from '../../../__generated__';
+import { useUserStore } from '../../../common/store/userStore';
 import { Content } from './components/content';
+import classes from './content-block.module.css';
+import { SelectTariffPlan } from './components/select-tariff-plan';
 
-const { root, imageWrapper, image, loader } = classes;
+const { root, loader } = classes;
 
 export const ContentBlockPage = () => {
   const { currentOfferId, userId } = useUserStore((state) => state);
@@ -74,7 +74,7 @@ export const ContentBlockPage = () => {
         <>
           {checkTariffPlan() ? (
             < Content />
-          ) : <p>плати бабки сука</p>}
+          ) : <SelectTariffPlan />}
         </>
       ) : <div className={loader} ><Puff {...loaderConfig} /></div>
       }

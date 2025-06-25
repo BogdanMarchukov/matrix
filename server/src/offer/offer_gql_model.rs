@@ -2,7 +2,12 @@ use async_graphql::{ComplexObject, FieldResult, SimpleObject};
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
-use crate::{config::S3Config, entity::offer};
+use crate::{
+    config::S3Config,
+    db_utils,
+    entity::offer,
+    tariff_plan::{tariff_plan_gql_model::TariffPlanGqlModel, tariff_plan_service},
+};
 
 #[derive(Clone, SimpleObject)]
 #[graphql(complex)]
@@ -26,6 +31,14 @@ impl OfferGqlModel {
             Some(img) => Some(format!("{}/{}", config.endpoint, img.to_owned())),
             None => None,
         }
+    }
+
+    async fn tariffs(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> FieldResult<Vec<TariffPlanGqlModel>> {
+        let conn = db_utils::get_connection_from_gql_ctx(ctx)?;
+        tariff_plan_service::find_by_ids(&self.tariff_ids, &conn).await
     }
 }
 

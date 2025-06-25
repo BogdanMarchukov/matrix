@@ -1,0 +1,103 @@
+.pointsScreen {
+  min-height: 100vh;
+  background-color: var(--color-bg-dark);
+  padding: var(--spaces-md);
+  color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pointsCard {
+  border-radius: var(--spaces-lg);
+  padding: var(--spaces-lgm);
+  margin-top: var(--spaces-lg);
+  width: 100%;
+  max-width: 24rem;
+  position: relative;
+  text-align: center;
+  background: var(--radial-gradient-primary);
+  box-shadow: var(--box-shadow-primary-dark);
+}
+
+.pointsValue {
+  font-size: var(--font-mdm);
+  font-weight: 700;
+  font-family: var(--font-ubuntu);
+}
+
+.pointsLabel {
+  font-size: var(--font-md);
+  font-weight: 700;
+  font-family: var(--font-ubuntu);
+  padding-bottom: 8px;
+}
+
+.pointsValue span {
+  font-size: var(--font-smm);
+}
+
+.pointsCurrency .pointsLabel {
+  font-size: var(--font-xs);
+  opacity: 0.8;
+  margin-top: var(--spaces-xs);
+}
+
+.pointsCurrency {
+  position: absolute;
+  top: var(--spaces-lgm);
+  right: var(--spaces-lgm);
+  font-size: var(--font-sm);
+  color: var(--color-white);
+}
+
+.infoText {
+  margin-top: var(--spaces-lg);
+  width: 100%;
+  max-width: 24rem;
+  font-size: var(--font-xsm);
+  line-height: 1.6;
+  text-align: left;
+  font-family: var(--font-ubuntu);
+  color: var(--color-white);
+}
+
+.highlight {
+  font-weight: 600;
+}
+
+.history {
+  margin-top: var(--spaces-lg);
+  width: 100%;
+  max-width: 24rem;
+}
+
+.historyTitle {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  margin-bottom: var(--spaces-sm);
+}
+
+.historyEmpty {
+  font-size: var(--font-xsm);
+  opacity: 0.7;
+}
+
+.orderButton {
+  margin-top: 50%;
+  margin-bottom: var(--spaces-lg);
+  border: 2px solid var(--color-primary-bright);
+  border-radius: var(--spaces-lg);
+  background-color: rgba(130, 87, 254, 0.25);
+  padding: var(--spaces-md) var(--spaces-lgm);
+  font-size: var(--font-xsm);
+  font-weight: 600;
+  font-family: var(--font-ubuntu);
+  color: var(--color-white);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.orderButton:hover {
+  background-color: var(--color-primary-bright);
+}
