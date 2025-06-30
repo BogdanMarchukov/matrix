@@ -74,7 +74,7 @@ export const ContentBlockPage = () => {
         <>
           {checkTariffPlan() ? (
             < Content />
-          ) : <SelectTariffPlan />}
+          ) : <SelectTariffPlan offerId={currentOfferId} />}
         </>
       ) : <div className={loader} ><Puff {...loaderConfig} /></div>
       }

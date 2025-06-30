@@ -81,8 +81,8 @@ pub struct ChatTgWebApp {
 
 #[derive(Serialize, Deserialize)]
 pub enum ChatType {
-    private,
-    group,
-    supergroup,
-    channel,
+    Private,
+    Group,
+    Supergroup,
+    Channel,
 }

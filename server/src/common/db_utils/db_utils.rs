@@ -1,25 +1,28 @@
 use async_graphql::{Context, FieldResult};
-use migration::{Migrator, MigratorTrait};
 use sea_orm::{
-    ConnectOptions, Database, DatabaseConnection, DatabaseTransaction, TransactionTrait,
+    ConnectOptions, Database, DatabaseConnection, DatabaseTransaction, DbErr, TransactionTrait,
 };
 
 use crate::{errors::gql_error::GqlError, GqlCtx};
 
-pub async fn get_pool() -> DatabaseConnection {
+pub async fn get_pool() -> Result<DatabaseConnection, DbErr> {
     use crate::config;
     let db_url = config::get_database_url();
     let opt = ConnectOptions::new(db_url);
-    let conn = Database::connect(opt)
-        .await
-        .expect("database connection error");
-    Migrator::up(&conn, None).await.expect("migration error");
-    conn
+    match Database::connect(opt).await {
+        Ok(db) => Ok(db),
+        Err(err) => Err(err),
+    }
 }
 
-pub async fn get_transaction() -> DatabaseTransaction {
-    let connection = get_pool().await;
-    connection.begin().await.expect("transaction error")
+pub async fn get_transaction() -> Result<DatabaseTransaction, GqlError> {
+    match get_pool().await {
+        Ok(db) => match db.begin().await {
+            Ok(transaction) => Ok(transaction),
+            Err(_) => Err(GqlError::ServerError("database error".to_string())),
+        },
+        Err(_) => Err(GqlError::ServerError("database error".to_string())),
+    }
 }
 
 pub fn get_connection_from_gql_ctx(ctx: &Context) -> FieldResult<DatabaseConnection> {

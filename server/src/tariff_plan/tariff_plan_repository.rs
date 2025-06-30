@@ -55,6 +55,20 @@ where
     }
 }
 
+pub async fn find_by_id<C>(conn: &C, id: Uuid) -> FieldResult<Option<tariff_plan::Model>>
+where
+    C: ConnectionTrait,
+{
+    match TariffPlan::find()
+        .filter(tariff_plan::Column::TariffPlanId.eq(id))
+        .one(conn)
+        .await
+    {
+        Ok(result) => Ok(result),
+        Err(_) => Err(GqlError::ServerError("database error".to_string()).extend()),
+    }
+}
+
 pub async fn create_one<C>(conn: &C, data: TariffPlanCreateData) -> FieldResult<tariff_plan::Model>
 where
     C: ConnectionTrait,

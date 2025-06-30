@@ -1,5 +1,5 @@
 use async_graphql::{ErrorExtensions, FieldResult};
-use chrono::{Duration, NaiveDateTime, Utc};
+use chrono::{DateTime, Duration, NaiveDateTime, Utc};
 use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, Set};
 use uuid::Uuid;
 
@@ -28,6 +28,38 @@ where
             .into_iter()
             .map(|u| UserTariffPlanGqlModel::new(u))
             .collect())
+    } else {
+        Err(GqlError::ServerError(("Database error".to_string())).extend())
+    }
+}
+
+pub async fn crete<C>(
+    tariff_plan_id: Uuid,
+    tariff_plan_payment_id: Uuid,
+    user_id: Uuid,
+    conn: &C,
+) -> FieldResult<UserTariffPlanGqlModel>
+where
+    C: ConnectionTrait,
+{
+    let tariff_plan = tariff_plan_repository::find_by_id(conn, tariff_plan_id)
+        .await?
+        .unwrap_or(return Err(GqlError::NotFound("tariff plan not found".to_string()).extend()));
+    let exp = Utc::now() + Duration::days(tariff_plan.expiry_days.into());
+
+    let user_tariff_plan = user_tariff_plan::ActiveModel {
+        user_tariff_plan_id: Set(Uuid::new_v4()),
+        user_id: Set(user_id),
+        tariff_plan_id: Set(tariff_plan_id),
+        tariff_plan_payment_id: Set(Some(tariff_plan_payment_id)),
+        expires_at: Set(NaiveDateTime::new(exp.date_naive(), exp.time())),
+        ..Default::default()
+    };
+    if let Ok(result) = UserTariffPlan::insert(user_tariff_plan)
+        .exec_with_returning(conn)
+        .await
+    {
+        Ok(UserTariffPlanGqlModel::new(result))
     } else {
         Err(GqlError::ServerError(("Database error".to_string())).extend())
     }

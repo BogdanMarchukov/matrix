@@ -78,55 +78,58 @@ pub async fn create_for_all_users(
     newsletter: &NewsletterGqlModel,
     conn: &DatabaseConnection,
 ) -> bool {
-    let txn = get_transaction().await;
-    match user_repository::find_all(conn).await {
-        Ok(v) => {
-            let mut insert_data: Vec<notify::ActiveModel> = vec![];
-            for user in v.iter() {
-                let data = notify::ActiveModel {
-                    notify_id: Set(Uuid::new_v4()),
-                    title: Set(newsletter.title.to_owned()),
-                    payload: Set(newsletter.payload.to_owned()),
-                    is_read: Set(false),
-                    user_id: Set(user.user_id.to_owned()),
-                    created_at: Set(Local::now().naive_local()),
-                    ..Default::default()
-                };
-                insert_data.push(data);
-            }
-            if let Ok(update_result) = Notify::update_many()
-                .col_expr(notify::Column::IsRead, Expr::value(true))
-                .filter(notify::Column::IsRead.eq(false))
-                .filter(notify::Column::NotifyType.eq(NotifyTypeEnum::Daly))
-                .exec(&txn)
-                .await
-            {
-                println!("update all notify success: {:?}", update_result);
-                match Notify::insert_many(insert_data.to_owned()).exec(&txn).await {
-                    Ok(_) => {
-                        txn.commit().await.ok();
-                        for notify in insert_data.iter() {
-                            NotifySender::send(NotifySender::Dely(TxSender {
-                                user_id: notify.user_id.to_owned().unwrap(),
-                                id: notify.notify_id.to_owned().unwrap(),
-                            }));
-                        }
-                        true
-                    }
-                    Err(e) => {
-                        txn.rollback().await.ok();
-                        println!("insert many error: {}", e);
-                        false
-                    }
+    if let Ok(txn) = get_transaction().await {
+        match user_repository::find_all(conn).await {
+            Ok(v) => {
+                let mut insert_data: Vec<notify::ActiveModel> = vec![];
+                for user in v.iter() {
+                    let data = notify::ActiveModel {
+                        notify_id: Set(Uuid::new_v4()),
+                        title: Set(newsletter.title.to_owned()),
+                        payload: Set(newsletter.payload.to_owned()),
+                        is_read: Set(false),
+                        user_id: Set(user.user_id.to_owned()),
+                        created_at: Set(Local::now().naive_local()),
+                        ..Default::default()
+                    };
+                    insert_data.push(data);
                 }
-            } else {
-                txn.rollback().await.ok();
+                if let Ok(update_result) = Notify::update_many()
+                    .col_expr(notify::Column::IsRead, Expr::value(true))
+                    .filter(notify::Column::IsRead.eq(false))
+                    .filter(notify::Column::NotifyType.eq(NotifyTypeEnum::Daly))
+                    .exec(&txn)
+                    .await
+                {
+                    println!("update all notify success: {:?}", update_result);
+                    match Notify::insert_many(insert_data.to_owned()).exec(&txn).await {
+                        Ok(_) => {
+                            txn.commit().await.ok();
+                            for notify in insert_data.iter() {
+                                NotifySender::send(NotifySender::Dely(TxSender {
+                                    user_id: notify.user_id.to_owned().unwrap(),
+                                    id: notify.notify_id.to_owned().unwrap(),
+                                }));
+                            }
+                            true
+                        }
+                        Err(e) => {
+                            txn.rollback().await.ok();
+                            println!("insert many error: {}", e);
+                            false
+                        }
+                    }
+                } else {
+                    txn.rollback().await.ok();
+                    false
+                }
+            }
+            Err(e) => {
+                println!("ger users error: {}", e);
                 false
             }
         }
-        Err(e) => {
-            println!("ger users error: {}", e);
-            false
-        }
+    } else {
+        false
     }
 }
