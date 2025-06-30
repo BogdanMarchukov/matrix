@@ -45,7 +45,8 @@ export const ContentBlockPage = () => {
     skip: !currentOfferId
   });
 
-  const { data: userTariffPlan, loading: userTariffPlanLoading } = useQuery(FIND_USER_TARIFF_PLAN, {
+  const { data: userTariffPlan, loading: userTariffPlanLoading, refetch: refathUserTariffPlan
+  } = useQuery(FIND_USER_TARIFF_PLAN, {
     variables: {
       userId
     },
@@ -74,7 +75,7 @@ export const ContentBlockPage = () => {
         <>
           {checkTariffPlan() ? (
             < Content />
-          ) : <SelectTariffPlan offerId={currentOfferId} />}
+          ) : <SelectTariffPlan offerId={currentOfferId} refatchUserTariffPlan={refathUserTariffPlan} />}
         </>
       ) : <div className={loader} ><Puff {...loaderConfig} /></div>
       }

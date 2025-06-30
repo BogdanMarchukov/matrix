@@ -52,6 +52,7 @@ mod newsletter;
 mod notify;
 use actix_cors::Cors;
 use uuid::Uuid;
+use tracing_subscriber;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 
@@ -169,6 +170,11 @@ async fn main() -> std::io::Result<()> {
     std::fs::create_dir_all("./tmp")?;
     let pool: DatabaseConnection = get_pool().await.expect("database error");
     Migrator::up(&pool, None).await.expect("migration error");
+
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::DEBUG)
+        .with_test_writer()
+        .init();
     HttpServer::new(move || {
         let schema = Schema::build(Query, Mutation, Subscription).finish();
 

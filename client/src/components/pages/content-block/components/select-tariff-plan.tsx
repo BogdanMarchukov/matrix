@@ -1,10 +1,10 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { gql } from '../../../../__generated__';
 import classes from './select-tariff-plan.module.css';
 import { Puff } from 'react-loader-spinner';
 import { useMemo } from 'react';
 
-const { pointsScreen, pointsCard, pointsValue, pointsLabel, infoText, highlight, history, historyTitle, historyEmpty, orderButton } = classes;
+const { pointsScreen, pointsCard, pointsValue, pointsLabel, infoText, orderButton } = classes;
 
 const GET_TARIFF_PLAN = gql(/* GraphQl */ `
   query FindTariffPlanByOffer($offerId: UUID!) {
@@ -24,11 +24,24 @@ const GET_TARIFF_PLAN = gql(/* GraphQl */ `
 `
 )
 
+const BY_TARIFF_PLAN = gql(/* GraphQl */ `
+  mutation BuyTariffPlan($tariffPlanId: UUID!) {
+    userTariffPlan {
+      buyTariffPlan(tariffPlanId: $tariffPlanId) {
+        tariffPlanId
+        userId
+      }
+    }
+  }
+`
+)
+
 type SelectTariffProps = {
   offerId: string | null
+  refatchUserTariffPlan: () => void
 }
 
-export const SelectTariffPlan = ({ offerId }: SelectTariffProps) => {
+export const SelectTariffPlan = ({ offerId, refatchUserTariffPlan }: SelectTariffProps) => {
   const loaderConfig = { height: 80, width: 80, color: "#ffffff" };
   const { data, loading } = useQuery(GET_TARIFF_PLAN, {
     variables: {
@@ -36,7 +49,19 @@ export const SelectTariffPlan = ({ offerId }: SelectTariffProps) => {
     },
     skip: !offerId
   })
+  const [buyTariffPlan] = useMutation(BY_TARIFF_PLAN);
+
   const tariffPlan = useMemo(() => data?.offer?.findById?.tariffs?.sort((a, b) => b.price - a.price)?.[0], [data]);
+
+  const handelClick = () => {
+    if (tariffPlan) {
+      buyTariffPlan({
+        variables: {
+          tariffPlanId: tariffPlan.tariffPlanId
+        }
+      }).then(() => refatchUserTariffPlan())
+    }
+  }
 
   return (
     <div className={pointsScreen}>
@@ -52,7 +77,7 @@ export const SelectTariffPlan = ({ offerId }: SelectTariffProps) => {
               {tariffPlan.description}
             </p>
           </div>
-          <button className={orderButton}>
+          <button className={orderButton} onClick={handelClick} >
             Подписаться
           </button>
         </>

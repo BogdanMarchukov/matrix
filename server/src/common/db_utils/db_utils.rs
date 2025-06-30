@@ -8,11 +8,9 @@ use crate::{errors::gql_error::GqlError, GqlCtx};
 pub async fn get_pool() -> Result<DatabaseConnection, DbErr> {
     use crate::config;
     let db_url = config::get_database_url();
-    let opt = ConnectOptions::new(db_url);
-    match Database::connect(opt).await {
-        Ok(db) => Ok(db),
-        Err(err) => Err(err),
-    }
+    let mut opt = ConnectOptions::new(db_url);
+    opt.sqlx_logging(false);
+    Database::connect(opt).await
 }
 
 pub async fn get_transaction() -> Result<DatabaseTransaction, GqlError> {

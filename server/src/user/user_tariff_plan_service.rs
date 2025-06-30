@@ -24,13 +24,15 @@ pub async fn buy_tariff_plan(
         let tariff_plan_payment =
             tariff_plan_payment_repository::create(payment.payment_id, user_id, &transaction)
                 .await?;
-        user_tariff_plan_repository::crete(
+        let result = user_tariff_plan_repository::crete(
             tariff_plan_id,
             tariff_plan_payment.tariff_plan_payment_id,
             user_id,
             &transaction,
         )
-        .await
+        .await?;
+        transaction.commit().await?;
+        Ok(result)
     } else {
         Err(GqlError::BadRequest("tariff plan is free".to_string()).extend())
     }

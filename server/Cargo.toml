@@ -37,7 +37,10 @@ sea-orm = { version = "1", features = [
   "runtime-tokio-rustls",
   "macros",
   "with-uuid",
+  "debug-print",
 ] }
+tracing-subscriber = "0.3.19"
+tracing = "0.1.41"
 migration = { path = "../migration" } # depends on your needs
 jsonwebtoken = "9"
 urlencoding = "2.1.3"

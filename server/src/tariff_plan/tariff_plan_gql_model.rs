@@ -6,7 +6,7 @@ use async_graphql::*;
 
 use crate::{entity::tariff_plan, errors::gql_error::GqlError};
 
-#[derive(Clone, SimpleObject)]
+#[derive(Clone, SimpleObject, Debug)]
 #[graphql(name = "TariffPlan")]
 pub struct TariffPlanGqlModel {
     pub tariff_plan_id: Uuid,
