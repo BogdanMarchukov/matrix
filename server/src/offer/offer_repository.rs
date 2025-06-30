@@ -23,7 +23,7 @@ where
     }
 }
 
-pub async fn delete_by_pk<C>(offer_id: Uuid, conn: &C) -> FieldResult<OfferGqlModel>
+pub async fn _delete_by_pk<C>(offer_id: Uuid, conn: &C) -> FieldResult<OfferGqlModel>
 where
     C: ConnectionTrait,
 {

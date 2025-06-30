@@ -3,7 +3,6 @@ use async_graphql::*;
 use uuid::Uuid;
 
 use crate::guards::auth_guard::AuthGuard;
-use crate::tariff_plan::tariff_plan_service;
 
 use super::user_tariff_plan_gql_model::UserTariffPlanGqlModel;
 use super::{user_service, user_tariff_plan_service};

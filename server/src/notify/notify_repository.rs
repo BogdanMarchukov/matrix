@@ -67,7 +67,7 @@ pub async fn update_one(
         if let Ok(notify) = notify.update(conn).await {
             Ok(NotifyGqlModel::new(notify))
         } else {
-            Err(GqlError::ServerError(("Database error".to_string())).extend())
+            Err(GqlError::ServerError("Database error".to_string()).extend())
         }
     } else {
         Err(GqlError::NotFound("Notify not found".to_string()).extend())

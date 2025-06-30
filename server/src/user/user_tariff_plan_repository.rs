@@ -1,5 +1,5 @@
 use async_graphql::{ErrorExtensions, FieldResult};
-use chrono::{DateTime, Duration, NaiveDateTime, Utc};
+use chrono::{Duration, NaiveDateTime, Utc};
 use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, Set};
 use uuid::Uuid;
 
@@ -29,7 +29,7 @@ where
             .map(|u| UserTariffPlanGqlModel::new(u))
             .collect())
     } else {
-        Err(GqlError::ServerError(("Database error".to_string())).extend())
+        Err(GqlError::ServerError("Database error".to_string()).extend())
     }
 }
 
@@ -42,9 +42,10 @@ pub async fn crete<C>(
 where
     C: ConnectionTrait,
 {
-    let tariff_plan = tariff_plan_repository::find_by_id(conn, tariff_plan_id)
-        .await?
-        .unwrap_or(return Err(GqlError::NotFound("tariff plan not found".to_string()).extend()));
+    let tariff_plan = match tariff_plan_repository::find_by_id(conn, tariff_plan_id).await? {
+        Some(t) => t,
+        None => return Err(GqlError::ServerError("Tariff plan not found".to_string()).extend()),
+    };
     let exp = Utc::now() + Duration::days(tariff_plan.expiry_days.into());
 
     let user_tariff_plan = user_tariff_plan::ActiveModel {
@@ -61,7 +62,7 @@ where
     {
         Ok(UserTariffPlanGqlModel::new(result))
     } else {
-        Err(GqlError::ServerError(("Database error".to_string())).extend())
+        Err(GqlError::ServerError("Database error".to_string()).extend())
     }
 }
 

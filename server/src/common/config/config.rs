@@ -46,7 +46,7 @@ pub fn get_database_url() -> String {
     std::env::var("DATABASE_URL").expect("DATABASE_URL must be set")
 }
 
-pub fn get_bot_token() -> String {
+pub fn _get_bot_token() -> String {
     dotenv().ok();
     std::env::var("BOT_TOKEN").expect("BOT_TOKEN must be set")
 }
@@ -61,7 +61,7 @@ pub fn get_api_key() -> String {
     std::env::var("API_KEY").expect("API_KEY must be set")
 }
 
-pub fn get_node_env() -> String {
+pub fn _get_node_env() -> String {
     dotenv().ok();
     std::env::var("NODE_ENV").expect("NODE_ENV must be set")
 }

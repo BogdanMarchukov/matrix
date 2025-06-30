@@ -1,19 +1,17 @@
-use std::collections::HashMap;
-use std::fmt::Debug;
-
 use super::auth_gql::LoginResult;
 use crate::db_utils::get_transaction;
 use crate::entity::users;
 use crate::errors::gql_error::GqlError;
 use crate::secret::secret_service;
 use crate::secret::secret_service::JwtPayload;
-use crate::user::user_gql_model::{User, UserGqlModel};
+use crate::user::user_gql_model::User;
 use crate::user::{user_info_repository, user_repository, user_tariff_plan_repository};
 use crate::{auth::web_app_data::InitDataTgWebApp, secret};
 use actix_web::HttpRequest;
 use async_graphql::{ErrorExtensions, FieldResult};
 use jsonwebtoken::TokenData;
 use sea_orm::{ColumnTrait, Condition, DatabaseConnection};
+use std::collections::HashMap;
 use uuid::Uuid;
 
 pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<LoginResult> {

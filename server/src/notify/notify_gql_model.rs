@@ -1,7 +1,7 @@
 use crate::{
     entity::{notify, sea_orm_active_enums::NotifyTypeEnum},
     errors::gql_error::GqlError,
-    user::user_gql_model::{UserGqlModel, User, UserRoleGqlType},
+    user::user_gql_model::{User, UserRoleGqlType},
 };
 use async_graphql::*;
 use chrono::{DateTime, Utc};

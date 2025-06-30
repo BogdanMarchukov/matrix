@@ -6,7 +6,7 @@ use super::{
 use crate::{
     entity::{notify, sea_orm_active_enums::NotifyTypeEnum},
     gql_schema::GqlOrder,
-    user::user_gql_model::{UserGqlModel, User},
+    user::user_gql_model::User,
 };
 use async_graphql::FieldResult;
 use sea_orm::{ColumnTrait, Condition, DatabaseConnection, Order};
@@ -46,7 +46,7 @@ pub async fn find_many_by_user_id(
     };
     let limit = match input_sort {
         Some(sort) => sort.limit,
-        None => None
+        None => None,
     };
     let all_notify = find_many(filter, conn, limit, order, order_by).await?;
     for n in all_notify.iter() {

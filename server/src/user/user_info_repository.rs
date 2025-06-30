@@ -21,7 +21,7 @@ pub async fn find_one_by_user_id(
     {
         Ok(UserInfoGqlModel::new(result))
     } else {
-        Err(GqlError::NotFound(("user not found".to_owned())).extend())
+        Err(GqlError::NotFound("user not found".to_owned()).extend())
     }
 }
 
@@ -33,10 +33,10 @@ pub async fn find_one_by_pk(
         if let Some(u) = result {
             Ok(UserInfoGqlModel::new(u))
         } else {
-            Err(GqlError::NotFound(("userInfo not found".to_owned())).extend())
+            Err(GqlError::NotFound("userInfo not found".to_owned()).extend())
         }
     } else {
-        Err(GqlError::ServerError(("database error".to_owned())).extend())
+        Err(GqlError::ServerError("database error".to_owned()).extend())
     }
 }
 

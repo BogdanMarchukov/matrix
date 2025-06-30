@@ -1,7 +1,6 @@
 use crate::db_utils;
 use crate::guards::auth_guard::AuthGuard;
 use crate::guards::system_guard::SystemGuard;
-use crate::user::user_service;
 use async_graphql::Object;
 use async_graphql::*;
 
@@ -23,7 +22,7 @@ pub struct TariffPlanCreateData {
 impl TariffPlanQuery {
     #[graphql(guard = "AuthGuard")]
     async fn find_many<'ctx>(&self, ctx: &Context<'ctx>) -> FieldResult<Vec<TariffPlanGqlModel>> {
-        let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
+        let conn = db_utils::get_connection_from_gql_ctx(ctx)?;
         tariff_plan_service::find_many(&conn).await
     }
 }
