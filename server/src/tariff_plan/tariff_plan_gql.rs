@@ -10,7 +10,7 @@ use super::tariff_plan_service;
 pub struct TariffPlanMutation;
 pub struct TariffPlanQuery;
 
-#[derive(InputObject)]
+#[derive(InputObject, Clone)]
 pub struct TariffPlanCreateData {
     pub title: String,
     pub description: Option<String>,

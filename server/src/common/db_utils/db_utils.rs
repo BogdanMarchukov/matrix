@@ -1,8 +1,8 @@
-use std::sync::Arc;
-
 use async_graphql::{Context, FieldResult};
+use migration::{Migrator, MigratorTrait};
 use sea_orm::{
-    ConnectOptions, Database, DatabaseConnection, DatabaseTransaction, DbErr, TransactionTrait,
+    ConnectOptions, ConnectionTrait, Database, DatabaseConnection, DatabaseTransaction, DbErr,
+    TransactionTrait,
 };
 use testcontainers::{clients::Cli, images::postgres::Postgres, Container, RunnableImage};
 
@@ -52,6 +52,10 @@ impl<'a> TestDb<'a> {
         let port = container.get_host_port_ipv4(5432);
         let db_url = format!("postgres://postgres:postgres@localhost:{}/postgres", port);
         let db = Database::connect(db_url).await.expect("DB connect failed");
+        db.execute_unprepared("CREATE EXTENSION IF NOT EXISTS pgcrypto")
+            .await
+            .expect("Enable pgcrypto");
+        Migrator::up(&db, None).await.expect("Migration failed");
 
         Self {
             db,
