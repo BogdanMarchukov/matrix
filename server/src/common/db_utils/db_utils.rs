@@ -1,7 +1,10 @@
+use std::sync::Arc;
+
 use async_graphql::{Context, FieldResult};
 use sea_orm::{
     ConnectOptions, Database, DatabaseConnection, DatabaseTransaction, DbErr, TransactionTrait,
 };
+use testcontainers::{clients::Cli, images::postgres::Postgres, Container, RunnableImage};
 
 use crate::{errors::gql_error::GqlError, GqlCtx};
 
@@ -34,4 +37,26 @@ pub fn get_connection_from_gql_ctx(ctx: &Context) -> FieldResult<DatabaseConnect
         Err(_) => return Err(GqlError::ServerError("get cxt error".to_string()).into()),
     };
     Ok(ctx_data.db.to_owned())
+}
+
+pub struct TestDb<'a> {
+    pub db: DatabaseConnection,
+    pub _container: Container<'a, Postgres>,
+    pub _docker: &'a Cli,
+}
+
+impl<'a> TestDb<'a> {
+    pub async fn new(docker: &'a Cli) -> Self {
+        let pg_image = RunnableImage::from(Postgres::default());
+        let container = docker.run(pg_image);
+        let port = container.get_host_port_ipv4(5432);
+        let db_url = format!("postgres://postgres:postgres@localhost:{}/postgres", port);
+        let db = Database::connect(db_url).await.expect("DB connect failed");
+
+        Self {
+            db,
+            _container: container,
+            _docker: docker,
+        }
+    }
 }
