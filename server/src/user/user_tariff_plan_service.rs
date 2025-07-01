@@ -15,7 +15,7 @@ pub async fn buy_tariff_plan(
     tariff_plan_id: Uuid,
     user_id: Uuid,
 ) -> FieldResult<UserTariffPlanGqlModel> {
-    let transaction = db_utils::get_transaction().await?;
+    let transaction = db_utils::get_transaction(None).await?;
     let tariff_plan = tariff_plan_service::find_by_id(tariff_plan_id, &transaction).await?;
     let result_check_free_tariff_plan = is_free_tariff_plan(tariff_plan_id, &transaction).await?;
     if result_check_free_tariff_plan == false {

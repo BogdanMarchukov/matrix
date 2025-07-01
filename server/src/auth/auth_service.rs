@@ -42,7 +42,7 @@ pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<
             Some(v) => v,
             None => match user_repository::create_one_by_tg(init_user, conn).await {
                 Ok(data) => {
-                    let trn = get_transaction().await?;
+                    let trn = get_transaction(None).await?;
                     user_info_repository::create_one_by_user_id(data.0.user_id, &trn).await?;
                     user_tariff_plan_repository::find_or_create_free(data.0.user_id, conn).await?;
                     trn.commit().await?;

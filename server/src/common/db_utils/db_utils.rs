@@ -13,14 +13,19 @@ pub async fn get_pool() -> Result<DatabaseConnection, DbErr> {
     Database::connect(opt).await
 }
 
-pub async fn get_transaction() -> Result<DatabaseTransaction, GqlError> {
-    match get_pool().await {
-        Ok(db) => match db.begin().await {
-            Ok(transaction) => Ok(transaction),
-            Err(_) => Err(GqlError::ServerError("database error".to_string())),
-        },
-        Err(_) => Err(GqlError::ServerError("database error".to_string())),
-    }
+pub async fn get_transaction(
+    db: Option<DatabaseConnection>,
+) -> Result<DatabaseTransaction, GqlError> {
+    let db = match db {
+        Some(conn) => conn,
+        None => get_pool()
+            .await
+            .map_err(|_| GqlError::ServerError("database error".into()))?,
+    };
+
+    db.begin()
+        .await
+        .map_err(|_| GqlError::ServerError("database error".into()))
 }
 
 pub fn get_connection_from_gql_ctx(ctx: &Context) -> FieldResult<DatabaseConnection> {

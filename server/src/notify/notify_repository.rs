@@ -78,7 +78,7 @@ pub async fn create_for_all_users(
     newsletter: &NewsletterGqlModel,
     conn: &DatabaseConnection,
 ) -> bool {
-    if let Ok(txn) = get_transaction().await {
+    if let Ok(txn) = get_transaction(None).await {
         match user_repository::find_all(conn).await {
             Ok(v) => {
                 let mut insert_data: Vec<notify::ActiveModel> = vec![];
