@@ -2,7 +2,7 @@ use crate::errors::gql_error::GqlError;
 use async_graphql::{ErrorExtensions, FieldResult};
 use uuid::Uuid;
 
-pub fn get_uuid_from_string(id: &String) -> FieldResult<Uuid> {
+pub fn _get_uuid_from_string(id: &String) -> FieldResult<Uuid> {
     let uuid = match Uuid::parse_str(&id[..]) {
         Ok(id) => id,
         Err(_) => {

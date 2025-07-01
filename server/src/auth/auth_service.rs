@@ -1,19 +1,17 @@
-use std::collections::HashMap;
-use std::fmt::Debug;
-
 use super::auth_gql::LoginResult;
 use crate::db_utils::get_transaction;
 use crate::entity::users;
 use crate::errors::gql_error::GqlError;
 use crate::secret::secret_service;
 use crate::secret::secret_service::JwtPayload;
-use crate::user::user_gql_model::{User, UserGqlModel};
+use crate::user::user_gql_model::User;
 use crate::user::{user_info_repository, user_repository, user_tariff_plan_repository};
 use crate::{auth::web_app_data::InitDataTgWebApp, secret};
 use actix_web::HttpRequest;
 use async_graphql::{ErrorExtensions, FieldResult};
 use jsonwebtoken::TokenData;
 use sea_orm::{ColumnTrait, Condition, DatabaseConnection};
+use std::collections::HashMap;
 use uuid::Uuid;
 
 pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<LoginResult> {
@@ -44,7 +42,7 @@ pub async fn login(init_data: String, conn: &DatabaseConnection) -> FieldResult<
             Some(v) => v,
             None => match user_repository::create_one_by_tg(init_user, conn).await {
                 Ok(data) => {
-                    let trn = get_transaction().await;
+                    let trn = get_transaction(None).await?;
                     user_info_repository::create_one_by_user_id(data.0.user_id, &trn).await?;
                     user_tariff_plan_repository::find_or_create_free(data.0.user_id, conn).await?;
                     trn.commit().await?;

@@ -2,6 +2,7 @@ use actix_multipart::form::tempfile::TempFileConfig;
 use actix_web::{guard, web, App, Error, HttpRequest, HttpResponse, HttpServer};
 use async_graphql::Schema;
 use async_graphql::{Data, ErrorExtensions};
+mod payment;
 use async_graphql_actix_web::GraphQLSubscription;
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use auth::auth_service;
@@ -9,6 +10,7 @@ use errors::gql_error::GqlError;
 use gql_schema::Subscription;
 use guards::http_system_guard;
 use include_dir::{include_dir as include_d, Dir};
+use migration::{Migrator, MigratorTrait};
 use mime_guess::from_path;
 use newsletter::newsletter_scheduler::newsletter_scheduler;
 use offer::uploader::save_file;
@@ -50,6 +52,7 @@ mod newsletter;
 mod notify;
 use actix_cors::Cors;
 use uuid::Uuid;
+use tracing_subscriber;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 
@@ -165,7 +168,13 @@ async fn main() -> std::io::Result<()> {
     let port = config::get_port();
     newsletter_scheduler().await;
     std::fs::create_dir_all("./tmp")?;
-    let pool: DatabaseConnection = get_pool().await;
+    let pool: DatabaseConnection = get_pool().await.expect("database error");
+    Migrator::up(&pool, None).await.expect("migration error");
+
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::DEBUG)
+        .with_test_writer()
+        .init();
     HttpServer::new(move || {
         let schema = Schema::build(Query, Mutation, Subscription).finish();
 

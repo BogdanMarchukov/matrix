@@ -1,7 +1,6 @@
-use crate::auth::auth_service::get_user_from_request;
 use crate::db_utils::get_connection_from_gql_ctx;
 use crate::entity::sea_orm_active_enums::UserRoleType;
-use crate::entity::{user_tariff_plan, users};
+use crate::entity::users;
 use crate::errors::gql_error::GqlError;
 use async_graphql::FieldResult;
 use async_graphql::*;

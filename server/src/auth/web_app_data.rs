@@ -73,7 +73,7 @@ pub struct UserTgWebApp {
 #[derive(Serialize, Deserialize)]
 pub struct ChatTgWebApp {
     pub id: i32,
-    pub KW_TYPE: String,
+    pub kw_type: String,
     pub title: String,
     pub username: Option<String>,
     pub photo_url: Option<String>,
@@ -81,8 +81,8 @@ pub struct ChatTgWebApp {
 
 #[derive(Serialize, Deserialize)]
 pub enum ChatType {
-    private,
-    group,
-    supergroup,
-    channel,
+    Private,
+    Group,
+    Supergroup,
+    Channel,
 }

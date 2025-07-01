@@ -1,7 +1,6 @@
-use super::user_gql_model::{UserGqlModel, User, UserRoleGqlType};
+use super::user_gql_model::{User, UserRoleGqlType};
 use crate::entity::user_info;
 use crate::errors::gql_error::GqlError;
-use async_graphql::*;
 use async_graphql::{FieldResult, SimpleObject};
 use chrono::NaiveDate;
 use uuid::Uuid;

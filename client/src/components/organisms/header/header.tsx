@@ -1,10 +1,10 @@
 import React from "react";
 import classes from "./header.module.css";
-import {useLocation, useNavigate} from "react-router-dom";
-import {PATHS} from "../../../common/constants";
+import { useLocation, useNavigate } from "react-router-dom";
+import { PATHS } from "../../../common/constants";
 import MenuIcon from "./svg/menu-icon";
-import {IconButton} from "../../atoms/buttons/icon-button/icon-button";
-import {Button} from "../../atoms/buttons/button/button";
+import { IconButton } from "../../atoms/buttons/icon-button/icon-button";
+import { Button } from "../../atoms/buttons/button/button";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -14,10 +14,14 @@ export const Header = () => {
     else navigate(PATHS.HOME)
   };
 
+  const onBackClick = () => {
+    navigate(PATHS.HOME)
+  }
+
   return (
     <header className={classes.root}>
       <div className={classes.item}>
-        <Button variant="text">Назад</Button>
+        {location.pathname === PATHS.HOME ? null : <Button onClick={onBackClick} variant="text">Назад</Button>}
       </div>
       <div className={classes.item}>
         <div className={classes.title}>KYMATICA</div>
@@ -25,7 +29,7 @@ export const Header = () => {
       </div>
       <div className={classes.item}>
         <div className={classes.icon}>
-          <IconButton onClick={onMenuBtnClick} size="medium"><MenuIcon/></IconButton>
+          <IconButton onClick={onMenuBtnClick} size="medium"><MenuIcon /></IconButton>
         </div>
       </div>
     </header>

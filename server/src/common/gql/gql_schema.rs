@@ -7,6 +7,7 @@ use crate::{
     user::{
         user_gql::UserQuery,
         user_info_gql::{UserInfoMutation, UserInfoQuery},
+        user_tariff_plan_gql::UserTariffPlanMutation,
     },
 };
 use async_graphql::{Enum, FieldResult, Object};
@@ -47,6 +48,10 @@ impl Mutation {
 
     async fn tariff_plan(&self) -> FieldResult<TariffPlanMutation> {
         Ok(TariffPlanMutation)
+    }
+
+    async fn user_tariff_plan(&self) -> FieldResult<UserTariffPlanMutation> {
+        Ok(UserTariffPlanMutation)
     }
 }
 

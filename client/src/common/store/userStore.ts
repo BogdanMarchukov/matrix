@@ -15,6 +15,7 @@ type UserState = {
   avatarUrl: string | null;
   userId: string | null;
   userInfo: UserInfo;
+  currentOfferId: string | null;
 };
 
 type Actions = {
@@ -23,6 +24,7 @@ type Actions = {
   setAvatarUrl: (avatar: string) => void;
   setUserId: (userId: UserState["userId"]) => void;
   setUserInfo: (userInfo: UserInfo) => void;
+  setCurrentOfferId: (offerId: string) => void;
 };
 
 export const useUserStore = create<UserState & Actions>((set) => ({
@@ -36,9 +38,11 @@ export const useUserStore = create<UserState & Actions>((set) => ({
   avatarUrl: null,
   userId: null,
   lastNotify: null,
+  currentOfferId: null,
   setJwt: (jwt) => set((state) => ({ ...state, auth: { jwt } })),
   setFirstName: (firstName) => set((state) => ({ ...state, firstName })),
   setAvatarUrl: (avatarUrl) => set((state) => ({ ...state, avatarUrl })),
   setUserId: (userId) => set((state) => ({ ...state, userId })),
-  setUserInfo: (userInfo) => set((state) => ({ ...state, userInfo }))
+  setUserInfo: (userInfo) => set((state) => ({ ...state, userInfo })),
+  setCurrentOfferId: (offerId) => set((state) => ({ ...state, currentOfferId: offerId }))
 }));

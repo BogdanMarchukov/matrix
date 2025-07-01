@@ -1,6 +1,8 @@
 use async_graphql::{ErrorExtensions, FieldResult};
 use rust_decimal::Decimal;
-use sea_orm::{ActiveModelTrait, ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, Set};
+use sea_orm::{
+    ActiveModelTrait, ColumnTrait, Condition, ConnectionTrait, EntityTrait, QueryFilter, Set,
+};
 use uuid::Uuid;
 
 use crate::{
@@ -19,6 +21,52 @@ where
         .one(conn)
         .await?
         .ok_or_else(|| GqlError::NotFound("free tariff plan not found".to_string()).extend())
+}
+
+pub struct FindManyFilter {
+    pub ids: Option<Vec<Uuid>>,
+}
+
+impl FindManyFilter {
+    pub fn new(ids: Option<Vec<Uuid>>) -> FindManyFilter {
+        FindManyFilter { ids }
+    }
+}
+
+pub async fn find_many<C>(
+    conn: &C,
+    filter: Option<FindManyFilter>,
+) -> FieldResult<Vec<tariff_plan::Model>>
+where
+    C: ConnectionTrait,
+{
+    let mut orm_filter = Condition::all();
+    match filter {
+        Some(f) => {
+            if let Some(ids) = f.ids {
+                orm_filter = orm_filter.add(tariff_plan::Column::TariffPlanId.is_in(ids));
+            }
+        }
+        None => (),
+    }
+    match TariffPlan::find().filter(orm_filter).all(conn).await {
+        Ok(result) => Ok(result),
+        Err(_) => Err(GqlError::ServerError("database error".to_string()).extend()),
+    }
+}
+
+pub async fn find_by_id<C>(conn: &C, id: Uuid) -> FieldResult<Option<tariff_plan::Model>>
+where
+    C: ConnectionTrait,
+{
+    match TariffPlan::find()
+        .filter(tariff_plan::Column::TariffPlanId.eq(id))
+        .one(conn)
+        .await
+    {
+        Ok(result) => Ok(result),
+        Err(_) => Err(GqlError::ServerError("database error".to_string()).extend()),
+    }
 }
 
 pub async fn create_one<C>(conn: &C, data: TariffPlanCreateData) -> FieldResult<tariff_plan::Model>

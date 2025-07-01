@@ -1,4 +1,5 @@
 use async_graphql::{ErrorExtensions, FieldResult};
+use sea_orm::entity::ModelTrait;
 use sea_orm::{
     ActiveModelTrait, ConnectionTrait, EntityTrait, Order, QueryOrder, QuerySelect, Set,
 };
@@ -17,6 +18,21 @@ where
 {
     if let Ok(Some(offer)) = Offer::find_by_id(offer_id).one(conn).await {
         Ok(OfferGqlModel::new(offer))
+    } else {
+        Err(GqlError::NotFound("offer not found".to_string()).extend())
+    }
+}
+
+pub async fn _delete_by_pk<C>(offer_id: Uuid, conn: &C) -> FieldResult<OfferGqlModel>
+where
+    C: ConnectionTrait,
+{
+    if let Ok(Some(offer)) = Offer::find_by_id(offer_id).one(conn).await {
+        if let Ok(_) = offer.clone().delete(conn).await {
+            Ok(OfferGqlModel::new(offer))
+        } else {
+            Err(GqlError::ServerError("offer delete error".to_string()).extend())
+        }
     } else {
         Err(GqlError::NotFound("offer not found".to_string()).extend())
     }
@@ -78,6 +94,7 @@ where
         is_active: Set(data.is_active),
         title: Set(data.title),
         tariff_ids: Set(data.tariff_ids),
+        description: Set(data.description),
         ..Default::default()
     };
     if let Ok(result) = offer::Entity::insert(new_offer)

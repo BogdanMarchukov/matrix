@@ -57,6 +57,9 @@ pub async fn update_one(
         if let Some(publish_at) = data.publish_at {
             newsletter.publish_at = Set(publish_at);
         }
+        if let Some(payload) = data.payload {
+            newsletter.payload = Set(payload);
+        }
         if let Some(is_published) = data.is_published {
             newsletter.is_published = Set(is_published);
         }

@@ -1,16 +1,16 @@
 .base {
-    display: flex;
-    flex-direction: column;
-    padding: var(--spaces-smm);
-    border-radius: var(--spaces-smm);
+  display: flex;
+  flex-direction: column;
+  padding: var(--spaces-smm);
+  border-radius: var(--spaces-smm);
 }
 
 .primary {
-    background: var(--color-bg-dark);
-    box-shadow: var(--box-shadow-primary-dark);
+  background: var(--color-bg-dark);
+  box-shadow: var(--box-shadow-primary-dark);
 }
 
 .secondary {
-    background: var(--radial-gradient-primary);
-    box-shadow: var(--box-shadow-primary-light);
+  background: var(--radial-gradient-primary);
+  box-shadow: var(--box-shadow-primary-light);
 }

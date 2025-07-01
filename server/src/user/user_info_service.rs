@@ -5,8 +5,8 @@ use uuid::Uuid;
 use crate::errors::gql_error::GqlError;
 
 use super::{
-    types::UserInfoUpdateInput, user_gql_model::{UserGqlModel, User},
-    user_info_gql_model::UserInfoGqlModel, user_info_repository,
+    types::UserInfoUpdateInput, user_gql_model::User, user_info_gql_model::UserInfoGqlModel,
+    user_info_repository,
 };
 
 pub async fn find_by_user_id(
@@ -29,12 +29,12 @@ pub async fn update_one(
     user_info.check_role(&user)?;
     if let Some(hour) = data.hour_of_birth {
         if !(0..25).contains(&hour) {
-            return Err(GqlError::BadRequest(("hour_of_birth is not valid".to_string())).extend());
+            return Err(GqlError::BadRequest("hour_of_birth is not valid".to_string()).extend());
         }
     }
     if let Some(min) = data.min_of_birth {
         if !(0..61).contains(&min) {
-            return Err(GqlError::BadRequest(("min_of_birth is not valid".to_string())).extend());
+            return Err(GqlError::BadRequest("min_of_birth is not valid".to_string()).extend());
         }
     }
     user_info_repository::user_info_update_one(user_info_id, data, conn).await;

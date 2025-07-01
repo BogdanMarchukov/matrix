@@ -1,62 +1,55 @@
-import React from "react";
-import {Product} from "./components/product";
-import classes from "./products.module.css";
-import {Swiper, SwiperSlide} from 'swiper/react';
+import { useQuery } from "@apollo/client";
 import 'swiper/css';
-import main from "./png/main.png";
-import compatibility from './png/compatibility.png';
-import finance from './png/finance.png';
-import destiny from './png/destiny.png';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { gql } from "../../../../../__generated__";
+import { useUserStore } from "../../../../../common/store/userStore";
+import { Product } from "./components/product";
+import classes from "./products.module.css";
+import { useMemo } from "react";
 
 const { root, swiperBox } = classes;
 
-const productsList: Product[] = [
-  {
-    id: '0',
-    img: main,
-    title: 'Основной калькулятор',
-    price: 100
-  },
-  {
-    id: '1',
-    img: compatibility,
-    title: 'Калькулятор совместимости',
-    price: 100
-  },
-  {
-    id: '2',
-    img: finance,
-    title: 'Финансовый калькулятор',
-    price: 100
-  },
-  {
-    id: '3',
-    img: destiny,
-    title: 'Калькулятор предназначения',
-    price: 100
+const OFFER_GET_ALL = gql(/* GraphQl */ `
+  query FindMany {
+    offer {
+      findMany {
+        img
+        offerId
+        title
+        tariffIds
+        description
+      }
+    }
   }
-]
+`);
 
 export const Products = () => {
+  const { userId } = useUserStore((state) => state);
+  const { data } = useQuery(OFFER_GET_ALL, { skip: !userId })
+  const offer = useMemo(() => data?.offer?.findMany || [], [data])
+
   return (
     <div>
       <div className={root}>
         <h3>Все продукты</h3>
       </div>
-      <div>
-        <div className={swiperBox}>
-          <Swiper
-            slidesOffsetBefore={16}
-            slidesPerView={2.5}
-          >
-            {productsList.map((product) => (
-              <SwiperSlide key={product.id}>
-                <Product product={product}/>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+      {offer?.length ?
+        <div>
+          <div className={swiperBox}>
+            <Swiper
+              slidesOffsetBefore={16}
+              slidesPerView={2.5}
+            >
+              {offer?.length ? offer.map((offer) => (
+                <SwiperSlide key={offer.offerId}>
+                  <Product offer={offer} />
+                </SwiperSlide>
+              )) : null}
+            </Swiper>
+          </div>
         </div>
-      </div>
+        : null
+      }
     </div>
   )
     ;
