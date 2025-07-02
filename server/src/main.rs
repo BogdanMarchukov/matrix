@@ -21,6 +21,7 @@ use sea_orm::DatabaseConnection;
 use secret::secret_service;
 use std::collections::HashMap;
 use tokio::sync::broadcast::{self};
+use tracing::{error, info};
 use user::user_gql_model::User;
 #[path = "auth/mod.rs"]
 mod auth;
@@ -51,8 +52,8 @@ mod helpers;
 mod newsletter;
 mod notify;
 use actix_cors::Cors;
-use uuid::Uuid;
 use tracing_subscriber;
+use uuid::Uuid;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 
@@ -157,7 +158,7 @@ async fn gql_index(
         user,
     });
     let que = serde_json::to_string(&request).unwrap_or(String::from("{}"));
-    println!("{}", que);
+    info!("{}", que);
     let result = schema.execute(request).await;
     GraphQLResponse::from(result)
 }
