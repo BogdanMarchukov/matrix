@@ -13,6 +13,7 @@ use guards::http_system_guard;
 use include_dir::{include_dir as include_d, Dir};
 use migration::{Migrator, MigratorTrait};
 use mime_guess::from_path;
+use news::uploader::save_news_img;
 use newsletter::newsletter_scheduler::newsletter_scheduler;
 use offer::uploader::save_file;
 use once_cell::sync::Lazy;
@@ -203,6 +204,12 @@ async fn main() -> std::io::Result<()> {
                     .guard(guard::Put())
                     .guard(guard::fn_guard(http_system_guard::verify_api_key))
                     .to(save_file),
+            )
+            .service(
+                web::resource("/news/{news_id}/upload")
+                    .guard(guard::Put())
+                    .guard(guard::fn_guard(http_system_guard::verify_api_key))
+                    .to(save_news_img),
             )
             .route("/gql", web::post().to(gql_index))
             .route("/gql", web::get().to(gql_playgound))

@@ -34,5 +34,9 @@ mod tests {
             .expect("Failed to create news");
         assert_eq!(created.title, create_data.title);
         assert_eq!(created.payload, create_data.payload);
+        let found = news_repository::find_by_pk(created.news_id, conn)
+            .await
+            .expect("Failed to find news");
+        assert_eq!(created.news_id, found.news_id)
     }
 }
