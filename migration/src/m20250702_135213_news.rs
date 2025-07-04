@@ -14,6 +14,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(News::NewsId).uuid().not_null().primary_key())
                     .col(ColumnDef::new(News::Title).string().not_null())
                     .col(ColumnDef::new(News::Payload).string().not_null())
+                    .col(ColumnDef::new(News::PublishAt).date_time().not_null())
                     .col(
                         ColumnDef::new(News::IsPublish)
                             .boolean()
@@ -52,6 +53,7 @@ enum News {
     Title,
     Payload,
     Img,
+    PublishAt,
     IsPublish,
     CreatedAt,
     UpdatedAt,

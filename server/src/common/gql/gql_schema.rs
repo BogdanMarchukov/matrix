@@ -1,5 +1,6 @@
 use crate::{
     auth::auth_gql::AuthMutation,
+    news::news_gql::NewsMutation,
     newsletter::newsletter_gql::NewsletterMutation,
     notify::notify_gql::{NotifyMutation, NotifyQuery},
     offer::offer_gql::{OfferMutation, OfferQuery},
@@ -52,6 +53,10 @@ impl Mutation {
 
     async fn user_tariff_plan(&self) -> FieldResult<UserTariffPlanMutation> {
         Ok(UserTariffPlanMutation)
+    }
+
+    async fn news(&self) -> FieldResult<NewsMutation> {
+        Ok(NewsMutation)
     }
 }
 

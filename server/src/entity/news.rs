@@ -9,6 +9,7 @@ pub struct Model {
     pub news_id: Uuid,
     pub title: String,
     pub payload: String,
+    pub publish_at: DateTime,
     pub is_publish: bool,
     pub img: Option<String>,
     pub created_at: DateTime,
