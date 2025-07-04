@@ -76,9 +76,5 @@ pub async fn find_all_active(conn: &DatabaseConnection) -> Result<Vec<Newsletter
         .filter(newsletter::Column::IsPublished.eq(false))
         .all(conn)
         .await?;
-    Ok(result
-        .into_iter()
-        .map(NewsletterGqlModel::new)
-        .rev()
-        .collect())
+    Ok(result.into_iter().map(NewsletterGqlModel::new).collect())
 }
