@@ -65,6 +65,14 @@ mod tests {
         let result = news_repository::create_for_all_users(&news, conn).await;
         assert_eq!(result, true);
 
+        let result = find_all_by_user_id(user.0.user_id, user.clone(), conn)
+            .await
+            .expect("find news error");
+        assert_eq!(result.len(), 1);
+
+        let result = news_repository::create_for_all_users(&news, conn).await;
+        assert_eq!(result, true);
+
         let result = find_all_by_user_id(user.0.user_id, user, conn)
             .await
             .expect("find news error");

@@ -7,7 +7,7 @@ use crate::{
     TxSender,
 };
 use async_graphql::{ErrorExtensions, FieldResult};
-use migration::{Expr, IntoCondition};
+use migration::{Expr, IntoCondition, OnConflict};
 use sea_orm::QueryFilter;
 use sea_orm::{ActiveModelTrait, ConnectionTrait, DatabaseConnection, EntityTrait, Set};
 use sea_orm::{ColumnTrait, RelationTrait};
@@ -61,15 +61,7 @@ pub async fn find_all_active(conn: &DatabaseConnection) -> FieldResult<Vec<NewsG
 
 pub async fn create_for_all_users(news: &NewsGqlModel, conn: &DatabaseConnection) -> bool {
     if let Ok(txn) = get_transaction(Some(conn.clone())).await {
-        let news_id = news.news_id.to_owned();
-        let relation = users::Relation::UserNews
-            .def()
-            .on_condition(move |_left, right| {
-                Expr::col((right, user_news::Column::NewsId))
-                    .ne(news_id)
-                    .into_condition()
-            });
-        match user_repository::find_all(&txn, Some(relation)).await {
+        match user_repository::find_all(&txn, None).await {
             Ok(users) => {
                 let mut insert_data: Vec<user_news::ActiveModel> = vec![];
                 for user in users {
@@ -86,7 +78,12 @@ pub async fn create_for_all_users(news: &NewsGqlModel, conn: &DatabaseConnection
                     insert_data.push(data);
                 }
                 match user_news::Entity::insert_many(insert_data.to_owned())
-                    .exec(&txn)
+                    .on_conflict(
+                        OnConflict::columns([user_news::Column::UserId, user_news::Column::NewsId])
+                            .do_nothing()
+                            .to_owned(),
+                    )
+                    .exec_without_returning(&txn)
                     .await
                 {
                     Ok(_) => {

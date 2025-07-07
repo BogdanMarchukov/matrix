@@ -7,7 +7,7 @@ use async_graphql::{ErrorExtensions, FieldResult};
 use sea_orm::ActiveValue::Set;
 use sea_orm::{
     Condition, ConnectionTrait, DatabaseConnection, DbErr, EntityTrait, JoinType, QueryFilter,
-    QuerySelect, Related, RelationDef, RelationTrait, Select,
+    QuerySelect, RelationDef,
 };
 use uuid::Uuid;
 
