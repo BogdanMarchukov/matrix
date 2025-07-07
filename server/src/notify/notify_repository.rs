@@ -79,7 +79,7 @@ pub async fn create_for_all_users(
     conn: &DatabaseConnection,
 ) -> bool {
     if let Ok(txn) = get_transaction(None).await {
-        match user_repository::find_all(conn).await {
+        match user_repository::find_all(conn, None).await {
             Ok(v) => {
                 let mut insert_data: Vec<notify::ActiveModel> = vec![];
                 for user in v.iter() {

@@ -5,7 +5,10 @@ use crate::entity::users;
 use crate::errors::gql_error::GqlError;
 use async_graphql::{ErrorExtensions, FieldResult};
 use sea_orm::ActiveValue::Set;
-use sea_orm::{Condition, ConnectionTrait, DatabaseConnection, DbErr, EntityTrait, QueryFilter};
+use sea_orm::{
+    Condition, ConnectionTrait, DatabaseConnection, DbErr, EntityTrait, JoinType, QueryFilter,
+    QuerySelect, Related, RelationDef, RelationTrait, Select,
+};
 use uuid::Uuid;
 
 pub async fn find_one(filter: Condition, conn: &DatabaseConnection) -> FieldResult<Option<User>> {
@@ -19,12 +22,21 @@ pub async fn find_one(filter: Condition, conn: &DatabaseConnection) -> FieldResu
     }
 }
 
-pub async fn find_all<C>(conn: &C) -> Result<Vec<users::Model>, DbErr>
+pub async fn find_all<C>(
+    conn: &C,
+    relation: Option<RelationDef>,
+) -> Result<Vec<users::Model>, DbErr>
 where
     C: ConnectionTrait,
 {
-    let users = Users::find().all(conn).await?;
-    Ok(users)
+    let select = Users::find();
+    if let Some(relation) = relation {
+        let users = select.join(JoinType::LeftJoin, relation).all(conn).await?;
+        Ok(users)
+    } else {
+        let users = select.all(conn).await?;
+        Ok(users)
+    }
 }
 
 pub async fn find_by_id(user_id: &str, conn: &DatabaseConnection) -> FieldResult<Option<User>> {

@@ -1,15 +1,16 @@
 use crate::{
     db_utils::get_transaction,
-    entity::{news, user_news},
+    entity::{news, user_news, users},
     errors::gql_error::GqlError,
     notify::notify_sender::SubscribeSender,
     user::user_repository,
     TxSender,
 };
 use async_graphql::{ErrorExtensions, FieldResult};
-use sea_orm::ColumnTrait;
+use migration::{Expr, IntoCondition};
 use sea_orm::QueryFilter;
 use sea_orm::{ActiveModelTrait, ConnectionTrait, DatabaseConnection, EntityTrait, Set};
+use sea_orm::{ColumnTrait, RelationTrait};
 
 use super::{news_gql::NewsCreateInput, news_gql_model::NewsGqlModel};
 
@@ -60,7 +61,15 @@ pub async fn find_all_active(conn: &DatabaseConnection) -> FieldResult<Vec<NewsG
 
 pub async fn create_for_all_users(news: &NewsGqlModel, conn: &DatabaseConnection) -> bool {
     if let Ok(txn) = get_transaction(Some(conn.clone())).await {
-        match user_repository::find_all(&txn).await {
+        let news_id = news.news_id.to_owned();
+        let relation = users::Relation::UserNews.def().on_condition(
+            (move |_left, right| {
+                Expr::col((right, user_news::Column::NewsId))
+                    .ne(news_id)
+                    .into_condition()
+            }),
+        );
+        match user_repository::find_all(&txn, Some(relation)).await {
             Ok(users) => {
                 let mut insert_data: Vec<user_news::ActiveModel> = vec![];
                 for user in users {
