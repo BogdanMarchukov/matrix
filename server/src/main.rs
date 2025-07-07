@@ -23,7 +23,7 @@ use sea_orm::DatabaseConnection;
 use secret::secret_service;
 use std::collections::HashMap;
 use tokio::sync::broadcast::{self};
-use tracing::{error, info};
+use tracing::info;
 use user::user_gql_model::User;
 #[path = "auth/mod.rs"]
 mod auth;
