@@ -60,7 +60,12 @@ use uuid::Uuid;
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 
 pub static TX_NOTIFY: Lazy<broadcast::Sender<TxSender>> = Lazy::new(|| {
-    let (tx, _rx) = broadcast::channel(100);
+    let (tx, _rx) = broadcast::channel(10_000);
+    tx
+});
+
+pub static TX_NEWS: Lazy<broadcast::Sender<TxSender>> = Lazy::new(|| {
+    let (tx, _rx) = broadcast::channel(10_000);
     tx
 });
 

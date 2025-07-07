@@ -1,7 +1,7 @@
 use super::notify_gql_model::NotifyGqlModel;
 use crate::db_utils::get_transaction;
 use crate::entity::sea_orm_active_enums::NotifyTypeEnum;
-use crate::notify::notify_sender::NotifySender;
+use crate::notify::notify_sender::SubscribeSender;
 use crate::TxSender;
 use crate::{
     entity::notify, entity::prelude::Notify, errors::gql_error::GqlError,
@@ -106,7 +106,7 @@ pub async fn create_for_all_users(
                         Ok(_) => {
                             txn.commit().await.ok();
                             for notify in insert_data.iter() {
-                                NotifySender::send(NotifySender::Dely(TxSender {
+                                SubscribeSender::send(SubscribeSender::NofifyDely(TxSender {
                                     user_id: notify.user_id.to_owned().unwrap(),
                                     id: notify.notify_id.to_owned().unwrap(),
                                 }));

@@ -1,9 +1,10 @@
 use tokio::sync::broadcast::Sender;
 
-use crate::{TxSender, TX_NOTIFY};
+use crate::{TxSender, TX_NEWS, TX_NOTIFY};
 
-pub enum NotifySender {
-    Dely(TxSender),
+pub enum SubscribeSender {
+    NofifyDely(TxSender),
+    News(TxSender),
 }
 
 fn publish(tx: Sender<TxSender>, payload: TxSender) {
@@ -15,11 +16,15 @@ fn publish(tx: Sender<TxSender>, payload: TxSender) {
     }
 }
 
-impl NotifySender {
+impl SubscribeSender {
     pub fn send(self) {
         match self {
-            NotifySender::Dely(tx_sender) => {
+            SubscribeSender::NofifyDely(tx_sender) => {
                 let tx = TX_NOTIFY.to_owned();
+                publish(tx, tx_sender)
+            }
+            SubscribeSender::News(tx_sender) => {
+                let tx = TX_NEWS.to_owned();
                 publish(tx, tx_sender)
             }
         }

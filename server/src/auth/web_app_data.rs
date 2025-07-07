@@ -70,6 +70,23 @@ pub struct UserTgWebApp {
     pub photo_url: Option<String>,
 }
 
+impl UserTgWebApp {
+    pub fn test_data(id: Option<i64>) -> Self {
+        Self {
+            id: id.unwrap_or(1),
+            is_bot: Some(false),
+            first_name: "bogdan".to_string(),
+            last_name: "bogdan".to_string(),
+            username: Some("bogdan".to_string()),
+            language_code: None,
+            is_premium: None,
+            added_to_attachment_menu: None,
+            allows_write_to_pm: None,
+            photo_url: None,
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct ChatTgWebApp {
     pub id: i32,

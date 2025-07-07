@@ -1,6 +1,10 @@
 use async_graphql::SimpleObject;
 use chrono::{DateTime, Utc};
+use sea_orm::{ConnectionTrait, DatabaseConnection};
+use tracing::info;
 use uuid::Uuid;
+
+use super::news_repository;
 
 #[derive(Clone, SimpleObject, Debug)]
 #[graphql(name = "News")]
@@ -27,5 +31,13 @@ impl NewsGqlModel {
             created_at: DateTime::<Utc>::from_naive_utc_and_offset(news.created_at, Utc),
             updated_at: DateTime::<Utc>::from_naive_utc_and_offset(news.updated_at, Utc),
         }
+    }
+
+    pub async fn send_notify(&self, conn: &DatabaseConnection) -> bool {
+        let result = news_repository::create_for_all_users(self, conn).await;
+        if result {
+            info!("publish news is success Id: {}", &self.news_id);
+        }
+        result
     }
 }

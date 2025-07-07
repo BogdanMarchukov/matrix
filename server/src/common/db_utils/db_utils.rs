@@ -1,4 +1,4 @@
-use async_graphql::{Context, FieldResult};
+use async_graphql::{Context, ErrorExtensions, FieldResult};
 use migration::{Migrator, MigratorTrait};
 use sea_orm::{
     ConnectOptions, ConnectionTrait, Database, DatabaseConnection, DatabaseTransaction, DbErr,
