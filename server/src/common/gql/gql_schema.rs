@@ -1,3 +1,9 @@
+use crate::guards::auth_guard::AuthGuard;
+use crate::notify::notify_gql::NotifySub;
+use crate::notify::notify_gql::UserNewsSub;
+use crate::GqlCtx;
+use crate::TX_NEWS;
+use crate::TX_NOTIFY;
 use crate::{
     auth::auth_gql::AuthMutation,
     news::news_gql::NewsMutation,
@@ -8,10 +14,13 @@ use crate::{
     user::{
         user_gql::UserQuery,
         user_info_gql::{UserInfoMutation, UserInfoQuery},
+        user_news_gql::UserNewsQuery,
         user_tariff_plan_gql::UserTariffPlanMutation,
     },
 };
-use async_graphql::{Enum, FieldResult, Object};
+use actix::dev::Stream;
+use async_graphql::async_stream::stream;
+use async_graphql::{Context, Enum, FieldResult, Object, Subscription};
 
 pub struct Query;
 
@@ -76,5 +85,48 @@ impl Query {
 
     async fn offer(&self) -> FieldResult<OfferQuery> {
         Ok(OfferQuery)
+    }
+
+    async fn user_news(&self) -> FieldResult<UserNewsQuery> {
+        Ok(UserNewsQuery)
+    }
+}
+
+#[Subscription]
+impl Subscription {
+    #[graphql(guard = "AuthGuard")]
+    async fn notify_delay(&self, ctx: &Context<'_>) -> impl Stream<Item = NotifySub> {
+        let data = ctx.data::<GqlCtx>().unwrap();
+        let mut sender = TX_NOTIFY.to_owned().subscribe();
+        let user = data.user.to_owned();
+        stream! {
+            while let Ok(message) = sender.recv().await {
+                if let Some(user) = user.to_owned() {
+                    if user.0.user_id == message.user_id  {
+                        yield NotifySub {
+                           notify_id: message.id
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    #[graphql(guard = "AuthGuard")]
+    async fn user_news(&self, ctx: &Context<'_>) -> impl Stream<Item = UserNewsSub> {
+        let data = ctx.data::<GqlCtx>().unwrap();
+        let mut sender = TX_NEWS.to_owned().subscribe();
+        let user = data.user.to_owned();
+        stream! {
+            while let Ok(message) = sender.recv().await {
+                if let Some(user) = user.to_owned() {
+                    if user.0.user_id == message.user_id  {
+                        yield UserNewsSub {
+                           user_news_id: message.id
+                        }
+                    }
+                }
+            }
+        }
     }
 }

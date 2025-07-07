@@ -2,11 +2,9 @@ use super::notify_gql_model::{NotifyGqlModel, NotifyTypeGql};
 use super::notify_service;
 use crate::gql_schema::GqlOrder;
 use crate::guards::auth_guard::AuthGuard;
-use crate::{gql_schema::Subscription, user::user_service};
-use crate::{GqlCtx, TX_NOTIFY};
-use actix::dev::Stream;
+use crate::user::user_service;
 use async_graphql::*;
-use async_graphql::{Context, FieldResult, InputObject, Object, SimpleObject, Subscription};
+use async_graphql::{Context, FieldResult, InputObject, Object, SimpleObject};
 use uuid::Uuid;
 
 pub struct NotifyQuery;
@@ -27,6 +25,11 @@ pub enum NotifyOrderBy {
 #[derive(SimpleObject)]
 pub struct NotifySub {
     pub notify_id: Uuid,
+}
+
+#[derive(SimpleObject)]
+pub struct UserNewsSub {
+    pub user_news_id: Uuid,
 }
 
 #[derive(InputObject)]
@@ -76,26 +79,5 @@ impl NotifyMutation {
     ) -> FieldResult<NotifyGqlModel> {
         let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
         notify_service::update_one(notify_id, data, request_user, &conn).await
-    }
-}
-
-#[Subscription]
-impl Subscription {
-    #[graphql(guard = "AuthGuard")]
-    async fn notify_delay(&self, ctx: &Context<'_>) -> impl Stream<Item = NotifySub> {
-        let data = ctx.data::<GqlCtx>().unwrap();
-        let mut sender = TX_NOTIFY.to_owned().subscribe();
-        let user = data.user.to_owned();
-        async_stream::stream! {
-            while let Ok(message) = sender.recv().await {
-                if let Some(user) = user.to_owned() {
-                    if user.0.user_id == message.user_id  {
-                        yield NotifySub {
-                           notify_id: message.id
-                        }
-                    }
-                }
-            }
-        }
     }
 }
