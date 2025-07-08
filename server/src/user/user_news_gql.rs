@@ -5,6 +5,7 @@ use uuid::Uuid;
 use super::{user_news_service, user_service};
 
 pub struct UserNewsQuery;
+pub struct UserNewsMutation;
 
 #[Object]
 impl UserNewsQuery {
@@ -25,5 +26,18 @@ impl UserNewsQuery {
     ) -> FieldResult<UserNewsGqlModel> {
         let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
         user_news_service::find_by_pk(user_news_id, request_user, &conn).await
+    }
+}
+
+#[Object]
+impl UserNewsMutation {
+    #[graphql(guard = "AuthGuard")]
+    async fn read_increment<'ctx>(
+        &self,
+        ctx: &Context<'ctx>,
+        user_news_id: Uuid,
+    ) -> FieldResult<UserNewsGqlModel> {
+        let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
+        user_news_service::reading_increment(user_news_id, request_user, &conn).await
     }
 }

@@ -5,7 +5,11 @@ use uuid::Uuid;
 
 use crate::{entity::user_news, errors::gql_error::GqlError};
 
-use super::{user_gql_model::User, user_news_gql_model::UserNewsGqlModel, user_news_repository};
+use super::{
+    user_gql_model::User,
+    user_news_gql_model::UserNewsGqlModel,
+    user_news_repository::{self, UserNewsUpdateData},
+};
 
 pub async fn find_all_by_user_id(
     user_id: Uuid,
@@ -45,6 +49,23 @@ pub async fn find_by_pk(
     };
     user_news_gql.check_role(&auth_user)?;
     Ok(user_news_gql)
+}
+
+pub async fn reading_increment(
+    user_news_id: Uuid,
+    auth_user: User,
+    conn: &DatabaseConnection,
+) -> FieldResult<UserNewsGqlModel> {
+    let current_user_news = find_by_pk(user_news_id, auth_user, conn).await?;
+    let update_data = UserNewsUpdateData {
+        reading_count: Some(current_user_news.reading_count + 1),
+        reading_at: Some(chrono::Utc::now().naive_utc()),
+    };
+    let result = user_news_repository::update_one(user_news_id, update_data, conn).await;
+    match result {
+        Ok(user_news) => Ok(UserNewsGqlModel::new(user_news)),
+        Err(_) => Err(GqlError::ServerError("database error".to_string()).extend()),
+    }
 }
 
 #[cfg(test)]
@@ -104,9 +125,14 @@ mod tests {
         let result = find_by_pk(user_news.user_news_id, second_user, conn).await;
         assert!(result.is_err());
 
-        let result = find_by_pk(user_news.user_news_id, user, conn)
+        let result = find_by_pk(user_news.user_news_id, user.clone(), conn)
             .await
             .expect("find news error");
         assert_eq!(result.user_news_id, user_news.user_news_id);
+
+        let updated_result = reading_increment(user_news.user_news_id, user, conn)
+            .await
+            .expect("find news error");
+        assert_eq!(updated_result.reading_count, user_news.reading_count + 1);
     }
 }
