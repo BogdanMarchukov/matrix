@@ -1,6 +1,7 @@
 use crate::guards::auth_guard::AuthGuard;
 use crate::notify::notify_gql::NotifySub;
 use crate::notify::notify_gql::UserNewsSub;
+use crate::user::user_news_gql::UserNewsMutation;
 use crate::GqlCtx;
 use crate::TX_NEWS;
 use crate::TX_NOTIFY;
@@ -66,6 +67,10 @@ impl Mutation {
 
     async fn news(&self) -> FieldResult<NewsMutation> {
         Ok(NewsMutation)
+    }
+
+    async fn user_news(&self) -> FieldResult<UserNewsMutation> {
+        Ok(UserNewsMutation)
     }
 }
 
