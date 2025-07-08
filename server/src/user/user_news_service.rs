@@ -30,6 +30,23 @@ pub async fn find_all_by_user_id(
     Ok(result)
 }
 
+pub async fn find_by_pk(
+    user_news_id: Uuid,
+    auth_user: User,
+    conn: &DatabaseConnection,
+) -> FieldResult<UserNewsGqlModel> {
+    let user_news = match user_news_repository::find_by_pk(conn, user_news_id).await {
+        Ok(user_news) => user_news,
+        Err(_) => return Err(GqlError::ServerError("database error".to_string()).extend()),
+    };
+    let user_news_gql = match user_news {
+        Some(user_news) => UserNewsGqlModel::new(user_news),
+        None => return Err(GqlError::NotFound("user news not found".to_string()).extend()),
+    };
+    user_news_gql.check_role(&auth_user)?;
+    Ok(user_news_gql)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{
@@ -46,7 +63,7 @@ mod tests {
         let docker = testcontainers::clients::Cli::default();
         let test_db = TestDb::new(&docker).await;
         let conn = &test_db.db;
-        let crete_user_data = UserTgWebApp::test_data(None);
+        let crete_user_data = UserTgWebApp::test_data(Some(1));
 
         let user = user_repository::create_one_by_tg(crete_user_data, conn)
             .await
@@ -73,9 +90,23 @@ mod tests {
         let result = news_repository::create_for_all_users(&news, conn).await;
         assert_eq!(result, true);
 
-        let result = find_all_by_user_id(user.0.user_id, user, conn)
+        let result = find_all_by_user_id(user.0.user_id, user.clone(), conn)
             .await
             .expect("find news error");
         assert_eq!(result.len(), 1);
+
+        let crete_user_data = UserTgWebApp::test_data(Some(2));
+        let second_user = user_repository::create_one_by_tg(crete_user_data, conn)
+            .await
+            .expect("create user error");
+
+        let user_news = result.get(0).unwrap();
+        let result = find_by_pk(user_news.user_news_id, second_user, conn).await;
+        assert!(result.is_err());
+
+        let result = find_by_pk(user_news.user_news_id, user, conn)
+            .await
+            .expect("find news error");
+        assert_eq!(result.user_news_id, user_news.user_news_id);
     }
 }

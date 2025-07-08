@@ -1,9 +1,5 @@
-use crate::{
-    gql_schema::Subscription, guards::auth_guard::AuthGuard,
-    user::user_news_gql_model::UserNewsGqlModel, GqlCtx, TX_NEWS,
-};
-use actix::dev::Stream;
-use async_graphql::{Context, FieldResult, Object, Subscription};
+use crate::{guards::auth_guard::AuthGuard, user::user_news_gql_model::UserNewsGqlModel};
+use async_graphql::{Context, FieldResult, Object};
 use uuid::Uuid;
 
 use super::{user_news_service, user_service};
@@ -20,5 +16,14 @@ impl UserNewsQuery {
     ) -> FieldResult<Vec<UserNewsGqlModel>> {
         let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
         user_news_service::find_all_by_user_id(user_id, request_user, &conn).await
+    }
+
+    async fn find_by_pk<'ctx>(
+        &self,
+        ctx: &Context<'ctx>,
+        user_news_id: Uuid,
+    ) -> FieldResult<UserNewsGqlModel> {
+        let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
+        user_news_service::find_by_pk(user_news_id, request_user, &conn).await
     }
 }
