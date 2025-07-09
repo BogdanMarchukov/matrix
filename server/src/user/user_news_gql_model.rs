@@ -1,4 +1,4 @@
-use async_graphql::{ErrorExtensions, FieldResult, SimpleObject};
+use async_graphql::{ComplexObject, ErrorExtensions, FieldResult, SimpleObject};
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
@@ -6,17 +6,30 @@ use crate::errors::gql_error::GqlError;
 
 use super::user_gql_model::{User, UserRoleGqlType};
 #[derive(SimpleObject, Clone, Debug)]
+#[graphql(complex)]
 #[graphql(name = "UserNews")]
 pub struct UserNewsGqlModel {
     pub user_news_id: Uuid,
     pub news_id: Uuid,
     pub title: String,
     pub payload: String,
+    #[graphql(skip)]
     pub img: Option<String>,
     pub created_at: DateTime<Utc>,
     pub reading_at: Option<DateTime<Utc>>,
     pub reading_count: i32,
     pub user_id: Uuid,
+}
+
+#[ComplexObject]
+impl UserNewsGqlModel {
+    async fn img(&self) -> Option<String> {
+        let config = crate::config::S3Config::new();
+        match &self.img {
+            Some(img) => Some(format!("{}/{}", config.endpoint, img)),
+            None => None,
+        }
+    }
 }
 
 impl UserNewsGqlModel {
