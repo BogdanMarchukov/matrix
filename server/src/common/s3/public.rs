@@ -18,7 +18,7 @@ impl Default for PublicBucket {
     fn default() -> Self {
         let s3_config = S3Config::new();
         let region = Region::Custom {
-            region: "".to_string(),
+            region: "eu-west-1".to_string(),
             endpoint: s3_config.endpoint,
         };
 
