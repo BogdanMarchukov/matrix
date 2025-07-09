@@ -1,18 +1,22 @@
 use crate::{
     db_utils::get_transaction,
-    entity::{news, user_news, users},
+    entity::{news, user_news},
     errors::gql_error::GqlError,
     notify::notify_sender::SubscribeSender,
     user::user_repository,
     TxSender,
 };
 use async_graphql::{ErrorExtensions, FieldResult};
-use migration::{Expr, IntoCondition, OnConflict};
+use migration::OnConflict;
+use sea_orm::ColumnTrait;
 use sea_orm::QueryFilter;
 use sea_orm::{ActiveModelTrait, ConnectionTrait, DatabaseConnection, EntityTrait, Set};
-use sea_orm::{ColumnTrait, RelationTrait};
+use uuid::Uuid;
 
-use super::{news_gql::NewsCreateInput, news_gql_model::NewsGqlModel};
+use super::{
+    news_gql::{NewsCreateInput, NewsUpdateInput},
+    news_gql_model::NewsGqlModel,
+};
 
 pub async fn create_one<C>(input_data: NewsCreateInput, conn: &C) -> FieldResult<NewsGqlModel>
 where
@@ -43,6 +47,30 @@ where
         },
         Err(_) => Err(GqlError::ServerError("database error".to_string()).extend()),
     }
+}
+
+pub async fn update_one<C>(id: Uuid, data: NewsUpdateInput, conn: &C) -> FieldResult<NewsGqlModel>
+where
+    C: ConnectionTrait,
+{
+    let mut updated: news::ActiveModel = match news::Entity::find_by_id(id).one(conn).await {
+        Ok(model) => match model {
+            Some(model) => model.into(),
+            None => return Err(GqlError::NotFound("news not found".to_string()).extend()),
+        },
+        Err(_) => return Err(GqlError::ServerError("database error".to_string()).extend()),
+    };
+    if let Some(title) = data.title {
+        updated.title = Set(title);
+    }
+    if let Some(payload) = data.payload {
+        updated.payload = Set(payload);
+    }
+    if let Some(is_publish) = data.is_publish {
+        updated.is_publish = Set(is_publish);
+    }
+    let result: news::Model = updated.update(conn).await?;
+    Ok(NewsGqlModel::new(result))
 }
 
 pub async fn find_all_active(conn: &DatabaseConnection) -> FieldResult<Vec<NewsGqlModel>> {
