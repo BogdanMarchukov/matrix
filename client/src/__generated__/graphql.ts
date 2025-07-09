@@ -89,18 +89,62 @@ export type LoginResult = {
 export type Mutation = {
   __typename?: 'Mutation';
   auth: AuthMutation;
+  news: NewsMutation;
   newsletter: NewsletterMutation;
   notify: NotifyMutation;
   offer: OfferMutation;
   tariffPlan: TariffPlanMutation;
   userInfo: UserInfoMutation;
+  userNews: UserNewsMutation;
   userTariffPlan: UserTariffPlanMutation;
+};
+
+export type News = {
+  __typename?: 'News';
+  createdAt: Scalars['DateTime']['output'];
+  img?: Maybe<Scalars['String']['output']>;
+  isPublish: Scalars['Boolean']['output'];
+  newsId: Scalars['UUID']['output'];
+  payload: Scalars['String']['output'];
+  publishAt: Scalars['DateTime']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type NewsCreateInput = {
+  isPublish: Scalars['Boolean']['input'];
+  payload: Scalars['String']['input'];
+  publishAt: Scalars['NaiveDateTime']['input'];
+  title: Scalars['String']['input'];
 };
 
 export type NewsLetterCreateInput = {
   payload: Scalars['String']['input'];
   publishAt: Scalars['NaiveDateTime']['input'];
   title: Scalars['String']['input'];
+};
+
+export type NewsMutation = {
+  __typename?: 'NewsMutation';
+  createOne: News;
+  updateOne: News;
+};
+
+
+export type NewsMutationCreateOneArgs = {
+  data: NewsCreateInput;
+};
+
+
+export type NewsMutationUpdateOneArgs = {
+  data: NewsUpdateInput;
+  newsId: Scalars['UUID']['input'];
+};
+
+export type NewsUpdateInput = {
+  isPublish?: InputMaybe<Scalars['Boolean']['input']>;
+  payload?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Newsletter = {
@@ -232,6 +276,7 @@ export type Query = {
   offer: OfferQuery;
   user: UserQuery;
   userInfo: UserInfoQuery;
+  userNews: UserNewsQuery;
 };
 
 export type Sort = {
@@ -243,6 +288,7 @@ export type Sort = {
 export type Subscription = {
   __typename?: 'Subscription';
   notifyDelay: NotifySub;
+  userNews: UserNewsSub;
 };
 
 export type TariffPlan = {
@@ -322,6 +368,50 @@ export type UserInfoUpdateInput = {
   dateOfBirth?: InputMaybe<Scalars['NaiveDate']['input']>;
   hourOfBirth?: InputMaybe<Scalars['Int']['input']>;
   minOfBirth?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type UserNews = {
+  __typename?: 'UserNews';
+  createdAt: Scalars['DateTime']['output'];
+  img?: Maybe<Scalars['String']['output']>;
+  newsId: Scalars['UUID']['output'];
+  payload: Scalars['String']['output'];
+  readingAt?: Maybe<Scalars['DateTime']['output']>;
+  readingCount: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+  userId: Scalars['UUID']['output'];
+  userNewsId: Scalars['UUID']['output'];
+};
+
+export type UserNewsMutation = {
+  __typename?: 'UserNewsMutation';
+  readIncrement: UserNews;
+};
+
+
+export type UserNewsMutationReadIncrementArgs = {
+  userNewsId: Scalars['UUID']['input'];
+};
+
+export type UserNewsQuery = {
+  __typename?: 'UserNewsQuery';
+  findByPk: UserNews;
+  findByUserId: Array<UserNews>;
+};
+
+
+export type UserNewsQueryFindByPkArgs = {
+  userNewsId: Scalars['UUID']['input'];
+};
+
+
+export type UserNewsQueryFindByUserIdArgs = {
+  userId: Scalars['UUID']['input'];
+};
+
+export type UserNewsSub = {
+  __typename?: 'UserNewsSub';
+  userNewsId: Scalars['UUID']['output'];
 };
 
 export type UserQuery = {
@@ -431,6 +521,13 @@ export type UserFindByIdQueryVariables = Exact<{
 
 export type UserFindByIdQuery = { __typename?: 'Query', user: { __typename?: 'UserQuery', findByPk: { __typename?: 'User', userId: any, userTariffPlan: Array<{ __typename?: 'UserTariffPlan', tariffPlanId: any }> } } };
 
+export type FindByUserIdQueryVariables = Exact<{
+  userId: Scalars['UUID']['input'];
+}>;
+
+
+export type FindByUserIdQuery = { __typename?: 'Query', userNews: { __typename?: 'UserNewsQuery', findByUserId: Array<{ __typename?: 'UserNews', img?: string | null, newsId: any, payload: string, title: string, userNewsId: any }> } };
+
 export type FindManyQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -462,6 +559,7 @@ export const FindTariffPlanByOfferDocument = {"kind":"Document","definitions":[{
 export const BuyTariffPlanDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"BuyTariffPlan"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tariffPlanId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userTariffPlan"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"buyTariffPlan"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tariffPlanId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tariffPlanId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tariffPlanId"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}}]}}]}}]} as unknown as DocumentNode<BuyTariffPlanMutation, BuyTariffPlanMutationVariables>;
 export const OfferFindByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"OfferFindById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"offer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"offerId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offerId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"img"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"offerId"}},{"kind":"Field","name":{"kind":"Name","value":"tariffIds"}}]}}]}}]}}]} as unknown as DocumentNode<OfferFindByIdQuery, OfferFindByIdQueryVariables>;
 export const UserFindByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UserFindById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findByPk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"userTariffPlan"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tariffPlanId"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UserFindByIdQuery, UserFindByIdQueryVariables>;
+export const FindByUserIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindByUserId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userNews"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findByUserId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"img"}},{"kind":"Field","name":{"kind":"Name","value":"newsId"}},{"kind":"Field","name":{"kind":"Name","value":"payload"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"userNewsId"}}]}}]}}]}}]} as unknown as DocumentNode<FindByUserIdQuery, FindByUserIdQueryVariables>;
 export const FindManyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindMany"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"offer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findMany"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"img"}},{"kind":"Field","name":{"kind":"Name","value":"offerId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"tariffIds"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]}}]} as unknown as DocumentNode<FindManyQuery, FindManyQueryVariables>;
 export const GetUserInfoByUserIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserInfoByUserId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fundByUserId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"hourOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"minOfBirth"}}]}}]}}]}}]} as unknown as DocumentNode<GetUserInfoByUserIdQuery, GetUserInfoByUserIdQueryVariables>;
 export const UserInfoUpdateOneDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UserInfoUpdateOne"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userInfoId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserInfoUpdateInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOne"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userInfoId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userInfoId"}}},{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"hourOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"minOfBirth"}}]}}]}}]}}]} as unknown as DocumentNode<UserInfoUpdateOneMutation, UserInfoUpdateOneMutationVariables>;
