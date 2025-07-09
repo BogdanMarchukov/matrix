@@ -1,31 +1,10 @@
 import { useQuery } from "@apollo/client";
+import { useMemo } from "react";
+import { Swiper, SwiperSlide } from 'swiper/react';
 import { gql } from "../../../../../__generated__";
 import { useUserStore } from "../../../../../common/store/userStore";
 import { New } from "./components/new";
-import classes from './news.module.css'
-import newsFirst from './png/news-first.png';
-import newsSecond from './png/news-second.png';
-import newsThird from './png/news-third.png';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { useMemo } from "react";
-
-const newsList = [
-  {
-    id: '1',
-    title: 'Новост 1',
-    img: newsFirst,
-  },
-  {
-    id: '2',
-    title: 'Новост 2',
-    img: newsSecond,
-  },
-  {
-    id: '3',
-    title: 'Новост 3',
-    img: newsThird,
-  }
-]
+import classes from './news.module.css';
 
 const GET_ALL_NEWS = gql(/* GraphQl */ `
   query FindByUserId($userId: UUID!) {
@@ -40,7 +19,6 @@ const GET_ALL_NEWS = gql(/* GraphQl */ `
     }
   }
 `);
-
 
 export const News = () => {
   const { userId } = useUserStore((state) => state);
