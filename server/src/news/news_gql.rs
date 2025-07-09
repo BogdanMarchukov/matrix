@@ -37,6 +37,7 @@ impl NewsMutation {
         news_service::create_one(data, &conn).await
     }
 
+    #[graphql(guard = "SystemGuard")]
     async fn update_one<'ctx>(
         &self,
         ctx: &Context<'ctx>,
