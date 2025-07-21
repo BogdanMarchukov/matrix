@@ -19,11 +19,11 @@ declare global {
 }
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:5000/gql",
+  uri: "https://52f382f23545.ngrok-free.app/gql",
 });
 
 const wsLink = new GraphQLWsLink(createClient({
-  url: "ws://localhost:5000/gql",
+  url: "ws://52f382f23545.ngrok-free.app/gql",
   connectionParams: () => {
     const token = localStorage.getItem("jwt");
     return {

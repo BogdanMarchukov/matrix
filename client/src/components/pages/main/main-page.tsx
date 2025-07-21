@@ -4,6 +4,7 @@ import { Products } from "./components/products";
 import { UserBar } from "./components/user-bar";
 import classes from './main-page.module.css'
 import { News } from "./components/news";
+import AstrologyChart from "../../astrology-chart/astrology-chart";
 
 export const MainPage = () => {
   return (
@@ -11,6 +12,7 @@ export const MainPage = () => {
       <UserBar />
       <News />
       <Scores />
+      <AstrologyChart />
       <PriceCalc />
       <Products />
     </div>
