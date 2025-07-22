@@ -1,6 +1,7 @@
 import React from "react";
 import AnimatedLine from "../atoms/animation-line/animation-lene";
 import AnimatedPolygon from "../atoms/animation-polygon/animation-polygon";
+import { motion } from "framer-motion";
 
 type AnimatedLineProps = {
   show: boolean
@@ -70,7 +71,20 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
   return show ? (
     < div >
       <svg viewBox="0 0 600 660">
-        <circle cx={center.x} cy={center.y} r={circleRadius} stroke="#4A5568" strokeWidth="1" fill="none" />
+        <defs>
+          <filter id="dropShadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="#000" floodOpacity="0.4" />
+          </filter>
+        </defs>
+
+        <circle
+          cx={center.x}
+          cy={center.y}
+          r={circleRadius}
+          stroke="#FFD700"
+          strokeWidth={2}
+          filter="url(#dropShadow)"
+        />
 
         {sectors.map((s, idx) =>
           showIndex.includes(idx) ? (
@@ -85,7 +99,14 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
             />
           ) : null
         )}
-        <circle cx={center.x} cy={center.y} r={30} fill="#ecc94b" />
+        <motion.circle
+          cx={center.x}
+          cy={center.y}
+          r={30}
+          fill="#ecc94b"
+          animate={{ r: [30, 36, 30], opacity: [1, 0.6, 1] }}
+          transition={{ duration: 1.5, repeat: 2, ease: "easeInOut" }}
+        />
         <text x={center.x} y={center.y + 6} textAnchor="middle" fontSize="20" fontWeight="bold" fill="#1A202C">
           12
         </text>
