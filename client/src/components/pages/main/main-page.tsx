@@ -12,7 +12,6 @@ export const MainPage = () => {
       <UserBar />
       <News />
       <Scores />
-      <AstrologyChart />
       <PriceCalc />
       <Products />
     </div>

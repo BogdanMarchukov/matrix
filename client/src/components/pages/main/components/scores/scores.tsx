@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import classes from "./scores.module.css";
 import ButtonSvg from "./svg/button";
 import MiniBtnSvg from "./svg/miniBtn";
@@ -6,10 +6,12 @@ import { IconButton } from "../../../../atoms/buttons/icon-button";
 import { Card } from "../../../../atoms/card";
 import { Currency } from "../../../../atoms/currency";
 import { DateInput } from "../../../../atoms/date-input";
+import AstrologyChart from "../../../../astrology-chart/astrology-chart";
 
 const { root, input, content, horizontalBox, verticalBox, titleBox, scoreTitle, sumBox, sum, friendsBonusTitle, friendsBonusText, orderTitle } = classes;
 
 export const Scores = () => {
+  const [show, setShow] = useState(false)
   return (
     <div className={root}>
       <DateInput className={input} placeholder="Введите дату рождения" />
@@ -38,12 +40,13 @@ export const Scores = () => {
           </div>
           <Card variant="secondary">
             <p className={orderTitle}>Выбрать и заказать</p>
-            <IconButton variant="secondary" size="large">
+            <IconButton variant="secondary" size="large" onClick={() => setShow((prev) => !prev)}>
               <ButtonSvg />
             </IconButton>
           </Card>
         </div>
       </div>
-    </div>
+      <AstrologyChart show={show} />
+    </div >
   );
 }

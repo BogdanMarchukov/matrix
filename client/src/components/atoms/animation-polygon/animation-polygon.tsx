@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 type Point = { x: number; y: number };
+type SquarePoints = Point & { collor: string }
 
 type AnimatedPolygonPathProps = {
-  points: Point[];
+  points: SquarePoints[];
   stroke?: string;
   strokeWidth?: number;
-  duration?: number; // duration for full path
+  duration?: number;
   delay?: number;
+  onVertexReach?: (index: number) => void;
 };
 
 const AnimatedPolygonPath: React.FC<AnimatedPolygonPathProps> = ({
@@ -16,8 +18,11 @@ const AnimatedPolygonPath: React.FC<AnimatedPolygonPathProps> = ({
   strokeWidth = 1,
   duration = 1000,
   delay = 0,
+  onVertexReach
 }) => {
   const [pathData, setPathData] = useState("");
+  const [reachedVertices, setReachedVertices] = useState<number[]>([]);
+  const prevSegmentRef = useRef<number>(-1);
 
   useEffect(() => {
     let raf: number;
@@ -39,8 +44,15 @@ const AnimatedPolygonPath: React.FC<AnimatedPolygonPathProps> = ({
       const segmentIndex = Math.floor(elapsed / segmentDuration);
       const localProgress = (elapsed % segmentDuration) / segmentDuration;
 
+      if (segmentIndex !== prevSegmentRef.current && segmentIndex < points.length) {
+        prevSegmentRef.current = segmentIndex;
+        setReachedVertices((prev) =>
+          prev.includes(segmentIndex) ? prev : [...prev, segmentIndex]
+        );
+        onVertexReach?.(segmentIndex);
+      }
+
       if (segmentIndex >= points.length) {
-        // completed
         const fullPath = points
           .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
           .join(" ") + " Z";
@@ -67,16 +79,26 @@ const AnimatedPolygonPath: React.FC<AnimatedPolygonPathProps> = ({
 
     raf = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(raf);
-  }, [points, duration, delay]);
+  }, [points, duration, delay, onVertexReach]);
 
   return (
-    <path
-      d={pathData}
-      fill="none"
-      stroke={stroke}
-      strokeWidth={strokeWidth}
-    />
+    <>
+      <path d={pathData} fill="none" stroke={stroke} strokeWidth={strokeWidth} />
+      {reachedVertices.map((index) => {
+        const point = points[index];
+        return (
+          <circle
+            key={index}
+            cx={point.x}
+            cy={point.y}
+            r={18}
+            fill={point.collor}
+          />
+        );
+      })}
+    </>
   );
 };
 
 export default AnimatedPolygonPath;
+

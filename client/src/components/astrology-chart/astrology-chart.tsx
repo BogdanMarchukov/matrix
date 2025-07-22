@@ -2,6 +2,10 @@ import React from "react";
 import AnimatedLine from "../atoms/animation-line/animation-lene";
 import AnimatedPolygon from "../atoms/animation-polygon/animation-polygon";
 
+type AnimatedLineProps = {
+  show: boolean
+};
+
 type Point = {
   x: number;
   y: number;
@@ -27,7 +31,7 @@ const polarToCartesian = (centerX: number, centerY: number, radius: number, angl
   };
 };
 
-const AstrologyChart: React.FC = () => {
+const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps) => {
   const center: Point = { x: 300, y: 320 };
   const circleRadius = 240;
 
@@ -64,8 +68,8 @@ const AstrologyChart: React.FC = () => {
   const showIndex = [0, 3, 6, 9, 12, 15, 18, 21]
 
 
-  return (
-    <div>
+  return show ? (
+    < div >
       <svg viewBox="0 0 600 660">
         <circle cx={center.x} cy={center.y} r={circleRadius} stroke="#4A5568" strokeWidth="1" fill="none" />
 
@@ -114,7 +118,7 @@ const AstrologyChart: React.FC = () => {
         <text x={center.x + 40} y={center.y + 115} fontSize="20" textAnchor="middle" fill="#E53E3E">❤️</text>
         <text x={center.x + 125} y={center.y + 60} fontSize="25" textAnchor="middle" fill="#E53E3E">💰</text>
         <AnimatedPolygon
-          points={getSquarePoints(90)}
+          points={getSquarePoints(90, ['#8E61EF', '#e1112a', '#e1112a', '#8E61EF'])}
           duration={2000}
           delay={200}
         />
@@ -130,8 +134,8 @@ const AstrologyChart: React.FC = () => {
             ];
             return (
               <>
-                <circle key={i + Date.now()} cx={p.x} cy={p.y} r="18" strokeWidth={1} stroke="#4A5568" fill={p.collor} />
-                <text key={i + 'text'} x={p.x} y={p.y + 7} fontSize="25" textAnchor="middle" fill="#4A5568">{i}</text>
+                {/* <circle key={i + Date.now()} cx={p.x} cy={p.y} r="18" strokeWidth={1} stroke="#4A5568" fill={p.collor} /> */}
+                {/* <text key={i + 'text'} x={p.x} y={p.y + 7} fontSize="25" textAnchor="middle" fill="#4A5568">{i}</text> */}
                 <circle key={i + 2} cx={p.x + delta[0][i].x} cy={p.y + delta[0][i].y} r="14" strokeWidth={1} stroke="#4A5568" fill={delta[0][i].c} />
                 <circle key={i + 3} cx={p.x + delta[1][i].x} cy={p.y + delta[1][i].y} r="12" strokeWidth={1} stroke="#4A5568" fill={delta[1][i].c} />
                 {i === 0 ? <circle key={i + 3} cx={p.x} cy={p.y + 120} r="12" strokeWidth={1} stroke="#2bee14" fill="#2bee14" /> : null}
@@ -150,8 +154,8 @@ const AstrologyChart: React.FC = () => {
             ];
             return (
               <>
-                <circle key={i + 1} cx={p.x} cy={p.y} r="18" strokeWidth={1} stroke="#4A5568" fill={p.collor} />
-                <text key={i + 'text'} x={p.x} y={p.y + 7} fontSize="25" textAnchor="middle" fill="#4A5568">{i}</text>
+                {/* <circle key={i + 1} cx={p.x} cy={p.y} r="18" strokeWidth={1} stroke="#4A5568" fill={p.collor} /> */}
+                {/* <text key={i + 'text'} x={p.x} y={p.y + 7} fontSize="25" textAnchor="middle" fill="#4A5568">{i}</text> */}
                 {i === 1 ? <circle key={i + 2} cx={p.x - 59} cy={p.y - 59} r="10" strokeWidth={1} stroke="#4A5568" fill={p.collor} /> : null}
                 {i === 1 ? <circle key={i + 2} cx={p.x - 74} cy={p.y - 74} r="10" strokeWidth={1} stroke="#4A5568" fill={p.collor} /> : null}
                 {i === 3 ? <circle key={i + 2} cx={p.x + 74} cy={p.y + 74} r="10" strokeWidth={1} stroke="#4A5568" fill={p.collor} /> : null}
@@ -162,8 +166,8 @@ const AstrologyChart: React.FC = () => {
           })
         }
       </svg>
-    </div>
-  );
+    </div >
+  ) : null
 };
 
 export default AstrologyChart;
