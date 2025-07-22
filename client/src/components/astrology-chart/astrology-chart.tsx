@@ -1,4 +1,6 @@
 import React from "react";
+import AnimatedLine from "../atoms/animation-line/animation-lene";
+import AnimatedPolygon from "../atoms/animation-polygon/animation-polygon";
 
 type Point = {
   x: number;
@@ -63,24 +65,22 @@ const AstrologyChart: React.FC = () => {
 
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-900 p-4">
-      <svg viewBox="0 0 600 660" className="rounded-2xl">
+    <div>
+      <svg viewBox="0 0 600 660">
         <circle cx={center.x} cy={center.y} r={circleRadius} stroke="#4A5568" strokeWidth="1" fill="none" />
 
-        {sectors.map((s, idx) => (
-          showIndex.includes(idx) ?
-            <line
+        {sectors.map((s, idx) =>
+          showIndex.includes(idx) ? (
+            <AnimatedLine
               key={idx}
-              x1={center.x}
-              y1={center.y}
-              x2={s.outer.x}
-              y2={s.outer.y}
+              from={center}
+              to={s.outer}
               stroke={idx === 3 || idx === 15 ? "#e1112a" : idx === 9 || idx === 21 ? "#196fec" : "#718096"}
-              strokeWidth="1"
+              strokeWidth={1}
+              duration={1500}
             />
-            : null
-        ))}
-
+          ) : null
+        )}
         <circle cx={center.x} cy={center.y} r={30} fill="#ecc94b" />
         <text x={center.x} y={center.y + 6} textAnchor="middle" fontSize="20" fontWeight="bold" fill="#1A202C">
           12
@@ -113,19 +113,16 @@ const AstrologyChart: React.FC = () => {
         <text x={center.x + 50} y={center.y - 40} fontSize="25" textAnchor="middle" fill="#E53E3E">♀</text>
         <text x={center.x + 40} y={center.y + 115} fontSize="20" textAnchor="middle" fill="#E53E3E">❤️</text>
         <text x={center.x + 125} y={center.y + 60} fontSize="25" textAnchor="middle" fill="#E53E3E">💰</text>
-        <polygon
-          points={getSquarePoints(90).map(p => `${p.x},${p.y}`).join(' ')}
-          stroke="#4A5568"
-          strokeWidth={1}
-          fill="none"
+        <AnimatedPolygon
+          points={getSquarePoints(90)}
+          duration={2000}
+          delay={200}
         />
-        <polygon
-          points={getSquarePoints(45).map(p => `${p.x},${p.y}`).join(' ')}
-          stroke="#4A5568"
-          strokeWidth={1}
-          fill="none"
-        />
-        {
+        <AnimatedPolygon
+          points={getSquarePoints(45)}
+          duration={2000}
+          delay={2400}
+        />{
           getSquarePoints(90, ['#8E61EF', '#e1112a', '#e1112a', '#8E61EF']).map((p, i, arr) => {
             const delta = [
               [{ x: -0, y: 33, c: "#196fec" }, { x: -33, y: 0, c: "#f3a834" }, { x: 0, y: -33, c: "#f3a834" }, { x: 33, y: 0, c: "#196fec" }],
