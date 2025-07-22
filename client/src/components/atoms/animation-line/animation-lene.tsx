@@ -11,6 +11,7 @@ type AnimatedLineProps = {
   stroke?: string;
   strokeWidth?: number;
   duration?: number;
+  delay?: number;
 };
 
 const AnimatedLine: React.FC<AnimatedLineProps> = ({
@@ -19,14 +20,21 @@ const AnimatedLine: React.FC<AnimatedLineProps> = ({
   stroke = "#718096",
   strokeWidth = 1,
   duration = 1000,
+  delay = 0,
 }) => {
   const [end, setEnd] = useState<Point>(from);
 
   useEffect(() => {
     let startTime: number;
+    let raf: number;
     const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
+      if (!startTime) startTime = timestamp + delay;
       const elapsed = timestamp - startTime;
+      if (elapsed < 0) {
+        raf = requestAnimationFrame(animate);
+        return;
+      }
+
       const progress = Math.min(elapsed / duration, 1);
 
       setEnd({
@@ -35,12 +43,13 @@ const AnimatedLine: React.FC<AnimatedLineProps> = ({
       });
 
       if (progress < 1) {
-        requestAnimationFrame(animate);
+        raf = requestAnimationFrame(animate);
       }
     };
 
-    requestAnimationFrame(animate);
-  }, [from, to, duration]);
+    raf = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(raf);
+  }, [from, to, delay, duration]);
 
   return (
     <line

@@ -67,7 +67,6 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
 
   const showIndex = [0, 3, 6, 9, 12, 15, 18, 21]
 
-
   return show ? (
     < div >
       <svg viewBox="0 0 600 660">
@@ -82,6 +81,7 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
               stroke={idx === 3 || idx === 15 ? "#e1112a" : idx === 9 || idx === 21 ? "#196fec" : "#718096"}
               strokeWidth={1}
               duration={1500}
+              delay={[3, 15, 9, 21].includes(idx) ? 0 : 1500}
             />
           ) : null
         )}
