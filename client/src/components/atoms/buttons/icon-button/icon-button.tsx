@@ -1,4 +1,4 @@
-import React, {CSSProperties, PropsWithChildren, useMemo} from "react";
+import { CSSProperties, PropsWithChildren } from "react";
 import classes from './icon-button.module.css';
 
 interface IconButtonProps extends PropsWithChildren {
@@ -21,7 +21,7 @@ const buttonClassNames = {
   }
 }
 
-export const IconButton = ({children, style, onClick, variant = 'primary', size = 'small'}: IconButtonProps) => {
+export const IconButton = ({ children, style, onClick, variant = 'primary', size = 'small' }: IconButtonProps) => {
   return (
     <button
       className={`${classes.root} ${classes[buttonClassNames[variant][size]]}`}

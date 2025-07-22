@@ -1,10 +1,9 @@
-import { Scores } from "./components/scores";
+import { News } from "./components/news";
 import { PriceCalc } from "./components/price-calc";
 import { Products } from "./components/products";
+import { Scores } from "./components/scores";
 import { UserBar } from "./components/user-bar";
-import classes from './main-page.module.css'
-import { News } from "./components/news";
-import AstrologyChart from "../../astrology-chart/astrology-chart";
+import classes from './main-page.module.css';
 
 export const MainPage = () => {
   return (
