@@ -1,9 +1,5 @@
-import React, { useEffect, useState } from "react";
-
-type Point = {
-  x: number;
-  y: number;
-};
+import React, { useEffect, useRef, useState } from "react";
+import { CirclePoints, Point } from "../../../common/types/astrology-cart";
 
 type AnimatedLineProps = {
   from: Point;
@@ -12,6 +8,7 @@ type AnimatedLineProps = {
   strokeWidth?: number;
   duration?: number;
   delay?: number;
+  circlePoints?: CirclePoints[];
 };
 
 const AnimatedLine: React.FC<AnimatedLineProps> = ({
@@ -21,8 +18,10 @@ const AnimatedLine: React.FC<AnimatedLineProps> = ({
   strokeWidth = 1,
   duration = 1000,
   delay = 0,
+  circlePoints = []
 }) => {
   const [end, setEnd] = useState<Point>(from);
+  const currentCircles = useRef<CirclePoints[]>([]);
 
   useEffect(() => {
     let startTime: number;
@@ -36,11 +35,20 @@ const AnimatedLine: React.FC<AnimatedLineProps> = ({
       }
 
       const progress = Math.min(elapsed / duration, 1);
+      const x = from.x + (to.x - from.x) * progress;
+      const y = from.y + (to.y - from.y) * progress;
 
-      setEnd({
-        x: from.x + (to.x - from.x) * progress,
-        y: from.y + (to.y - from.y) * progress,
+      const threshold = 3;
+      circlePoints.forEach((p) => {
+        const dx = p.x - x;
+        const dy = p.y - y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance <= threshold && !currentCircles.current.some(cp => cp.x === p.x && cp.y === p.y)) {
+          currentCircles.current.push(p);
+        }
       });
+
+      setEnd({ x, y });
 
       if (progress < 1) {
         raf = requestAnimationFrame(animate);
@@ -52,14 +60,28 @@ const AnimatedLine: React.FC<AnimatedLineProps> = ({
   }, [from, to, delay, duration]);
 
   return (
-    <line
-      x1={from.x}
-      y1={from.y}
-      x2={end.x}
-      y2={end.y}
-      stroke={stroke}
-      strokeWidth={strokeWidth}
-    />
+    <>
+      <line
+        x1={from.x}
+        y1={from.y}
+        x2={end.x}
+        y2={end.y}
+        stroke={stroke}
+        strokeWidth={strokeWidth}
+      />
+      {
+        currentCircles.current.map((p, i) => (
+          <circle
+            key={i}
+            cx={p.x}
+            cy={p.y}
+            stroke={p.stroke}
+            fill={p.fill}
+            r={p.r}
+          />
+        ))
+      }
+    </>
   );
 };
 
