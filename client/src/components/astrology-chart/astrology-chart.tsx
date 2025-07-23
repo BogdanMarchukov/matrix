@@ -1,8 +1,9 @@
 import React, { useMemo } from "react";
-import AnimatedLine from "../atoms/animation-line/animation-lene";
-import AnimatedPolygon from "../atoms/animation-polygon/animation-polygon";
 import { motion } from "framer-motion";
 import { CirclePoints } from "../../common/types/astrology-cart";
+import AnimatedLine from "../atoms/svg/animation-line/animation-lene";
+import AnimatedPolygonPath from "../atoms/svg/animation-polygon/animation-polygon";
+import DelayedText from "../atoms/svg/delayed-text/delayed-text";
 
 type AnimatedLineProps = {
   show: boolean
@@ -67,8 +68,8 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
     return squarePoints;
   }
 
-  const getSquarePoints90 = (): CirclePoints[] => {
-    return getSquarePoints(90, ['#8E61EF', '#e1112a', '#e1112a', '#8E61EF']).map((p, i, arr) => {
+  const getCirclePoints = (): CirclePoints[] => {
+    const points90 = getSquarePoints(90, ['#8E61EF', '#e1112a', '#e1112a', '#8E61EF']).map((p, i, arr) => {
       const delta = [
         [{ x: -0, y: 33, c: "#196fec" }, { x: -33, y: 0, c: "#f3a834" }, { x: 0, y: -33, c: "#f3a834" }, { x: 33, y: 0, c: "#196fec" }],
         [{ x: 0, y: 62, c: "#14b9ee" }, { x: -62, y: 0, c: "#ffffff" }, { x: 0, y: -62, c: "#ffffff" }, { x: 62, y: 0, c: "#14b9ee" }]
@@ -108,16 +109,65 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
 
       }
       return points
-    }).flat(1);
+    });
+
+    const points45 = getSquarePoints(45).map((p, i, arr) => {
+      const delta = [
+        [{ x: -23, y: 23 }, { x: -23, y: -23 }, { x: 23, y: -23 }, { x: 23, y: 23 }],
+        [{ x: -43, y: 43 }, { x: -43, y: -43 }, { x: 43, y: -43 }, { x: 43, y: 43 }]
+      ];
+      const points: CirclePoints[] = [];
+      points.push({
+        x: p.x + delta[0][i].x,
+        y: p.y + delta[0][i].y,
+        fill: p.collor,
+        stroke: "#455568",
+        r: "14"
+      })
+      points.push({
+        x: p.x + delta[1][i].x,
+        y: p.y + delta[1][i].y,
+        fill: p.collor,
+        stroke: "#455568",
+        r: "12"
+      })
+      if (i === 1) {
+        points.push({
+          x: p.x - 59,
+          y: p.y + - 59,
+          fill: p.collor,
+          stroke: "#4A5568",
+          r: "10"
+        })
+        points.push({
+          x: p.x - 74,
+          y: p.y + - 74,
+          fill: p.collor,
+          stroke: "#4A5568",
+          r: "10"
+        })
+      }
+      if (i === 3) {
+        points.push({
+          x: p.x + 74,
+          y: p.y + 74,
+          fill: p.collor,
+          stroke: "#4A556",
+          r: "10"
+        })
+
+      }
+      return points
+    });
+    return [...points90, ...points45].flat(1)
   }
 
-  const circlePoints90 = useMemo(() => getSquarePoints90(), []);
-
+  const circlePoints90 = useMemo(() => getCirclePoints(), []);
 
   const showIndex = [0, 3, 6, 9, 12, 15, 18, 21]
 
   return show ? (
-    < div >
+    <div>
       <svg viewBox="0 0 600 660">
         <defs>
           <filter id="dropShadow" x="-50%" y="-50%" width="200%" height="200%">
@@ -148,11 +198,56 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
             />
           ) : null
         )}
+        <AnimatedLine
+          from={{
+            x: circlePoints90[1].x,
+            y: circlePoints90[1].y
+          }}
+          to={{
+            x: circlePoints90[8].x,
+            y: circlePoints90[8].y
+          }}
+          delay={6900}
+          strokeDasharray="20 10"
+          stroke="#455568"
+          duration={1500}
+        />
+
+        <AnimatedLine
+          from={{
+            x: circlePoints90[4].x,
+            y: circlePoints90[4].y
+          }}
+          to={{
+            x: circlePoints90[6].x,
+            y: circlePoints90[6].y
+          }}
+          delay={6900}
+          strokeDasharray="20 10"
+          stroke="#455568"
+          duration={1500}
+        />
+
+        <AnimatedLine
+          from={{
+            x: circlePoints90[5].x,
+            y: circlePoints90[5].y
+          }}
+          to={{
+            x: circlePoints90[3].x,
+            y: circlePoints90[3].y
+          }}
+          delay={6900}
+          strokeDasharray="20 10"
+          stroke="#455568"
+          duration={1500}
+        />
+
         <motion.circle
           cx={center.x}
           cy={center.y}
           r={30}
-          fill="#ecc94b
+          fill="#ecc94b"
           animate={{ r: [30, 36, 30], opacity: [1, 0.6, 1] }}
           transition={{ duration: 1.5, repeat: 2, ease: "easeInOut" }}
         />
@@ -183,58 +278,58 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
             </text>
           </g>
         ))}
-        <text x={center.x - 40} y={center.y - 35} fontSize="25" textAnchor="middle" fill="#196fec">♂</text>
-        <text x={center.x + 50} y={center.y - 40} fontSize="25" textAnchor="middle" fill="#E53E3E">♀</text>
-        <text x={center.x + 40} y={center.y + 115} fontSize="20" textAnchor="middle" fill="#E53E3E">❤️</text>
-        <text x={center.x + 125} y={center.y + 60} fontSize="25" textAnchor="middle" fill="#E53E3E">💰</text>
-        <AnimatedPolygon
+
+        <DelayedText
+          x={center.x - 40}
+          y={center.y - 35}
+          fontSize="25"
+          textAnchor="middle"
+          fill="#196fec"
+          delay={8400}
+          content="♂"
+        />
+
+        <DelayedText
+          x={center.x + 50}
+          y={center.y - 40}
+          fontSize="25"
+          textAnchor="middle"
+          fill="#E53E3E"
+          delay={8400}
+          content="♀"
+
+        />
+
+        <DelayedText
+          x={center.x - 40}
+          y={center.y + 115}
+          fontSize="20"
+          textAnchor="middle"
+          fill="#E53E3E"
+          delay={8400}
+          content="❤️"
+        />
+
+        <DelayedText
+          x={center.x + 125}
+          y={center.y + 60}
+          fontSize="25"
+          textAnchor="middle"
+          fill="#E53E3E"
+          delay={8400}
+          content="💰"
+        />
+
+        <AnimatedPolygonPath
           points={getSquarePoints(90, ['#8E61EF', '#e1112a', '#e1112a', '#8E61EF'])}
           duration={2000}
           delay={2400}
         />
-        <AnimatedPolygon
+        <AnimatedPolygonPath
           points={getSquarePoints(45)}
           duration={2000}
           delay={200}
-        />{
-          getSquarePoints(90, ['#8E61EF', '#e1112a', '#e1112a', '#8E61EF']).map((p, i, arr) => {
-            const delta = [
-              [{ x: -0, y: 33, c: "#196fec" }, { x: -33, y: 0, c: "#f3a834" }, { x: 0, y: -33, c: "#f3a834" }, { x: 33, y: 0, c: "#196fec" }],
-              [{ x: 0, y: 62, c: "#14b9ee" }, { x: -62, y: 0, c: "#ffffff" }, { x: 0, y: -62, c: "#ffffff" }, { x: 62, y: 0, c: "#14b9ee" }]
-            ];
-            return (
-              <>
-                {/* <circle key={i + Date.now()} cx={p.x} cy={p.y} r="18" strokeWidth={1} stroke="#4A5568" fill={p.collor} /> */}
-                {/* <text key={i + 'text'} x={p.x} y={p.y + 7} fontSize="25" textAnchor="middle" fill="#4A5568">{i}</text> */}
-                {/* <circle key={i + 2} cx={p.x + delta[0][i].x} cy={p.y + delta[0][i].y} r="14" strokeWidth={1} stroke="#4A5568" fill={delta[0][i].c} /> */}
-                {/* <circle key={i + 3} cx={p.x + delta[1][i].x} cy={p.y + delta[1][i].y} r="12" strokeWidth={1} stroke="#4A5568" fill={delta[1][i].c} /> */}
-                {/* {i === 0 ? <circle key={i + 3} cx={p.x} cy={p.y + 120} r="12" strokeWidth={1} stroke="#2bee14" fill="#2bee14" /> : null} */}
-                {/* {i === 3 ? <circle key={i + 3} cx={p.x + 120} cy={p.y} r="12" strokeWidth={1} stroke="#2bee14" fill="#2bee14" /> : null} */}
-                {i === 0 ? <line strokeDasharray="20 10" key={i + 4} x1={arr[3].x + delta[1][3].x} y1={arr[3].y + delta[1][3].y} x2={arr[0].x + delta[1][0].x} y2={arr[0].y + delta[1][0].y} stroke="#4A5568" /> : null}
-                {i === 0 ? <line strokeDasharray="20, 10" key={i + 4} x1={arr[1].x + delta[1][1].x} y1={arr[1].y + delta[1][1].y} x2={arr[2].x + delta[1][2].x} y2={arr[2].y + delta[1][2].y} stroke="#4A5568" /> : null}
-                {i === 0 ? <line strokeDasharray="20, 10" key={i + 4} x1={arr[1].x + delta[0][1].x} y1={arr[1].y + delta[0][1].y} x2={arr[2].x + delta[0][2].x} y2={arr[2].y + delta[0][2].y} stroke="#4A5568" /> : null}
-              </>
-            )
-          })
-        }{
-          getSquarePoints(45).map((p, i) => {
-            const delta = [
-              [{ x: -23, y: 23 }, { x: -23, y: -23 }, { x: 23, y: -23 }, { x: 23, y: 23 }],
-              [{ x: -43, y: 43 }, { x: -43, y: -43 }, { x: 43, y: -43 }, { x: 43, y: 43 }]
-            ];
-            return (
-              <>
-                {/* <circle key={i + 1} cx={p.x} cy={p.y} r="18" strokeWidth={1} stroke="#4A5568" fill={p.collor} /> */}
-                {/* <text key={i + 'text'} x={p.x} y={p.y + 7} fontSize="25" textAnchor="middle" fill="#4A5568">{i}</text> */}
-                {i === 1 ? <circle key={i + 2} cx={p.x - 59} cy={p.y - 59} r="10" strokeWidth={1} stroke="#4A5568" fill={p.collor} /> : null}
-                {i === 1 ? <circle key={i + 2} cx={p.x - 74} cy={p.y - 74} r="10" strokeWidth={1} stroke="#4A5568" fill={p.collor} /> : null}
-                {i === 3 ? <circle key={i + 2} cx={p.x + 74} cy={p.y + 74} r="10" strokeWidth={1} stroke="#4A5568" fill={p.collor} /> : null}
-                <circle key={i + 2} cx={p.x + delta[0][i].x} cy={p.y + delta[0][i].y} r="14" strokeWidth={1} stroke="#4A5568" fill={p.collor} />
-                <circle key={i + 3} cx={p.x + delta[1][i].x} cy={p.y + delta[1][i].y} r="12" strokeWidth={1} stroke="#4A5568" fill={p.collor} />
-              </>
-            )
-          })
-        }
+        />
       </svg>
     </div >
   ) : null

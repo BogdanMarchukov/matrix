@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { CirclePoints, Point } from "../../../common/types/astrology-cart";
+import { CirclePoints, Point } from "../../../../common/types/astrology-cart";
 
 type AnimatedLineProps = {
   from: Point;
@@ -9,6 +9,7 @@ type AnimatedLineProps = {
   duration?: number;
   delay?: number;
   circlePoints?: CirclePoints[];
+  strokeDasharray?: string;
 };
 
 const AnimatedLine: React.FC<AnimatedLineProps> = ({
@@ -18,7 +19,8 @@ const AnimatedLine: React.FC<AnimatedLineProps> = ({
   strokeWidth = 1,
   duration = 1000,
   delay = 0,
-  circlePoints = []
+  circlePoints = [],
+  strokeDasharray = ""
 }) => {
   const [end, setEnd] = useState<Point>(from);
   const currentCircles = useRef<CirclePoints[]>([]);
@@ -68,6 +70,7 @@ const AnimatedLine: React.FC<AnimatedLineProps> = ({
         y2={end.y}
         stroke={stroke}
         strokeWidth={strokeWidth}
+        strokeDasharray={strokeDasharray}
       />
       {
         currentCircles.current.map((p, i) => (
