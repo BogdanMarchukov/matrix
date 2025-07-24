@@ -1,16 +1,17 @@
-import React, { useState } from "react";
-import classes from "./scores.module.css";
-import ButtonSvg from "./svg/button";
-import MiniBtnSvg from "./svg/miniBtn";
+import { useState } from "react";
+import AstrologyChart from "../../../../astrology-chart/astrology-chart";
 import { IconButton } from "../../../../atoms/buttons/icon-button";
 import { Card } from "../../../../atoms/card";
 import { Currency } from "../../../../atoms/currency";
 import { DateInput } from "../../../../atoms/date-input";
-import AstrologyChart from "../../../../astrology-chart/astrology-chart";
+import classes from "./scores.module.css";
+import ButtonSvg from "./svg/button";
+import MiniBtnSvg from "./svg/miniBtn";
 
 const { root, input, content, horizontalBox, verticalBox, titleBox, scoreTitle, sumBox, sum, friendsBonusTitle, friendsBonusText, orderTitle } = classes;
 
 export const Scores = () => {
+  const data = [[1, 6, 8, 1], [7, 14, 9, 2], [18, 17, 6], [19, 12], [10, 22, 5], [6, 19, 6, 10], [14, 6], [5, 14], [18, 17, 6], [9, 7, 7], [12]];
   const [show, setShow] = useState(false)
   return (
     <div className={root}>
@@ -46,7 +47,7 @@ export const Scores = () => {
           </Card>
         </div>
       </div>
-      <AstrologyChart show={show} />
+      <AstrologyChart show={show} pointValue={data} />
     </div >
   );
 }

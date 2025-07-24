@@ -1,20 +1,16 @@
-import React, { useMemo } from "react";
 import { motion } from "framer-motion";
-import { CirclePoints } from "../../common/types/astrology-cart";
+import React, { useMemo } from "react";
+import { CirclePoints, Point, SquarePoints } from "../../common/types/astrology-cart";
 import AnimatedLine from "../atoms/svg/animation-line/animation-lene";
 import AnimatedPolygonPath from "../atoms/svg/animation-polygon/animation-polygon";
 import DelayedText from "../atoms/svg/delayed-text/delayed-text";
 
+
 type AnimatedLineProps = {
   show: boolean
+  pointValue: number[][]
 };
 
-type Point = {
-  x: number;
-  y: number;
-};
-
-type SquarePoints = Point & { collor: string }
 
 type Sector = {
   angle: number;
@@ -34,7 +30,7 @@ const polarToCartesian = (centerX: number, centerY: number, radius: number, angl
   };
 };
 
-const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps) => {
+const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: AnimatedLineProps) => {
   const center: Point = { x: 300, y: 320 };
   const circleRadius = 240;
 
@@ -56,13 +52,14 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
     };
   });
 
-  const getSquarePoints = (angle: number, collors?: string[]): SquarePoints[] => {
+  const getSquarePoints = (angle: number, collors?: string[], values?: number[]): SquarePoints[] => {
     const polygonRadius = 210;
     const squareAngles = [0, 90, 180, 270];
     const squarePoints = squareAngles.map((an, i) => {
       return {
         ...polarToCartesian(center.x, center.y, polygonRadius, an - angle),
-        collor: collors ? collors[i] : '#ffffff'
+        collor: collors ? collors[i] : '#ffffff',
+        value: values ? values[i] : 0
       }
     });
     return squarePoints;
@@ -80,14 +77,20 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
         y: p.y + delta[0][i].y,
         fill: delta[0][i].c,
         stroke: "#455568",
-        r: "14"
+        r: "14",
+        value: pointValue[i * 2 + 2][0],
+        dtx: 0,
+        dty: 5
       })
       points.push({
         x: p.x + delta[1][i].x,
         y: p.y + delta[1][i].y,
         fill: delta[1][i].c,
         stroke: "#455568",
-        r: "12"
+        r: "12",
+        value: pointValue[i * 2 + 2][1],
+        dtx: -1,
+        dty: 4
       })
       if (i === 0) {
         points.push({
@@ -95,7 +98,10 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
           y: p.y + 120,
           fill: "#2bee14",
           stroke: "#2bee14",
-          r: "12"
+          r: "12",
+          value: pointValue[2][2],
+          dtx: 0,
+          dty: 5
         })
       }
       if (i === 3) {
@@ -104,7 +110,10 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
           y: p.y,
           fill: "#2bee14",
           stroke: "#2bee14",
-          r: "12"
+          r: "12",
+          value: pointValue[8][2],
+          dtx: 0,
+          dty: 5
         })
 
       }
@@ -122,14 +131,20 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
         y: p.y + delta[0][i].y,
         fill: p.collor,
         stroke: "#455568",
-        r: "14"
+        r: "14",
+        value: pointValue[i * 2 + 3][0],
+        dtx: -2,
+        dty: 4
       })
       points.push({
         x: p.x + delta[1][i].x,
         y: p.y + delta[1][i].y,
         fill: p.collor,
         stroke: "#455568",
-        r: "12"
+        r: "12",
+        value: pointValue[i * 2 + 3][1],
+        dtx: -1,
+        dty: 4
       })
       if (i === 1) {
         points.push({
@@ -137,14 +152,20 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
           y: p.y + - 59,
           fill: p.collor,
           stroke: "#4A5568",
-          r: "10"
+          r: "10",
+          value: pointValue[5][2],
+          dtx: -1,
+          dty: 3
         })
         points.push({
           x: p.x - 74,
           y: p.y + - 74,
           fill: p.collor,
           stroke: "#4A5568",
-          r: "10"
+          r: "10",
+          value: pointValue[5][3],
+          dtx: -1,
+          dty: 3
         })
       }
       if (i === 3) {
@@ -153,7 +174,10 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
           y: p.y + 74,
           fill: p.collor,
           stroke: "#4A556",
-          r: "10"
+          r: "10",
+          value: pointValue[9][2],
+          dtx: 0,
+          dty: 3
         })
 
       }
@@ -301,7 +325,7 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
         />
 
         <DelayedText
-          x={center.x - 40}
+          x={center.x + 40}
           y={center.y + 115}
           fontSize="20"
           textAnchor="middle"
@@ -321,12 +345,13 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show }: AnimatedLineProps
         />
 
         <AnimatedPolygonPath
-          points={getSquarePoints(90, ['#8E61EF', '#e1112a', '#e1112a', '#8E61EF'])}
+          points={getSquarePoints(90, ['#8E61EF', '#e1112a', '#e1112a', '#8E61EF'], pointValue[0])}
           duration={2000}
           delay={2400}
         />
+
         <AnimatedPolygonPath
-          points={getSquarePoints(45)}
+          points={getSquarePoints(45, undefined, pointValue[1])}
           duration={2000}
           delay={200}
         />

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-
-type Point = { x: number; y: number };
-type SquarePoints = Point & { collor: string }
+import { Point, SquarePoints } from "../../../../common/types/astrology-cart";
+import DelayedText from "../delayed-text/delayed-text";
 
 type AnimatedPolygonPathProps = {
   points: SquarePoints[];
@@ -87,13 +86,16 @@ const AnimatedPolygonPath: React.FC<AnimatedPolygonPathProps> = ({
       {reachedVertices.map((index) => {
         const point = points[index];
         return (
-          <circle
-            key={index}
-            cx={point.x}
-            cy={point.y}
-            r={18}
-            fill={point.collor}
-          />
+          <>
+            <circle
+              key={index}
+              cx={point.x}
+              cy={point.y}
+              r={18}
+              fill={point.collor}
+            />
+            <DelayedText key={index} x={point.x} y={point.y + 7} delay={0} fontSize={25} content={points[index].value} />
+          </>
         );
       })}
     </>

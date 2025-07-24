@@ -7,7 +7,7 @@ type DelayedTextProps = {
   textAnchor?: "start" | "middle" | "end";
   fill?: string;
   delay?: number;
-  content: string;
+  content: string | number;
 };
 
 const DelayedText: React.FC<DelayedTextProps> = ({

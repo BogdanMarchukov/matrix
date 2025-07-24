@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { CirclePoints, Point } from "../../../../common/types/astrology-cart";
+import DelayedText from "../delayed-text/delayed-text";
 
 type AnimatedLineProps = {
   from: Point;
@@ -63,25 +64,32 @@ const AnimatedLine: React.FC<AnimatedLineProps> = ({
 
   return (
     <>
-      <line
-        x1={from.x}
-        y1={from.y}
-        x2={end.x}
-        y2={end.y}
-        stroke={stroke}
-        strokeWidth={strokeWidth}
-        strokeDasharray={strokeDasharray}
-      />
+      <g id="lines-layer">
+        <line
+          x1={from.x}
+          y1={from.y}
+          x2={end.x}
+          y2={end.y}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+          strokeDasharray={strokeDasharray}
+        />
+      </g >
       {
         currentCircles.current.map((p, i) => (
-          <circle
-            key={i}
-            cx={p.x}
-            cy={p.y}
-            stroke={p.stroke}
-            fill={p.fill}
-            r={p.r}
-          />
+          <>
+            <g id="circles-layer">
+              <circle
+                key={i}
+                cx={p.x}
+                cy={p.y}
+                stroke={p.stroke}
+                fill={p.fill}
+                r={p.r}
+              />
+              <DelayedText delay={0} content={p.value} x={p.x + p.dtx} y={p.y + p.dty} />
+            </g>
+          </>
         ))
       }
     </>
