@@ -17,7 +17,6 @@ type Sector = {
   outer: Point;
   labelPos: Point;
   value: number;
-  smallText: number;
 };
 
 const degreesToRadians = (deg: number): number => (deg * Math.PI) / 180;
@@ -35,20 +34,19 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
   const circleRadius = 240;
 
   const values = [
-    12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 0, 1,
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+    20, 13, 14, 30, 16, 17, 40, 19, 21, 50, 1, 61,
+    60, 2, 3, 70, 5, 6, 0, 8, 9, 10, 11, 12
   ];
 
-  const sectors: Sector[] = Array.from({ length: 24 }, (_, i) => {
-    const angle = i * 15 - 90;
+  const sectors: Sector[] = Array.from({ length: 64 }, (_, i) => {
+    const angle = i * 5.625 - 90;
     const outer = polarToCartesian(center.x, center.y, circleRadius, angle);
     const labelPos = polarToCartesian(center.x, center.y, circleRadius + 20, angle);
     return {
       angle,
       outer,
       labelPos,
-      value: values[i],
-      smallText: i * 5,
+      value: values[i] || -1,
     };
   });
 
@@ -188,7 +186,7 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
 
   const circlePoints90 = useMemo(() => getCirclePoints(), []);
 
-  const showIndex = [0, 3, 6, 9, 12, 15, 18, 21]
+  const showIndex = [0, 8, 16, 24, 32, 40, 48, 56]
 
   return show ? (
     <div>
@@ -259,10 +257,10 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
               key={'line' + idx}
               from={center}
               to={s.outer}
-              stroke={idx === 3 || idx === 15 ? "#e1112a" : idx === 9 || idx === 21 ? "#196fec" : "#718096"}
+              stroke={idx === 8 || idx === 24 ? "#e1112a" : idx === 40 || idx === 56 ? "#196fec" : "#718096"}
               strokeWidth={1}
               duration={1500}
-              delay={([3, 15, 9, 21].includes(idx) ? 1500 : 0) + 4400}
+              delay={([0, 16, 32, 48].includes(idx) ? 0 : 1500) + 4400}
               circlePoints={circlePoints90}
             />
           ) : null
@@ -280,31 +278,37 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
           12
         </text>
 
-        {sectors.map((s, idx) => (
-          <g key={`text-${idx}`}>
-            <text
-              x={s.labelPos.x}
-              y={s.labelPos.y}
-              textAnchor="middle"
-              fontSize="14"
-              fontWeight="bold"
-              fill="#E2E8F0"
-            >
-              {s.value}
-            </text>
-            <text
-              x={s.labelPos.x}
-              y={s.labelPos.y + 12}
-              textAnchor="middle"
-              fontSize="10"
-              fill="#A0AEC0"
-            >
-              {s.smallText} лет
-            </text>
-          </g>
-        ))}
+        {sectors.map((s, idx) => {
+          if (true) {
+            return (
+              <g key={`text-${idx}`}>
+                <text
+                  x={s.labelPos.x}
+                  y={s.labelPos.y}
+                  textAnchor="middle"
+                  fontSize="14"
+                  fontWeight="bold"
+                  fill="#E2E8F0"
+                >
+                  {s.value}
+                </text>
+                <text
+                  x={s.labelPos.x}
+                  y={s.labelPos.y + 12}
+                  textAnchor="middle"
+                  fontSize="10"
+                  fill="#A0AEC0"
+                >
+                  лет
+                </text>
+              </g>
+            )
+          } else {
+            return null
+          }
+        })}
 
-        <DelayedText
+        < DelayedText
           x={center.x - 40}
           y={center.y - 35}
           fontSize="25"
