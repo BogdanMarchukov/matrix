@@ -86,16 +86,16 @@ const AnimatedPolygonPath: React.FC<AnimatedPolygonPathProps> = ({
       {reachedVertices.map((index) => {
         const point = points[index];
         return (
-          <>
+          <React.Fragment key={`fragment-${index}`} >
             <circle
-              key={index}
+              key={'plg-circle' + index}
               cx={point.x}
               cy={point.y}
               r={18}
               fill={point.collor}
             />
-            <DelayedText key={index} x={point.x} y={point.y + 7} delay={0} fontSize={25} content={points[index].value} />
-          </>
+            <DelayedText key={'plg-text' + index} x={point.x} y={point.y + 7} delay={0} fontSize={25} content={points[index].value} />
+          </React.Fragment>
         );
       })}
     </>

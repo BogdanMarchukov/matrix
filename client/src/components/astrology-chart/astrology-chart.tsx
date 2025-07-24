@@ -208,20 +208,6 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
           filter="url(#dropShadow)"
         />
 
-        {sectors.map((s, idx) =>
-          showIndex.includes(idx) ? (
-            < AnimatedLine
-              key={idx}
-              from={center}
-              to={s.outer}
-              stroke={idx === 3 || idx === 15 ? "#e1112a" : idx === 9 || idx === 21 ? "#196fec" : "#718096"}
-              strokeWidth={1}
-              duration={1500}
-              delay={([3, 15, 9, 21].includes(idx) ? 1500 : 0) + 4400}
-              circlePoints={circlePoints90}
-            />
-          ) : null
-        )}
         <AnimatedLine
           from={{
             x: circlePoints90[1].x,
@@ -266,6 +252,21 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
           stroke="#455568"
           duration={1500}
         />
+
+        {sectors.map((s, idx) =>
+          showIndex.includes(idx) ? (
+            < AnimatedLine
+              key={'line' + idx}
+              from={center}
+              to={s.outer}
+              stroke={idx === 3 || idx === 15 ? "#e1112a" : idx === 9 || idx === 21 ? "#196fec" : "#718096"}
+              strokeWidth={1}
+              duration={1500}
+              delay={([3, 15, 9, 21].includes(idx) ? 1500 : 0) + 4400}
+              circlePoints={circlePoints90}
+            />
+          ) : null
+        )}
 
         <motion.circle
           cx={center.x}

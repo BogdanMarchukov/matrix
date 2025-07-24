@@ -77,19 +77,17 @@ const AnimatedLine: React.FC<AnimatedLineProps> = ({
       </g >
       {
         currentCircles.current.map((p, i) => (
-          <>
-            <g id="circles-layer">
-              <circle
-                key={i}
-                cx={p.x}
-                cy={p.y}
-                stroke={p.stroke}
-                fill={p.fill}
-                r={p.r}
-              />
-              <DelayedText delay={0} content={p.value} x={p.x + p.dtx} y={p.y + p.dty} />
-            </g>
-          </>
+          <g id="circles-layer" key={"ci" + i}>
+            <circle
+              key={'cil' + i}
+              cx={p.x}
+              cy={p.y}
+              stroke={p.stroke}
+              fill={p.fill}
+              r={p.r}
+            />
+            <DelayedText key={'txt' + i} delay={0} content={p.value} x={p.x + p.dtx} y={p.y + p.dty} />
+          </g>
         ))
       }
     </>
