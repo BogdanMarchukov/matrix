@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Point, SquarePoints } from "../../../../common/types/astrology-cart";
 import DelayedText from "../delayed-text/delayed-text";
+import { text } from "stream/consumers";
 
 type AnimatedPolygonPathProps = {
   points: SquarePoints[];
@@ -8,6 +9,7 @@ type AnimatedPolygonPathProps = {
   strokeWidth?: number;
   duration?: number;
   delay?: number;
+  textDelay?: number;
   onVertexReach?: (index: number) => void;
 };
 
@@ -17,6 +19,7 @@ const AnimatedPolygonPath: React.FC<AnimatedPolygonPathProps> = ({
   strokeWidth = 1,
   duration = 1000,
   delay = 0,
+  textDelay = 0,
   onVertexReach
 }) => {
   const [pathData, setPathData] = useState("");
@@ -94,7 +97,7 @@ const AnimatedPolygonPath: React.FC<AnimatedPolygonPathProps> = ({
               r={18}
               fill={point.collor}
             />
-            <DelayedText key={'plg-text' + index} x={point.x} y={point.y + 7} delay={0} fontSize={25} content={points[index].value} />
+            <DelayedText key={'plg-text' + index} x={point.x} y={point.y + 7} delay={textDelay} fontSize={25} content={points[index].value} />
           </React.Fragment>
         );
       })}

@@ -260,6 +260,7 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
               stroke={idx === 8 || idx === 24 ? "#e1112a" : idx === 40 || idx === 56 ? "#196fec" : "#718096"}
               strokeWidth={1}
               duration={1500}
+              delayedText={100}
               delay={([0, 16, 32, 48].includes(idx) ? 0 : 1500) + 4400}
               circlePoints={circlePoints90}
             />
@@ -353,12 +354,14 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
           points={getSquarePoints(90, ['#8E61EF', '#e1112a', '#e1112a', '#8E61EF'], pointValue[0])}
           duration={2000}
           delay={2400}
+          textDelay={200}
         />
 
         <AnimatedPolygonPath
           points={getSquarePoints(45, undefined, pointValue[1])}
           duration={2000}
           delay={200}
+          textDelay={200}
         />
       </svg>
     </div >

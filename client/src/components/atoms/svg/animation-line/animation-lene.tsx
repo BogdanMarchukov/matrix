@@ -11,6 +11,7 @@ type AnimatedLineProps = {
   delay?: number;
   circlePoints?: CirclePoints[];
   strokeDasharray?: string;
+  delayedText?: number
 };
 
 const AnimatedLine: React.FC<AnimatedLineProps> = ({
@@ -20,6 +21,7 @@ const AnimatedLine: React.FC<AnimatedLineProps> = ({
   strokeWidth = 1,
   duration = 1000,
   delay = 0,
+  delayedText = 0,
   circlePoints = [],
   strokeDasharray = ""
 }) => {
@@ -86,7 +88,7 @@ const AnimatedLine: React.FC<AnimatedLineProps> = ({
               fill={p.fill}
               r={p.r}
             />
-            <DelayedText key={'txt' + i} delay={0} content={p.value} x={p.x + p.dtx} y={p.y + p.dty} />
+            <DelayedText key={'txt' + i} delay={delayedText} content={p.value} x={p.x + p.dtx} y={p.y + p.dty} />
           </g>
         ))
       }
