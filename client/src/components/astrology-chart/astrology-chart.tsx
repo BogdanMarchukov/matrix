@@ -34,19 +34,28 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
   const circleRadius = 240;
 
   const values = [
-    20, 13, 14, 30, 16, 17, 40, 19, 21, 50, 1, 61,
-    60, 2, 3, 70, 5, 6, 0, 8, 9, 10, 11, 12
+    20, 22.5, 23.5, 24, 25, 27.5, 28.5, 29, 30,
+    32.5, 33.5, 34, 35, 37.5, 38.5, 39, 40,
+    42.5, 43.5, 44, 45, 47.5, 48.5, 49, 50,
+    52.5, 53.5, 54, 55, 57.5, 58.5, 59, 60,
+    62.5, 63.5, 64, 65, 67.5, 68.5, 69, 70,
+    72.5, 73.5, 74, 75, 77.5, 78.5, 79, 0,
+    2.5, 3.5, 4, 5, 7.5, 8.5, 9, 10,
+    12.5, 13.5, 14, 15, 17.5, 18.5, 19, 20
   ];
 
   const sectors: Sector[] = Array.from({ length: 64 }, (_, i) => {
     const angle = i * 5.625 - 90;
     const outer = polarToCartesian(center.x, center.y, circleRadius, angle);
-    const labelPos = polarToCartesian(center.x, center.y, circleRadius + 20, angle);
+    const value = values[i];
+    const isMainValue = [0, 10, 20, 30, 40, 50, 60, 70, 80].includes(value);
+    const delta = isMainValue ? 20 : 10;
+    const labelPos = polarToCartesian(center.x, center.y, circleRadius + delta, angle);
     return {
       angle,
       outer,
       labelPos,
-      value: values[i] || -1,
+      value,
     };
   });
 
@@ -280,19 +289,20 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
         </text>
 
         {sectors.map((s, idx) => {
-          if (true) {
-            return (
-              <g key={`text-${idx}`}>
-                <text
-                  x={s.labelPos.x}
-                  y={s.labelPos.y}
-                  textAnchor="middle"
-                  fontSize="14"
-                  fontWeight="bold"
-                  fill="#E2E8F0"
-                >
-                  {s.value}
-                </text>
+          const isMainValue = [0, 10, 20, 30, 40, 50, 60, 70, 80].includes(s.value)
+          return (
+            <g key={`text-${idx}`}>
+              <text
+                x={s.labelPos.x}
+                y={s.labelPos.y}
+                textAnchor="middle"
+                fontSize={isMainValue ? 20 : 10}
+                fontWeight="bold"
+                fill="#E2E8F0"
+              >
+                {s.value}
+              </text>
+              {isMainValue ?
                 <text
                   x={s.labelPos.x}
                   y={s.labelPos.y + 12}
@@ -302,11 +312,10 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
                 >
                   лет
                 </text>
-              </g>
-            )
-          } else {
-            return null
-          }
+                : null
+              }
+            </g>
+          )
         })}
 
         < DelayedText
