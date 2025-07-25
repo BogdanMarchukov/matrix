@@ -17,6 +17,8 @@ type Sector = {
   outer: Point;
   labelPos: Point;
   value: number;
+  year: number;
+  energyPos: Point;
 };
 
 const degreesToRadians = (deg: number): number => (deg * Math.PI) / 180;
@@ -33,7 +35,7 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
   const center: Point = { x: 300, y: 320 };
   const circleRadius = 240;
 
-  const values = [
+  const years = [
     20, 22.5, 23.5, 24, 25, 27.5, 28.5, 29, 30,
     32.5, 33.5, 34, 35, 37.5, 38.5, 39, 40,
     42.5, 43.5, 44, 45, 47.5, 48.5, 49, 50,
@@ -47,15 +49,19 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
   const sectors: Sector[] = Array.from({ length: 64 }, (_, i) => {
     const angle = i * 5.625 - 90;
     const outer = polarToCartesian(center.x, center.y, circleRadius, angle);
-    const value = values[i];
-    const isMainValue = [0, 10, 20, 30, 40, 50, 60, 70, 80].includes(value);
+    const year = years[i];
+    const isMainValue = [0, 10, 20, 30, 40, 50, 60, 70, 80].includes(year);
     const delta = isMainValue ? 20 : 10;
+    const value = pointValue[11][i]
     const labelPos = polarToCartesian(center.x, center.y, circleRadius + delta, angle);
+    const energyPos = polarToCartesian(center.x, center.y, circleRadius - 10, angle);
     return {
       angle,
       outer,
       labelPos,
+      year,
       value,
+      energyPos
     };
   });
 
@@ -289,7 +295,7 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
         </text>
 
         {sectors.map((s, idx) => {
-          const isMainValue = [0, 10, 20, 30, 40, 50, 60, 70, 80].includes(s.value)
+          const isMainValue = [0, 10, 20, 30, 40, 50, 60, 70, 80].includes(s.year)
           return (
             <g key={`text-${idx}`}>
               <text
@@ -300,19 +306,34 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
                 fontWeight="bold"
                 fill="#E2E8F0"
               >
-                {s.value}
+                {s.year}
               </text>
-              {isMainValue ?
+              {!isMainValue ?
                 <text
-                  x={s.labelPos.x}
-                  y={s.labelPos.y + 12}
+                  x={s.energyPos.x}
+                  y={s.energyPos.y}
                   textAnchor="middle"
                   fontSize="10"
-                  fill="#A0AEC0"
+                  fontWeight="bold"
+                  fill="#E2E8F0"
                 >
-                  лет
+                  {s.value}
                 </text>
                 : null
+              }
+              {
+                isMainValue ?
+                  <text
+                    x={s.labelPos.x
+                    }
+                    y={s.labelPos.y + 12}
+                    textAnchor="middle"
+                    fontSize="10"
+                    fill="#A0AEC0"
+                  >
+                    лет
+                  </text>
+                  : null
               }
             </g>
           )
