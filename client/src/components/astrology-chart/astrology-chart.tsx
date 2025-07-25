@@ -33,7 +33,7 @@ const polarToCartesian = (centerX: number, centerY: number, radius: number, angl
 
 const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: AnimatedLineProps) => {
   const center: Point = { x: 300, y: 320 };
-  const circleRadius = 240;
+  const circleRadius = 255;
 
   const years = [
     20, 22.5, 23.5, 24, 25, 27.5, 28.5, 29, 30,
