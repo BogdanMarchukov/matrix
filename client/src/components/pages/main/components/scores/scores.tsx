@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AstrologyChart from "../../../../astrology-chart/astrology-chart";
 import { IconButton } from "../../../../atoms/buttons/icon-button";
 import { Card } from "../../../../atoms/card";
@@ -7,6 +7,8 @@ import { DateInput } from "../../../../atoms/date-input";
 import classes from "./scores.module.css";
 import ButtonSvg from "./svg/button";
 import MiniBtnSvg from "./svg/miniBtn";
+import { CloseIcon } from "./svg/close";
+import { Modal } from "../../../../atoms/modal/modal";
 
 const { root, input, content, horizontalBox, verticalBox, titleBox, scoreTitle, sumBox, sum, friendsBonusTitle, friendsBonusText, orderTitle } = classes;
 
@@ -16,7 +18,20 @@ export const Scores = () => {
     12, 11, 9, 18, 20, 15, 13, 7, 6, 22, 3, 1, 17, 14, 8, 5,
     9, 4, 19, 2, 18, 11, 10, 6, 3, 20, 21, 7, 13, 15, 12, 8,
     5, 1, 22, 19, 14, 17, 9, 6, 4, 10, 11, 2, 3, 7, 12, 16]];
-  const [show, setShow] = useState(false)
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (show) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [show]);
+
   return (
     <div className={root}>
       <DateInput className={input} placeholder="Введите дату рождения" />
@@ -51,7 +66,10 @@ export const Scores = () => {
           </Card>
         </div>
       </div>
-      <AstrologyChart show={show} pointValue={data} />
-    </div >
+
+      <Modal show={show} onClose={() => setShow(false)}>
+        <AstrologyChart show={show} pointValue={data} />
+      </Modal>
+    </div>
   );
-}
+};
