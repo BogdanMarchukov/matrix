@@ -1,0 +1,115 @@
+.overlay {
+  position: fixed;
+  touch-action: manipulation;
+  inset: 0;
+  z-index: 1000;
+  background: linear-gradient(to bottom, #f4ebff, var(--color-white));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spaces-mdm) var(--spaces-sm) var(--spaces-lg);
+  overflow-y: auto;
+}
+
+.closeButton {
+  position: absolute;
+  top: var(--spaces-mdm);
+  right: var(--spaces-mdm);
+  color: #333;
+  font-size: var(--font-smm);
+  cursor: pointer;
+}
+
+.imageWrapper {
+  margin-top: var(--sizes-ui-header);
+  margin-bottom: var(--spaces-md);
+}
+
+.image {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.textBlock {
+  text-align: center;
+  padding: 0 var(--spaces-sm);
+  max-width: 320px;
+}
+
+.title {
+  font-size: var(--font-sm);
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: var(--spaces-smm);
+}
+
+.description {
+  font-size: var(--font-xsm);
+  color: #444;
+  line-height: 1.6;
+  margin-bottom: var(--spaces-md);
+  text-align: left;
+}
+
+.linkText {
+  font-weight: 600;
+  color: #000;
+}
+
+.footer {
+  position: fixed;
+  bottom: 25px;
+  display: flex;
+  gap: var(--spaces-md);
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background: transparent;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  font-size: var(--font-xsm);
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: var(--spaces-xsm);
+  cursor: pointer;
+}
+
+.bigHeart {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  font-size: 80px;
+  opacity: 1;
+  animation: heartPop 0.8s ease-out forwards;
+  pointer-events: none;
+  /* чтобы не мешало кликам */
+}
+
+@keyframes heartPop {
+  0% {
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0;
+  }
+
+  30% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+
+  60% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}

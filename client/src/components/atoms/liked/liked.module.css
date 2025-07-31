@@ -1,0 +1,14 @@
+.iconButton {
+  background: none;
+  border: none;
+  font-size: var(--font-xsm);
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: var(--spaces-xsm);
+  cursor: pointer;
+}
+
+.iconButton.liked {
+  color: red;
+}
