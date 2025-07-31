@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import img from "../../png/news-first.png"
-import styles from "./news-modal.module.css";
 import Liked from "../../../../../../atoms/liked/liked";
 import { CloseIcon } from "../../../scores/svg/close";
+import styles from "./news-modal.module.css";
 
 interface NewsModalProps {
   onClose: () => void;
