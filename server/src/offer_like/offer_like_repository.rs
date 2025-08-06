@@ -51,4 +51,7 @@ impl OfferLikeRepository {
             .exec_with_returning(db)
             .await
     }
+    // создай find_many которая на фход принимает структуру filter со всеми полями сущьности Option
+    // AI!
+
 }
