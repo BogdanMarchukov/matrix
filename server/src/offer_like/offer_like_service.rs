@@ -10,6 +10,7 @@ pub async fn find_by_offer_id(
     offer_id: Uuid,
 ) -> FieldResult<Vec<OfferLikeGqlModel>> {
     let result = OfferLikeRepository::find_by_offer_id(db, offer_id).await?;
+    // исправь маппинг AI!
     Ok(result.into_iter().map(OfferLikeGqlModel::from).collect())
 }
 
