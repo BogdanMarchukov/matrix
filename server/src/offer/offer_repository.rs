@@ -106,3 +106,5 @@ where
         Err(GqlError::ServerError("offer create error: database error".to_string()).extend())
     }
 }
+
+// создай метод create_test_offer c тестовыми данными AI!
