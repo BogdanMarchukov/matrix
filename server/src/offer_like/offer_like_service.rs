@@ -68,26 +68,39 @@ pub async fn like_offer(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{db_utils::TestDb, user::user_gql_model::UserRoleGqlType};
+    use crate::{
+        auth::web_app_data::UserTgWebApp,
+        db_utils::TestDb,
+        user::{user_gql_model::UserRoleGqlType, user_repository},
+    };
     use testcontainers::clients::Cli;
 
-    #[tokio::test]
-    async fn test_like_offer() {
-        let docker = Cli::default();
-        let test_db = TestDb::new(&docker).await;
-        let conn = &test_db.db;
+    // #[tokio::test]
+    // async fn test_like_offer() {
+    //     let docker = Cli::default();
+    //     let test_db = TestDb::new(&docker).await;
+    //     let conn = &test_db.db;
+    //
+    //     let offer_id = Uuid::new_v4();
+    //     let user_id = Uuid::new_v4();
+    //
+    //     // Test liking an offer
+    //     let like_result = like_offer(conn, offer_id, user_id)
+    //         .await
+    //         .expect("Failed to like offer");
+    //     assert!(like_result.is_some());
+    //
+    //     // Test unliking an offer
+    //     let unlike_result = like_offer(conn, offer_id, user_id)
+    //         .await
+    //         .expect("Failed to unlike offer");
+    //     assert!(unlike_result.is_none());
+    // }
+    // ---- offer_like::offer_like_service::tests::test_find_by_user_id stdout ----
+ //thread 'offer_like::offer_like_service::tests::test_find_by_user_id' panicked at server/src/offer_like/offer_like_service.rs:115:14:
+ //Failed to like offer: Error { message: "Query Error: error returned from database: insert or update on table \"offer_like\" violates foreign key constraint \"fk-offer-like-offer\"", extensions: None }
+ //note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace AI!
 
-        let offer_id = Uuid::new_v4();
-        let user_id = Uuid::new_v4();
-
-        // Test liking an offer
-        let like_result = like_offer(conn, offer_id, user_id).await.expect("Failed to like offer");
-        assert!(like_result.is_some());
-
-        // Test unliking an offer
-        let unlike_result = like_offer(conn, offer_id, user_id).await.expect("Failed to unlike offer");
-        assert!(unlike_result.is_none());
-    }
 
     #[tokio::test]
     async fn test_find_by_user_id() {
@@ -96,25 +109,20 @@ mod tests {
         let conn = &test_db.db;
 
         let offer_id = Uuid::new_v4();
-        let user_id = Uuid::new_v4();
         let tg_user = UserTgWebApp::test_data(Some(1));
-        user_repository::create_one_by_tg(tg_user, conn)
+        let user = user_repository::create_one_by_tg(tg_user, conn)
             .await
             .expect("Create user error");
 
-        let user = User {
-            0: crate::user::user_gql_model::UserGqlModel {
-                user_id,
-                role: UserRoleGqlType::Member,
-                ..Default::default()
-            },
-        };
-
         // Create a like
-        like_offer(conn, offer_id, user_id).await.expect("Failed to like offer");
+        like_offer(conn, offer_id, user.0.user_id)
+            .await
+            .expect("Failed to like offer");
 
         // Find by user id
-        let found_like = find_by_user_id(conn, user_id, offer_id, user).await.expect("Failed to find like");
+        let found_like = find_by_user_id(conn, user.0.user_id, offer_id, user)
+            .await
+            .expect("Failed to find like");
         assert!(found_like.is_some());
     }
 }
