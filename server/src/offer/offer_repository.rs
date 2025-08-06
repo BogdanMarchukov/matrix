@@ -21,7 +21,6 @@ where
     } else {
         Err(GqlError::NotFound("offer not found".to_string()).extend())
     }
-// создай метод create_test_offer c тестовыми данными AI!
 pub async fn create_test_offer<C>(conn: &C) -> FieldResult<OfferGqlModel>
 where
     C: ConnectionTrait,
