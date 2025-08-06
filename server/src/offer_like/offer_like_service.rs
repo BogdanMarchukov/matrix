@@ -64,3 +64,5 @@ pub async fn like_offer(
         return Ok(Some(OfferLikeGqlModel::from(new_like)));
     }
 }
+
+// напиши тесты по аналогии с news_service.rs и news_repository.rs AI!
