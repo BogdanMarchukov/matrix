@@ -70,12 +70,7 @@ impl OfferLikeRepository {
 
         query.one(db).await
     }
-<<<<<<< HEAD
-=======
 
-<<<<<<< Updated upstream
+
     // напиши delete_one AI!
-=======
->>>>>>> Stashed changes
->>>>>>> 9b1df93 (feat: добавить поддержку удаления предложений в репозитории лайков)
 }
