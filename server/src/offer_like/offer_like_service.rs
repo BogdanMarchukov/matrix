@@ -1,11 +1,19 @@
-use crate::offer_like::offer_like_repository;
+use crate::entity::offer_like::Model as OfferLikeModel;
+use crate::offer_like::offer_like_repository::OfferLikeRepository;
 use sea_orm::DatabaseConnection;
 use uuid::Uuid;
-use crate::entity::offer_like::Model as OfferLikeModel;
+
+use super::offer_like_gql_model::OfferLikeGqlModel;
 
 pub async fn find_by_offer_id(
     db: &DatabaseConnection,
     offer_id: Uuid,
 ) -> Result<Vec<OfferLikeModel>, sea_orm::DbErr> {
-    offer_like_repository::find_by_offer_id(db, offer_id).await
+    let result = OfferLikeRepository::find_by_offer_id(db, offer_id).await?;
+    // исправь ошибку AI!
+    result
+        .into_iter()
+        .map(|r| OfferLikeGqlModel::from(r))
+        .collect();
+    Ok(result)
 }
