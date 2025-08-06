@@ -10,6 +10,9 @@ pub async fn find_by_offer_id(
     offer_id: Uuid,
 ) -> Result<Vec<OfferLikeModel>, sea_orm::DbErr> {
     let result = OfferLikeRepository::find_by_offer_id(db, offer_id).await?;
-    Ok(result)
+    // исправь ошибку AI!
+    result
+        .into_iter()
+        .map(|r| OfferLikeGqlModel::from(r));
     Ok(result)
 }
