@@ -97,7 +97,10 @@ mod tests {
 
         let offer_id = Uuid::new_v4();
         let user_id = Uuid::new_v4();
-        // исправь создание юзера, сделай как в nesw_repository.rs AI!
+        let tg_user = UserTgWebApp::test_data(Some(1));
+        user_repository::create_one_by_tg(tg_user, conn)
+            .await
+            .expect("Create user error");
 
         let user = User {
             0: crate::user::user_gql_model::UserGqlModel {
