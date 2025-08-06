@@ -69,9 +69,7 @@ pub async fn like_offer(
 mod tests {
     use super::*;
     use crate::{
-        auth::web_app_data::UserTgWebApp,
-        db_utils::TestDb,
-        user::{user_gql_model::UserRoleGqlType, user_repository},
+        auth::web_app_data::UserTgWebApp, db_utils::TestDb, offer::offer_repository, user::{user_gql_model::UserRoleGqlType, user_repository}
     };
     use testcontainers::clients::Cli;
 
@@ -104,7 +102,7 @@ mod tests {
         let conn = &test_db.db;
 
         let offer_id = Uuid::new_v4();
-        // Создаем оффер, чтобы можно было создать лайк
+        // исправь выздов функции create_one, посмотри сигнатуру функции в offer_repository AI!
         offer_repository::create_one(offer_id, conn)
             .await
             .expect("Failed to create offer");
