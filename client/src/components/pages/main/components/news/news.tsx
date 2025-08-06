@@ -56,7 +56,7 @@ export const News = () => {
             : null
         }
         <Swiper
-          slidesPerView={2.5}
+          slidesPerView={3.5}
         >
           {news?.length ? news.map((newItem) => (
             <SwiperSlide key={newItem.userNewsId}>
