@@ -99,7 +99,7 @@ mod tests {
     // ---- offer_like::offer_like_service::tests::test_find_by_user_id stdout ----
  //thread 'offer_like::offer_like_service::tests::test_find_by_user_id' panicked at server/src/offer_like/offer_like_service.rs:115:14:
  //Failed to like offer: Error { message: "Query Error: error returned from database: insert or update on table \"offer_like\" violates foreign key constraint \"fk-offer-like-offer\"", extensions: None }
- //note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace AI!
+ //note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 
 
     #[tokio::test]
