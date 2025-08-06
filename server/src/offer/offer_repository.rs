@@ -1,4 +1,4 @@
-use async_graphql::{ErrorExtensions, FieldResult};
+use async_graphql::FieldResult;
 use sea_orm::entity::ModelTrait;
 use sea_orm::{
     ActiveModelTrait, ConnectionTrait, EntityTrait, Order, QueryOrder, QuerySelect, Set,
