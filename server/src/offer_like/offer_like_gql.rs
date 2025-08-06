@@ -17,8 +17,8 @@ impl OfferLikeQuery {
         offer_id: Uuid,
     ) -> FieldResult<Vec<OfferLikeGqlModel>> {
         let (_, conn) = user_service::get_auth_user_from_ctx(ctx)?;
-        // допиши реалезацию, метод find_by_offer_id напиши в offer_like_service, используй
-        // offer_like_repository AI!
+        let offer_likes = offer_like_service::find_by_offer_id(&conn, offer_id).await?;
+        Ok(offer_likes.into_iter().map(Into::into).collect())
 
     }
 
