@@ -71,6 +71,13 @@ impl OfferLikeRepository {
         query.one(db).await
     }
 
-
-    // напиши delete_one AI!
+    pub async fn delete_one<C>(
+        db: &C,
+        offer_like_id: Uuid,
+    ) -> Result<DeleteResult, DbErr>
+    where
+        C: ConnectionTrait,
+    {
+        offer_like::Entity::delete_by_id(offer_like_id).exec(db).await
+    }
 }
