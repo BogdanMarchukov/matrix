@@ -118,4 +118,15 @@ where
     }
 }
 
-// создай метод create_test_offer c тестовыми данными AI!
+pub async fn create_test_offer<C>(conn: &C) -> FieldResult<OfferGqlModel>
+where
+    C: ConnectionTrait,
+{
+    let test_data = OfferCreateData {
+        title: "Test Offer".to_string(),
+        is_active: true,
+        tariff_ids: vec![],
+        description: Some("This is a test offer".to_string()),
+    };
+    create_one(test_data, conn).await
+}
