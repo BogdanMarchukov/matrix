@@ -21,6 +21,7 @@ impl From<offer_like::Model> for OfferLikeGqlModel {
 }
 
 impl OfferLikeGqlModel {
-    // напипи check_role по аналогии с NotifyGqlModel AI!
-    pub fn check_role() {}
+    pub fn check_role(&self, user_id: Uuid) -> bool {
+        self.user_id == user_id
+    }
 }
