@@ -56,6 +56,7 @@ impl OfferLikeRepository {
             .exec_with_returning(db)
             .await
     }
+
     pub async fn find_many<C>(
         db: &C,
         filter: OfferLikeFilter,
@@ -75,5 +76,4 @@ impl OfferLikeRepository {
 
         query.all(db).await
     }
-
 }
