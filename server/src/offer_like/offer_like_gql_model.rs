@@ -21,8 +21,10 @@ impl From<offer_like::Model> for OfferLikeGqlModel {
 }
 
 impl OfferLikeGqlModel {
-    // напиши как в NotofyGqlModel, обрати внимание на роли Admin и Owner AI!
-    pub fn check_role(&self, user_id: Uuid) -> bool {
-        self.user_id == user_id
+    pub fn check_role(&self, user_id: Uuid, user_role: &str) -> bool {
+        match user_role {
+            "Admin" => true,
+            "Owner" => self.user_id == user_id,
+            _ => false,
     }
 }
