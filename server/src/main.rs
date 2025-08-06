@@ -56,6 +56,7 @@ mod notify;
 use actix_cors::Cors;
 use tracing_subscriber;
 use uuid::Uuid;
+mod offer_like;
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 
