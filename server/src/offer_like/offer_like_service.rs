@@ -10,7 +10,6 @@ pub async fn find_by_offer_id(
     offer_id: Uuid,
 ) -> FieldResult<Vec<OfferLikeGqlModel>> {
     let result = OfferLikeRepository::find_by_offer_id(db, offer_id).await?;
-    // исправь маппинг AI!
     Ok(result.into_iter().map(OfferLikeGqlModel::from).collect())
 }
 
@@ -26,4 +25,10 @@ pub async fn find_by_user_id(
     } else {
         Ok(None)
     }
+}
+
+// напиши реалезацию метода, но должен снацала проверить есть ли like на оффере, если есть то
+// удалить и вернуть None, если нет то создать AI!
+pub async fn like_offer(db: &DatabaseConnection, offer_id: Uuid, user_id: Uuid) -> FieldResult<Option<OfferLikeGqlModel>> {
+    
 }
