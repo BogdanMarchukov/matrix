@@ -34,7 +34,7 @@ impl MigrationTrait for Migration {
                         ForeignKey::create()
                             .name("fk-offer-like-user")
                             .from(OfferLike::Table, OfferLike::UserId)
-                            .to(User::Table, User::UserId),
+                            .to(Users::Table, Users::UserId),
                     )
                     .to_owned(),
             )
@@ -63,7 +63,7 @@ enum Offer {
 }
 
 #[derive(Iden)]
-enum User {
+enum Users {
     Table,
     UserId,
 }

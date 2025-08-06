@@ -4,6 +4,7 @@ pub use super::news::Entity as News;
 pub use super::newsletter::Entity as Newsletter;
 pub use super::notify::Entity as Notify;
 pub use super::offer::Entity as Offer;
+pub use super::offer_like::Entity as OfferLike;
 pub use super::payment::Entity as Payment;
 pub use super::tariff_plan::Entity as TariffPlan;
 pub use super::tariff_plan_payment::Entity as TariffPlanPayment;
