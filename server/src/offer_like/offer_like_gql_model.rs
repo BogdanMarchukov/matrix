@@ -1,7 +1,11 @@
-use async_graphql::SimpleObject;
+use async_graphql::{ErrorExtensions, FieldResult, SimpleObject};
 use uuid::Uuid;
 
-use crate::entity::offer_like;
+use crate::{
+    entity::offer_like,
+    errors::gql_error::GqlError,
+    user::user_gql_model::{User, UserRoleGqlType},
+};
 
 #[derive(SimpleObject)]
 pub struct OfferLikeGqlModel {
@@ -17,5 +21,19 @@ impl From<offer_like::Model> for OfferLikeGqlModel {
             offer_id: model.offer_id,
             user_id: model.user_id,
         }
+    }
+}
+
+impl OfferLikeGqlModel {
+    pub fn check_role(&self, user: &User) -> FieldResult<&Self> {
+        let allowed = match user.0.role {
+            UserRoleGqlType::Owner => true,
+            UserRoleGqlType::Admin => true,
+            UserRoleGqlType::Member => self.user_id == user.0.user_id,
+        };
+        if allowed {
+            return Ok(self);
+        }
+        Err(GqlError::Forbidden.extend())
     }
 }
