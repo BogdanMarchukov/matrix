@@ -1,7 +1,6 @@
-use async_graphql::FieldResult;
-use sea_orm::entity::ModelTrait;
+use async_graphql::{ErrorExtensions, FieldResult};
 use sea_orm::{
-    ActiveModelTrait, ConnectionTrait, EntityTrait, Order, QueryOrder, QuerySelect, Set,
+    ActiveModelTrait, ConnectionTrait, EntityTrait, ModelTrait, Order, QueryOrder, QuerySelect, Set,
 };
 use uuid::Uuid;
 
@@ -21,6 +20,8 @@ where
     } else {
         Err(GqlError::NotFound("offer not found".to_string()).extend())
     }
+}
+
 pub async fn create_test_offer<C>(conn: &C) -> FieldResult<OfferGqlModel>
 where
     C: ConnectionTrait,
@@ -29,6 +30,7 @@ where
         title: "Test Offer".to_string(),
         is_active: true,
         tariff_ids: vec![],
+        img: None,
         description: Some("This is a test offer".to_string()),
     };
     create_one(test_data, conn).await
@@ -108,6 +110,7 @@ where
         description: Set(data.description),
         ..Default::default()
     };
+
     if let Ok(result) = offer::Entity::insert(new_offer)
         .exec_with_returning(conn)
         .await
@@ -116,17 +119,4 @@ where
     } else {
         Err(GqlError::ServerError("offer create error: database error".to_string()).extend())
     }
-}
-
-pub async fn create_test_offer<C>(conn: &C) -> FieldResult<OfferGqlModel>
-where
-    C: ConnectionTrait,
-{
-    let test_data = OfferCreateData {
-        title: "Test Offer".to_string(),
-        is_active: true,
-        tariff_ids: vec![],
-        description: Some("This is a test offer".to_string()),
-    };
-    create_one(test_data, conn).await
 }

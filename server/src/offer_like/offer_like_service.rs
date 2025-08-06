@@ -69,31 +69,10 @@ pub async fn like_offer(
 mod tests {
     use super::*;
     use crate::{
-        auth::web_app_data::UserTgWebApp, db_utils::TestDb, offer::offer_repository, user::{user_gql_model::UserRoleGqlType, user_repository}
+        auth::web_app_data::UserTgWebApp, db_utils::TestDb, offer::offer_repository,
+        user::user_repository,
     };
     use testcontainers::clients::Cli;
-
-    // #[tokio::test]
-    // async fn test_like_offer() {
-    //     let docker = Cli::default();
-    //     let test_db = TestDb::new(&docker).await;
-    //     let conn = &test_db.db;
-    //
-    //     let offer_id = Uuid::new_v4();
-    //     let user_id = Uuid::new_v4();
-    //
-    //     // Test liking an offer
-    //     let like_result = like_offer(conn, offer_id, user_id)
-    //         .await
-    //         .expect("Failed to like offer");
-    //     assert!(like_result.is_some());
-    //
-    //     // Test unliking an offer
-    //     let unlike_result = like_offer(conn, offer_id, user_id)
-    //         .await
-    //         .expect("Failed to unlike offer");
-    //     assert!(unlike_result.is_none());
-    // }
 
     #[tokio::test]
     async fn test_find_by_user_id() {
@@ -101,25 +80,27 @@ mod tests {
         let test_db = TestDb::new(&docker).await;
         let conn = &test_db.db;
 
-        let offer_id = Uuid::new_v4();
-        // исправь вызов функции create_one, посмотри сигнатуру функции в offer_repository AI!
-        offer_repository::create_one(offer_id, "Test Offer".to_string(), conn)
+        let offer = offer_repository::create_test_offer(conn)
             .await
-            .expect("Failed to create offer");
+            .expect("Create offer error");
+
         let tg_user = UserTgWebApp::test_data(Some(1));
         let user = user_repository::create_one_by_tg(tg_user, conn)
             .await
             .expect("Create user error");
 
-        // Create a like
-        like_offer(conn, offer_id, user.0.user_id)
+        like_offer(conn, offer.offer_id, user.0.user_id)
             .await
             .expect("Failed to like offer");
 
-        // Find by user id
-        let found_like = find_by_user_id(conn, user.0.user_id, offer_id, user)
+        let found_like = find_by_user_id(conn, user.0.user_id, offer.offer_id, user.clone())
             .await
             .expect("Failed to find like");
         assert!(found_like.is_some());
+
+        let unlike_result = like_offer(conn, offer.offer_id, user.0.user_id)
+            .await
+            .expect("Failed to unlike offer");
+        assert!(unlike_result.is_none());
     }
 }
