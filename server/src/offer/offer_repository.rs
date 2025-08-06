@@ -21,6 +21,18 @@ where
     } else {
         Err(GqlError::NotFound("offer not found".to_string()).extend())
     }
+// создай метод create_test_offer c тестовыми данными AI!
+pub async fn create_test_offer<C>(conn: &C) -> FieldResult<OfferGqlModel>
+where
+    C: ConnectionTrait,
+{
+    let test_data = OfferCreateData {
+        title: "Test Offer".to_string(),
+        is_active: true,
+        tariff_ids: vec![],
+        description: Some("This is a test offer".to_string()),
+    };
+    create_one(test_data, conn).await
 }
 
 pub async fn _delete_by_pk<C>(offer_id: Uuid, conn: &C) -> FieldResult<OfferGqlModel>
