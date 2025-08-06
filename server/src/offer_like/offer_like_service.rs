@@ -57,10 +57,10 @@ pub async fn like_offer(
     )
     .await
     {
-        OfferLikeRepository::delete(existing_like).await?;
+        OfferLikeRepository::delete_one(db, existing_like.offer_like_id).await?;
         return Ok(None);
     } else {
-        let new_like = OfferLikeRepository::create(offer_id, user_id).await?;
+        let new_like = OfferLikeRepository::create_one(db, offer_id, user_id).await?;
         return Ok(Some(OfferLikeGqlModel::from(new_like)));
     }
 }
