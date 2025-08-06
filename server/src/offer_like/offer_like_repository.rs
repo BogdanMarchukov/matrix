@@ -76,4 +76,20 @@ impl OfferLikeRepository {
 
         query.all(db).await
     }
+
+    // создай по аналогии с find_many AI!
+    pub async fn find_one<C>(
+        db: &C,
+        offer_id: Uuid,
+        user_id: Uuid,
+    ) -> Result<Option<offer_like::Model>, DbErr>
+    where
+        C: ConnectionTrait,
+    {
+        offer_like::Entity::find()
+            .filter(offer_like::Column::OfferId.eq(offer_id))
+            .filter(offer_like::Column::UserId.eq(user_id))
+            .one(db)
+            .await
+    }
 }
