@@ -68,7 +68,7 @@ pub async fn like_offer(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::db_utils::TestDb;
+    use crate::{db_utils::TestDb, user::user_gql_model::UserRoleGqlType};
     use testcontainers::clients::Cli;
 
     #[tokio::test]
@@ -97,6 +97,8 @@ mod tests {
 
         let offer_id = Uuid::new_v4();
         let user_id = Uuid::new_v4();
+        // исправь создание юзера, сделай как в nesw_repository.rs AI!
+
         let user = User {
             0: crate::user::user_gql_model::UserGqlModel {
                 user_id,
