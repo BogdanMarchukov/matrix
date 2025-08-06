@@ -1,4 +1,4 @@
-use sea_orm::{prelude::*, Set};
+use sea_orm::{prelude::*, DeleteResult, Set};
 use sea_orm::{EntityTrait, QueryFilter};
 use uuid::Uuid;
 
@@ -12,7 +12,6 @@ pub struct OfferLikeFilter {
 pub struct OfferLikeRepository;
 
 impl OfferLikeRepository {
-
     pub async fn create_one<C>(
         db: &C,
         offer_id: Uuid,
@@ -71,4 +70,12 @@ impl OfferLikeRepository {
 
         query.one(db).await
     }
+<<<<<<< HEAD
+=======
+
+<<<<<<< Updated upstream
+    // напиши delete_one AI!
+=======
+>>>>>>> Stashed changes
+>>>>>>> 9b1df93 (feat: добавить поддержку удаления предложений в репозитории лайков)
 }
