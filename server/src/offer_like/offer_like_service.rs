@@ -27,8 +27,12 @@ pub async fn find_by_user_id(
     }
 }
 
-// напиши реалезацию метода, но должен снацала проверить есть ли like на оффере, если есть то
-// удалить и вернуть None, если нет то создать AI!
 pub async fn like_offer(db: &DatabaseConnection, offer_id: Uuid, user_id: Uuid) -> FieldResult<Option<OfferLikeGqlModel>> {
-    
+    if let Ok(Some(existing_like)) = OfferLikeRepository::find_by_offer_id_and_user_id(db, offer_id, user_id).await {
+        OfferLikeRepository::delete(existing_like).await?;
+        return Ok(None);
+    } else {
+        let new_like = OfferLikeRepository::create(offer_id, user_id).await?;
+        return Ok(Some(OfferLikeGqlModel::from(new_like)));
+    }
 }
