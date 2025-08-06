@@ -102,8 +102,8 @@ mod tests {
         let conn = &test_db.db;
 
         let offer_id = Uuid::new_v4();
-        // исправь выздов функции create_one, посмотри сигнатуру функции в offer_repository AI!
-        offer_repository::create_one(offer_id, conn)
+        // исправь вызов функции create_one, посмотри сигнатуру функции в offer_repository AI!
+        offer_repository::create_one(offer_id, "Test Offer".to_string(), conn)
             .await
             .expect("Failed to create offer");
         let tg_user = UserTgWebApp::test_data(Some(1));
