@@ -1,6 +1,7 @@
 use async_graphql::{SimpleObject, ID};
 use uuid::Uuid;
 
+// переделай по аналогии с offer_gql.rs AI!
 #[derive(SimpleObject)]
 pub struct OfferLikeGql {
     pub offer_like_id: ID,
