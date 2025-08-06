@@ -103,8 +103,11 @@ mod tests {
         let test_db = TestDb::new(&docker).await;
         let conn = &test_db.db;
 
-        // создай сначала оффер, так-как like_offer не сможет создать like если в БД нет offer AI!
         let offer_id = Uuid::new_v4();
+        // Создаем оффер, чтобы можно было создать лайк
+        offer_repository::create_one(offer_id, conn)
+            .await
+            .expect("Failed to create offer");
         let tg_user = UserTgWebApp::test_data(Some(1));
         let user = user_repository::create_one_by_tg(tg_user, conn)
             .await
