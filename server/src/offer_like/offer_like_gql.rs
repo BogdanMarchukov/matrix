@@ -38,3 +38,16 @@ impl OfferLikeQuery {
         offer_like_service::find_by_user_id(&conn, data.user_id, data.offer_id, request_user).await
     }
 }
+
+#[Object]
+impl OfferLikeMutation {
+    #[graphql(guard = "AuthGuard")]
+    async fn like<'ctx>(
+        &self,
+        ctx: &Context<'ctx>,
+        offer_id: Uuid,
+    ) -> FieldResult<Option<OfferLikeGqlModel>> {
+        let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
+        offer_like_service::like_offer(&conn, offer_id, request_user.0.user_id).await
+    }
+}
