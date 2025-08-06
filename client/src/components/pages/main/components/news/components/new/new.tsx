@@ -15,7 +15,6 @@ export const New = ({ newItem, onClick }: NewProps) => {
 
   return (
     <div onClick={onClick} className={`${classes.root} ${classes[linearRadialGradientsList[randomClassName]]}`}>
-      <p className={classes.title}>{title}</p>
       <img className={classes.img} src={img!} alt={title} />
     </div >
   )
