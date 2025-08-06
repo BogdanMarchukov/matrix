@@ -18,6 +18,7 @@ mod m20250612_110702_create_free_tariff_plan;
 mod m20250702_135213_news;
 mod m20250702_141344_user_news;
 mod m20250707_200845_create_user_news_index;
+pub mod m20250806_000000_create_offer_like_table;
 
 pub struct Migrator;
 
