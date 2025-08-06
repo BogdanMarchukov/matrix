@@ -4,6 +4,11 @@ use uuid::Uuid;
 
 use crate::entity::offer_like;
 
+pub struct OfferLikeFilter {
+    pub offer_id: Option<Uuid>,
+    pub user_id: Option<Uuid>,
+}
+
 pub struct OfferLikeRepository;
 
 impl OfferLikeRepository {
@@ -51,7 +56,24 @@ impl OfferLikeRepository {
             .exec_with_returning(db)
             .await
     }
-    // создай find_many которая на фход принимает структуру filter со всеми полями сущьности Option
-    // AI!
+    pub async fn find_many<C>(
+        db: &C,
+        filter: OfferLikeFilter,
+    ) -> Result<Vec<offer_like::Model>, DbErr>
+    where
+        C: ConnectionTrait,
+    {
+        let mut query = offer_like::Entity::find();
+
+        if let Some(offer_id) = filter.offer_id {
+            query = query.filter(offer_like::Column::OfferId.eq(offer_id));
+        }
+
+        if let Some(user_id) = filter.user_id {
+            query = query.filter(offer_like::Column::UserId.eq(user_id));
+        }
+
+        query.all(db).await
+    }
 
 }
