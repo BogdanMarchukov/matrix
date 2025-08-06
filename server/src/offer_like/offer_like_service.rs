@@ -96,11 +96,6 @@ mod tests {
     //         .expect("Failed to unlike offer");
     //     assert!(unlike_result.is_none());
     // }
-    // ---- offer_like::offer_like_service::tests::test_find_by_user_id stdout ----
- //thread 'offer_like::offer_like_service::tests::test_find_by_user_id' panicked at server/src/offer_like/offer_like_service.rs:115:14:
- //Failed to like offer: Error { message: "Query Error: error returned from database: insert or update on table \"offer_like\" violates foreign key constraint \"fk-offer-like-offer\"", extensions: None }
- //note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
 
     #[tokio::test]
     async fn test_find_by_user_id() {
@@ -108,6 +103,7 @@ mod tests {
         let test_db = TestDb::new(&docker).await;
         let conn = &test_db.db;
 
+        // создай сначала оффер, так-как like_offer не сможет создать like если в БД нет offer AI!
         let offer_id = Uuid::new_v4();
         let tg_user = UserTgWebApp::test_data(Some(1));
         let user = user_repository::create_one_by_tg(tg_user, conn)
