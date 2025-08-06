@@ -65,4 +65,51 @@ pub async fn like_offer(
     }
 }
 
-// напиши тесты по аналогии с news_service.rs и news_repository.rs AI!
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::db_utils::TestDb;
+    use testcontainers::clients::Cli;
+
+    #[tokio::test]
+    async fn test_like_offer() {
+        let docker = Cli::default();
+        let test_db = TestDb::new(&docker).await;
+        let conn = &test_db.db;
+
+        let offer_id = Uuid::new_v4();
+        let user_id = Uuid::new_v4();
+
+        // Test liking an offer
+        let like_result = like_offer(conn, offer_id, user_id).await.expect("Failed to like offer");
+        assert!(like_result.is_some());
+
+        // Test unliking an offer
+        let unlike_result = like_offer(conn, offer_id, user_id).await.expect("Failed to unlike offer");
+        assert!(unlike_result.is_none());
+    }
+
+    #[tokio::test]
+    async fn test_find_by_user_id() {
+        let docker = Cli::default();
+        let test_db = TestDb::new(&docker).await;
+        let conn = &test_db.db;
+
+        let offer_id = Uuid::new_v4();
+        let user_id = Uuid::new_v4();
+        let user = User {
+            0: crate::user::user_gql_model::UserGqlModel {
+                user_id,
+                role: UserRoleGqlType::Member,
+                ..Default::default()
+            },
+        };
+
+        // Create a like
+        like_offer(conn, offer_id, user_id).await.expect("Failed to like offer");
+
+        // Find by user id
+        let found_like = find_by_user_id(conn, user_id, offer_id, user).await.expect("Failed to find like");
+        assert!(found_like.is_some());
+    }
+}
