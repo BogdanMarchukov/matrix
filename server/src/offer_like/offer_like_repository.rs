@@ -12,31 +12,6 @@ pub struct OfferLikeFilter {
 pub struct OfferLikeRepository;
 
 impl OfferLikeRepository {
-    pub async fn find_by_user_id<C>(
-        db: &C,
-        user_id: Uuid,
-    ) -> Result<Option<offer_like::Model>, DbErr>
-    where
-        C: ConnectionTrait,
-    {
-        offer_like::Entity::find()
-            .filter(offer_like::Column::UserId.eq(user_id))
-            .one(db)
-            .await
-    }
-
-    pub async fn find_by_offer_id<C>(
-        db: &C,
-        offer_id: Uuid,
-    ) -> Result<Vec<offer_like::Model>, DbErr>
-    where
-        C: ConnectionTrait,
-    {
-        offer_like::Entity::find()
-            .filter(offer_like::Column::OfferId.eq(offer_id))
-            .all(db)
-            .await
-    }
 
     pub async fn create_one<C>(
         db: &C,
@@ -95,19 +70,5 @@ impl OfferLikeRepository {
         }
 
         query.one(db).await
-    }
-    pub async fn find_one<C>(
-        db: &C,
-        offer_id: Uuid,
-        user_id: Uuid,
-    ) -> Result<Option<offer_like::Model>, DbErr>
-    where
-        C: ConnectionTrait,
-    {
-        offer_like::Entity::find()
-            .filter(offer_like::Column::OfferId.eq(offer_id))
-            .filter(offer_like::Column::UserId.eq(user_id))
-            .one(db)
-            .await
     }
 }
