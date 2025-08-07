@@ -6,6 +6,7 @@ use crate::{
     config::S3Config,
     db_utils,
     entity::offer,
+    offer_like::{offer_like_gql_model::OfferLikeGqlModel, offer_like_service},
     tariff_plan::{tariff_plan_gql_model::TariffPlanGqlModel, tariff_plan_service},
 };
 
@@ -39,6 +40,11 @@ impl OfferGqlModel {
     ) -> FieldResult<Vec<TariffPlanGqlModel>> {
         let conn = db_utils::get_connection_from_gql_ctx(ctx)?;
         tariff_plan_service::find_by_ids(&self.tariff_ids, &conn).await
+    }
+
+    async fn likes(&self, ctx: &async_graphql::Context<'_>) -> FieldResult<Vec<OfferLikeGqlModel>> {
+        let conn = db_utils::get_connection_from_gql_ctx(ctx)?;
+        offer_like_service::find_by_offer_id(&conn, self.offer_id).await
     }
 }
 
