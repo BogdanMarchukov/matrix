@@ -2,7 +2,11 @@ use async_graphql::{ComplexObject, ErrorExtensions, FieldResult, SimpleObject};
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
-use crate::errors::gql_error::GqlError;
+use crate::{
+    db_utils,
+    errors::gql_error::GqlError,
+    news::{news_gql_model::NewsGqlModel, news_service},
+};
 
 use super::user_gql_model::{User, UserRoleGqlType};
 #[derive(SimpleObject, Clone, Debug)]
@@ -29,6 +33,11 @@ impl UserNewsGqlModel {
             Some(img) => Some(format!("{}/{}", config.endpoint, img)),
             None => None,
         }
+    }
+
+    async fn news(&self, ctx: &async_graphql::Context<'_>) -> FieldResult<NewsGqlModel> {
+        let conn = db_utils::get_connection_from_gql_ctx(ctx)?;
+        news_service::find_by_pk(self.news_id, &conn).await
     }
 }
 

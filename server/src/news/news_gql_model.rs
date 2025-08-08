@@ -1,12 +1,18 @@
-use async_graphql::SimpleObject;
+use async_graphql::{ComplexObject, FieldResult, SimpleObject};
 use chrono::{DateTime, Utc};
-use sea_orm::{ConnectionTrait, DatabaseConnection};
+use sea_orm::DatabaseConnection;
 use tracing::info;
 use uuid::Uuid;
+
+use crate::{
+    db_utils,
+    news_like::{news_like_gql_model::NewsLikeGqlModel, news_like_service},
+};
 
 use super::news_repository;
 
 #[derive(Clone, SimpleObject, Debug)]
+#[graphql(complex)]
 #[graphql(name = "News")]
 pub struct NewsGqlModel {
     pub news_id: Uuid,
@@ -17,6 +23,17 @@ pub struct NewsGqlModel {
     pub publish_at: DateTime<Utc>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
+}
+
+#[ComplexObject]
+impl NewsGqlModel {
+    async fn news_likes(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> FieldResult<Vec<NewsLikeGqlModel>> {
+        let conn = db_utils::get_connection_from_gql_ctx(ctx)?;
+        news_like_service::find_by_news_id(&conn, self.news_id.to_owned()).await
+    }
 }
 
 impl NewsGqlModel {

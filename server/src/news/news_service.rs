@@ -23,6 +23,10 @@ pub async fn update_one(
     news_repository::update_one(news_id, data, conn).await
 }
 
+pub async fn find_by_pk(id: Uuid, conn: &DatabaseConnection) -> FieldResult<NewsGqlModel> {
+    news_repository::find_by_pk(id, conn).await
+}
+
 #[cfg(test)]
 mod tests {
     use crate::db_utils::TestDb;
