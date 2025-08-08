@@ -1,5 +1,4 @@
 use sea_orm_migration::prelude::*;
-use sea_orm_migration::sea_orm::prelude::DateTimeWithTimeZone;
 
 pub struct Migration;
 
@@ -27,7 +26,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(NewsLike::UserId).uuid().not_null())
                     .col(
                         ColumnDef::new(NewsLike::CreatedAt)
-                            .date_time_with_time_zone()
+                            .date_time()
                             .not_null()
                             .default(Expr::current_timestamp()),
                     )
