@@ -3,12 +3,13 @@ import Liked from "../../../../../../atoms/liked/liked";
 import { CloseIcon } from "../../../scores/svg/close";
 import styles from "./news-modal.module.css";
 import { gql } from "../../../../../../../__generated__";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
+import { useStore } from "zustand";
+import { useUserStore } from "../../../../../../../common/store/userStore";
 
 interface NewsModalProps {
   onClose: () => void;
   payload: string;
-  countLikes: number;
   img?: string | null;
   title: string;
   newsId: string
@@ -24,13 +25,36 @@ const LIKE = gql(/* GraphQl */ `
     }
 `);
 
-const NewsModal: React.FC<NewsModalProps> = ({ newsId, onClose, payload, img, title, countLikes }) => {
-  const [liked, setLiked] = useState(false);
+const LIKE_COUNT = gql(/* GraphQl */ `
+    query NewsLike($newsId: UUID!) {
+      newsLike {
+        findCountByNewsId(newsId: $newsId)
+      }
+    }
+`);
+
+const FIND_LIKE = gql(/* GraphQl */ `
+  query NewsLikeFindByUserId($data: NewsLikeFindByUserId!) {
+    newsLike {
+      findByUserId(data: $data) {
+        newsId
+      }
+    }
+  }
+`);
+
+const NewsModal: React.FC<NewsModalProps> = ({ newsId, onClose, payload, img, title }) => {
+  const userId = useUserStore((state) => state.userId);
   const [showBigHeart, setShowBigHeart] = useState(false);
   const [like, { loading, error, data }] = useMutation(LIKE, { variables: { newsId } });
+  const { data: likeCount, refetch } = useQuery(LIKE_COUNT, { variables: { newsId }, skip: !newsId });
+  const { data: likeData, refetch: refetchLike } = useQuery(FIND_LIKE, { variables: { data: { userId, newsId } }, skip: !userId });
+  const liked = typeof likeData?.newsLike?.findByUserId?.newsId === 'string';
 
   const handleDoubleClick = () => {
-    setLiked((prev) => !prev);
+    like()
+      .then(() => refetch())
+      .then(() => refetchLike());
     setShowBigHeart(true);
 
     setTimeout(() => {
@@ -65,7 +89,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ newsId, onClose, payload, img, ti
 
       <div className={styles.footer}>
         <Liked liked={liked} onClick={handleDoubleClick} />
-        <p>{countLikes ?? 0}</p>
+        <p>{likeCount?.findCountByNewsId ?? 0}</p>
       </div>
     </div >
   );

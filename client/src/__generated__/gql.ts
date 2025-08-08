@@ -24,7 +24,9 @@ const documents = {
     "\n    query OfferFindById($offerId: UUID!) {\n      offer {\n        findById(offerId: $offerId) {\n          img\n          isActive\n          offerId\n          tariffIds\n        }\n      }\n    }\n": types.OfferFindByIdDocument,
     "\n    query UserFindById($userId: UUID!) {\n      user {\n        findByPk(userId: $userId) {\n          userId\n          userTariffPlan {\n            tariffPlanId\n          }\n        }\n      }\n    }\n": types.UserFindByIdDocument,
     "\n    mutation Like($newsId: UUID!) {\n      newsLike {\n        like(newsId: $newsId) {\n          newsLikeId\n        }\n      }\n    }\n": types.LikeDocument,
-    "\n  query FindByUserId($userId: UUID!) {\n    userNews {\n      findByUserId(userId: $userId) {\n        img\n        newsId\n        payload\n        title\n        userNewsId\n        news {\n          countNewsLike\n        }\n      }\n    }\n  }\n": types.FindByUserIdDocument,
+    "\n    query NewsLike($newsId: UUID!) {\n      newsLike {\n        findCountByNewsId(newsId: $newsId)\n      }\n    }\n": types.NewsLikeDocument,
+    "\n  query NewsLikeFindByUserId($data: NewsLikeFindByUserId!) {\n    newsLike {\n      findByUserId(data: $data) {\n        newsId\n      }\n    }\n  }\n": types.NewsLikeFindByUserIdDocument,
+    "\n  query FindByUserId($userId: UUID!) {\n    userNews {\n      findByUserId(userId: $userId) {\n        img\n        newsId\n        payload\n        title\n        userNewsId\n      }\n    }\n  }\n": types.FindByUserIdDocument,
     "\n  query FindMany {\n    offer {\n      findMany {\n        img\n        offerId\n        title\n        tariffIds\n        description\n      }\n    }\n  }\n": types.FindManyDocument,
     "query GetUserInfoByUserId($userId: UUID!) {\n    userInfo {\n      fundByUserId(userId: $userId) {\n        city\n        dateOfBirth\n        hourOfBirth\n        minOfBirth\n      }\n    }\n  }\n": types.GetUserInfoByUserIdDocument,
     "mutation UserInfoUpdateOne($userInfoId: UUID!, $data: UserInfoUpdateInput!) {\n    userInfo {\n      updateOne(userInfoId: $userInfoId, data: $data) {\n        city\n        dateOfBirth\n        hourOfBirth\n        minOfBirth\n    }\n  }\n}": types.UserInfoUpdateOneDocument,
@@ -91,7 +93,15 @@ export function gql(source: "\n    mutation Like($newsId: UUID!) {\n      newsLi
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query FindByUserId($userId: UUID!) {\n    userNews {\n      findByUserId(userId: $userId) {\n        img\n        newsId\n        payload\n        title\n        userNewsId\n        news {\n          countNewsLike\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query FindByUserId($userId: UUID!) {\n    userNews {\n      findByUserId(userId: $userId) {\n        img\n        newsId\n        payload\n        title\n        userNewsId\n        news {\n          countNewsLike\n        }\n      }\n    }\n  }\n"];
+export function gql(source: "\n    query NewsLike($newsId: UUID!) {\n      newsLike {\n        findCountByNewsId(newsId: $newsId)\n      }\n    }\n"): (typeof documents)["\n    query NewsLike($newsId: UUID!) {\n      newsLike {\n        findCountByNewsId(newsId: $newsId)\n      }\n    }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query NewsLikeFindByUserId($data: NewsLikeFindByUserId!) {\n    newsLike {\n      findByUserId(data: $data) {\n        newsId\n      }\n    }\n  }\n"): (typeof documents)["\n  query NewsLikeFindByUserId($data: NewsLikeFindByUserId!) {\n    newsLike {\n      findByUserId(data: $data) {\n        newsId\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query FindByUserId($userId: UUID!) {\n    userNews {\n      findByUserId(userId: $userId) {\n        img\n        newsId\n        payload\n        title\n        userNewsId\n      }\n    }\n  }\n"): (typeof documents)["\n  query FindByUserId($userId: UUID!) {\n    userNews {\n      findByUserId(userId: $userId) {\n        img\n        newsId\n        payload\n        title\n        userNewsId\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

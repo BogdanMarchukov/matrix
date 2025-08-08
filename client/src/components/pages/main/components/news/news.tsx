@@ -17,9 +17,6 @@ const GET_ALL_NEWS = gql(/* GraphQl */ `
         payload
         title
         userNewsId
-        news {
-          countNewsLike
-        }
       }
     }
   }
@@ -33,7 +30,6 @@ export const News = () => {
     img: '',
     title: '',
     newsId: '',
-    news: { countNewsLike: 0 }
   })
   const { data } = useQuery(GET_ALL_NEWS, { variables: { userId }, skip: !userId });
   const news = useMemo(() => data?.userNews?.findByUserId || [], [data]);
@@ -42,7 +38,6 @@ export const News = () => {
       payload: news.payload,
       img: news.img,
       title: news.title,
-      news: { countNewsLike: news.news.countNewsLike },
       newsId: news.newsId
     }
   }, []);
@@ -58,7 +53,6 @@ export const News = () => {
         {
           shwModal ?
             <NewsModal
-              countLikes={currentNews.news.countNewsLike}
               payload={currentNews.payload}
               img={currentNews.img}
               title={currentNews.title}
