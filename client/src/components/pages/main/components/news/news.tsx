@@ -28,12 +28,11 @@ const GET_ALL_NEWS = gql(/* GraphQl */ `
 export const News = () => {
   const userId = useUserStore((state) => state.userId);
   const [shwModal, setShwModal] = useState(false);
-  const [currentNews, setCurrentNews] = useState<{
-    payload: string, img?: string | null, title: string, news: { countNewsLike: number }
-  }>({
+  const [currentNews, setCurrentNews] = useState<ReturnType<typeof selectNews>>({
     payload: '',
     img: '',
     title: '',
+    newsId: '',
     news: { countNewsLike: 0 }
   })
   const { data } = useQuery(GET_ALL_NEWS, { variables: { userId }, skip: !userId });
@@ -43,7 +42,8 @@ export const News = () => {
       payload: news.payload,
       img: news.img,
       title: news.title,
-      news: { countNewsLike: news.news.countNewsLike }
+      news: { countNewsLike: news.news.countNewsLike },
+      newsId: news.newsId
     }
   }, []);
 
@@ -57,7 +57,14 @@ export const News = () => {
       <div className={classes.content}>
         {
           shwModal ?
-            <NewsModal countLikes={currentNews.news.countNewsLike} payload={currentNews.payload} img={currentNews.img} title={currentNews.title} onClose={() => setShwModal(false)} />
+            <NewsModal
+              countLikes={currentNews.news.countNewsLike}
+              payload={currentNews.payload}
+              img={currentNews.img}
+              title={currentNews.title}
+              onClose={() => setShwModal(false)}
+              newsId={currentNews.newsId}
+            />
             : null
         }
         <Swiper

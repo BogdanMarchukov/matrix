@@ -37,6 +37,16 @@ impl NewsLikeQuery {
         let (request_user, conn) = user_service::get_auth_user_from_ctx(ctx)?;
         news_like_service::find_by_user_id(&conn, data.user_id, data.news_id, request_user).await
     }
+
+    #[graphql(guard = "AuthGuard")]
+    async fn find_count_by_news_id<'ctx>(
+        &self,
+        ctx: &Context<'ctx>,
+        news_id: Uuid,
+    ) -> FieldResult<u64> {
+        let (_, conn) = user_service::get_auth_user_from_ctx(ctx)?;
+        news_like_service::find_count_by_news_id(&conn, news_id).await
+    }
 }
 
 #[Object]

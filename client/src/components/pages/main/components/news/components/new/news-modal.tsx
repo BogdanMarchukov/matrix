@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Liked from "../../../../../../atoms/liked/liked";
 import { CloseIcon } from "../../../scores/svg/close";
 import styles from "./news-modal.module.css";
+import { gql } from "../../../../../../../__generated__";
+import { useMutation } from "@apollo/client";
 
 interface NewsModalProps {
   onClose: () => void;
@@ -9,11 +11,23 @@ interface NewsModalProps {
   countLikes: number;
   img?: string | null;
   title: string;
+  newsId: string
 }
 
-const NewsModal: React.FC<NewsModalProps> = ({ onClose, payload, img, title, countLikes }) => {
+const LIKE = gql(/* GraphQl */ `
+    mutation Like($newsId: UUID!) {
+      newsLike {
+        like(newsId: $newsId) {
+          newsLikeId
+        }
+      }
+    }
+`);
+
+const NewsModal: React.FC<NewsModalProps> = ({ newsId, onClose, payload, img, title, countLikes }) => {
   const [liked, setLiked] = useState(false);
   const [showBigHeart, setShowBigHeart] = useState(false);
+  const [like, { loading, error, data }] = useMutation(LIKE, { variables: { newsId } });
 
   const handleDoubleClick = () => {
     setLiked((prev) => !prev);

@@ -23,6 +23,7 @@ const documents = {
     "\n  mutation BuyTariffPlan($tariffPlanId: UUID!) {\n    userTariffPlan {\n      buyTariffPlan(tariffPlanId: $tariffPlanId) {\n        tariffPlanId\n        userId\n      }\n    }\n  }\n": types.BuyTariffPlanDocument,
     "\n    query OfferFindById($offerId: UUID!) {\n      offer {\n        findById(offerId: $offerId) {\n          img\n          isActive\n          offerId\n          tariffIds\n        }\n      }\n    }\n": types.OfferFindByIdDocument,
     "\n    query UserFindById($userId: UUID!) {\n      user {\n        findByPk(userId: $userId) {\n          userId\n          userTariffPlan {\n            tariffPlanId\n          }\n        }\n      }\n    }\n": types.UserFindByIdDocument,
+    "\n    mutation Like($newsId: UUID!) {\n      newsLike {\n        like(newsId: $newsId) {\n          newsLikeId\n        }\n      }\n    }\n": types.LikeDocument,
     "\n  query FindByUserId($userId: UUID!) {\n    userNews {\n      findByUserId(userId: $userId) {\n        img\n        newsId\n        payload\n        title\n        userNewsId\n        news {\n          countNewsLike\n        }\n      }\n    }\n  }\n": types.FindByUserIdDocument,
     "\n  query FindMany {\n    offer {\n      findMany {\n        img\n        offerId\n        title\n        tariffIds\n        description\n      }\n    }\n  }\n": types.FindManyDocument,
     "query GetUserInfoByUserId($userId: UUID!) {\n    userInfo {\n      fundByUserId(userId: $userId) {\n        city\n        dateOfBirth\n        hourOfBirth\n        minOfBirth\n      }\n    }\n  }\n": types.GetUserInfoByUserIdDocument,
@@ -83,6 +84,10 @@ export function gql(source: "\n    query OfferFindById($offerId: UUID!) {\n     
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n    query UserFindById($userId: UUID!) {\n      user {\n        findByPk(userId: $userId) {\n          userId\n          userTariffPlan {\n            tariffPlanId\n          }\n        }\n      }\n    }\n"): (typeof documents)["\n    query UserFindById($userId: UUID!) {\n      user {\n        findByPk(userId: $userId) {\n          userId\n          userTariffPlan {\n            tariffPlanId\n          }\n        }\n      }\n    }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n    mutation Like($newsId: UUID!) {\n      newsLike {\n        like(newsId: $newsId) {\n          newsLikeId\n        }\n      }\n    }\n"): (typeof documents)["\n    mutation Like($newsId: UUID!) {\n      newsLike {\n        like(newsId: $newsId) {\n          newsLikeId\n        }\n      }\n    }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
