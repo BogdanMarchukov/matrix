@@ -64,3 +64,43 @@ pub async fn like_news(
         return Ok(Some(NewsLikeGqlModel::from(new_like)));
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{
+        auth::web_app_data::UserTgWebApp, db_utils::TestDb, news::news_repository,
+        user::user_repository,
+    };
+    use testcontainers::clients::Cli;
+
+    #[tokio::test]
+    async fn test_find_by_user_id() {
+        let docker = Cli::default();
+        let test_db = TestDb::new(&docker).await;
+        let conn = &test_db.db;
+
+        let news = news_repository::create_test_news(conn)
+            .await
+            .expect("Create news error");
+
+        let tg_user = UserTgWebApp::test_data(Some(1));
+        let user = user_repository::create_one_by_tg(tg_user, conn)
+            .await
+            .expect("Create user error");
+
+        like_news(conn, news.news_id, user.0.user_id)
+            .await
+            .expect("Failed to like news");
+
+        let found_like = find_by_user_id(conn, user.0.user_id, news.news_id, user.clone())
+            .await
+            .expect("Failed to find like");
+        assert!(found_like.is_some());
+
+        let unlike_result = like_news(conn, news.news_id, user.0.user_id)
+            .await
+            .expect("Failed to unlike news");
+        assert!(unlike_result.is_none());
+    }
+}

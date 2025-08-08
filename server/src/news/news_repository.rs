@@ -7,10 +7,11 @@ use crate::{
     TxSender,
 };
 use async_graphql::{ErrorExtensions, FieldResult};
+use chrono::{NaiveDateTime, Utc};
 use migration::OnConflict;
-use sea_orm::ColumnTrait;
 use sea_orm::QueryFilter;
 use sea_orm::{ActiveModelTrait, ConnectionTrait, DatabaseConnection, EntityTrait, Set};
+use sea_orm::{ColumnTrait, DbErr};
 use uuid::Uuid;
 
 use super::{
@@ -34,6 +35,25 @@ where
         .exec_with_returning(conn)
         .await?;
     Ok(NewsGqlModel::new(result))
+}
+
+pub async fn create_test_news<C>(db: &C) -> Result<news::Model, DbErr>
+where
+    C: ConnectionTrait,
+{
+    let test_news = news::ActiveModel {
+        news_id: Set(Uuid::new_v4()),
+        title: Set("Test News Title".to_string()),
+        payload: Set("This is a test news payload.".to_string()),
+        publish_at: Set(Utc::now().naive_utc()),
+        is_publish: Set(true),
+        img: Set(None),
+        created_at: Set(Utc::now().naive_utc()),
+        updated_at: Set(Utc::now().naive_utc()),
+    };
+    news::Entity::insert(test_news)
+        .exec_with_returning(db)
+        .await
 }
 
 pub async fn find_by_pk<C>(id: uuid::Uuid, conn: &C) -> FieldResult<NewsGqlModel>
