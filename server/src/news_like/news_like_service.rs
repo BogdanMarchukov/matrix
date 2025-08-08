@@ -116,6 +116,11 @@ mod tests {
             .expect("Failed to find like");
         assert!(found_like.is_some());
 
+        let like_count = find_count_by_news_id(conn, news.news_id)
+            .await
+            .expect("Failed to find like count");
+        assert_eq!(like_count, 1);
+
         let unlike_result = like_news(conn, news.news_id, user.0.user_id)
             .await
             .expect("Failed to unlike news");
