@@ -3,6 +3,7 @@ use actix_web::{guard, web, App, Error, HttpRequest, HttpResponse, HttpServer};
 use async_graphql::Schema;
 use async_graphql::{Data, ErrorExtensions};
 mod news;
+mod news_like;
 mod payment;
 use async_graphql_actix_web::GraphQLSubscription;
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};

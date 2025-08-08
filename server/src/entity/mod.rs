@@ -3,6 +3,7 @@
 pub mod prelude;
 
 pub mod news;
+pub mod news_like;
 pub mod newsletter;
 pub mod notify;
 pub mod offer;
