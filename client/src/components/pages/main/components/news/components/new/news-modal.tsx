@@ -6,11 +6,12 @@ import styles from "./news-modal.module.css";
 interface NewsModalProps {
   onClose: () => void;
   payload: string;
+  countLikes: number;
   img?: string | null;
   title: string;
 }
 
-const NewsModal: React.FC<NewsModalProps> = ({ onClose, payload, img, title }) => {
+const NewsModal: React.FC<NewsModalProps> = ({ onClose, payload, img, title, countLikes }) => {
   const [liked, setLiked] = useState(false);
   const [showBigHeart, setShowBigHeart] = useState(false);
 
@@ -50,6 +51,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, payload, img, title }) =
 
       <div className={styles.footer}>
         <Liked liked={liked} onClick={handleDoubleClick} />
+        <p>{countLikes ?? 0}</p>
       </div>
     </div >
   );

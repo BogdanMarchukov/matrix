@@ -86,13 +86,21 @@ export type LoginResult = {
   user: User;
 };
 
+export type ManyData = {
+  __typename?: 'ManyData';
+  count: Scalars['Int']['output'];
+  value: Array<NewsLikeGqlModel>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   auth: AuthMutation;
   news: NewsMutation;
+  newsLike: NewsLikeMutation;
   newsletter: NewsletterMutation;
   notify: NotifyMutation;
   offer: OfferMutation;
+  offerLike: OfferLikeMutation;
   tariffPlan: TariffPlanMutation;
   userInfo: UserInfoMutation;
   userNews: UserNewsMutation;
@@ -101,10 +109,12 @@ export type Mutation = {
 
 export type News = {
   __typename?: 'News';
+  countNewsLike: Scalars['Int']['output'];
   createdAt: Scalars['DateTime']['output'];
   img?: Maybe<Scalars['String']['output']>;
   isPublish: Scalars['Boolean']['output'];
   newsId: Scalars['UUID']['output'];
+  newsLikes: ManyData;
   payload: Scalars['String']['output'];
   publishAt: Scalars['DateTime']['output'];
   title: Scalars['String']['output'];
@@ -122,6 +132,45 @@ export type NewsLetterCreateInput = {
   payload: Scalars['String']['input'];
   publishAt: Scalars['NaiveDateTime']['input'];
   title: Scalars['String']['input'];
+};
+
+export type NewsLikeFindByUserId = {
+  newsId: Scalars['UUID']['input'];
+  userId: Scalars['UUID']['input'];
+};
+
+export type NewsLikeGqlModel = {
+  __typename?: 'NewsLikeGqlModel';
+  createdAt: Scalars['DateTime']['output'];
+  newsId: Scalars['UUID']['output'];
+  newsLikeId: Scalars['UUID']['output'];
+  userId: Scalars['UUID']['output'];
+};
+
+export type NewsLikeMutation = {
+  __typename?: 'NewsLikeMutation';
+  like?: Maybe<NewsLikeGqlModel>;
+};
+
+
+export type NewsLikeMutationLikeArgs = {
+  newsId: Scalars['UUID']['input'];
+};
+
+export type NewsLikeQuery = {
+  __typename?: 'NewsLikeQuery';
+  findByNewsId: Array<NewsLikeGqlModel>;
+  findByUserId?: Maybe<NewsLikeGqlModel>;
+};
+
+
+export type NewsLikeQueryFindByNewsIdArgs = {
+  newsId: Scalars['UUID']['input'];
+};
+
+
+export type NewsLikeQueryFindByUserIdArgs = {
+  data: NewsLikeFindByUserId;
 };
 
 export type NewsMutation = {
@@ -235,6 +284,7 @@ export type Offer = {
   description?: Maybe<Scalars['String']['output']>;
   img?: Maybe<Scalars['String']['output']>;
   isActive: Scalars['Boolean']['output'];
+  likes: Array<OfferLikeGqlModel>;
   offerId: Scalars['UUID']['output'];
   tariffIds: Array<Scalars['UUID']['output']>;
   tariffs: Array<TariffPlan>;
@@ -247,6 +297,44 @@ export type OfferCreateData = {
   isActive: Scalars['Boolean']['input'];
   tariffIds: Array<Scalars['UUID']['input']>;
   title: Scalars['String']['input'];
+};
+
+export type OfferLikeFindByUserId = {
+  offerId: Scalars['UUID']['input'];
+  userId: Scalars['UUID']['input'];
+};
+
+export type OfferLikeGqlModel = {
+  __typename?: 'OfferLikeGqlModel';
+  offerId: Scalars['UUID']['output'];
+  offerLikeId: Scalars['UUID']['output'];
+  userId: Scalars['UUID']['output'];
+};
+
+export type OfferLikeMutation = {
+  __typename?: 'OfferLikeMutation';
+  like?: Maybe<OfferLikeGqlModel>;
+};
+
+
+export type OfferLikeMutationLikeArgs = {
+  offerId: Scalars['UUID']['input'];
+};
+
+export type OfferLikeQuery = {
+  __typename?: 'OfferLikeQuery';
+  findByOfferId: Array<OfferLikeGqlModel>;
+  findByUserId?: Maybe<OfferLikeGqlModel>;
+};
+
+
+export type OfferLikeQueryFindByOfferIdArgs = {
+  offerId: Scalars['UUID']['input'];
+};
+
+
+export type OfferLikeQueryFindByUserIdArgs = {
+  data: OfferLikeFindByUserId;
 };
 
 export type OfferMutation = {
@@ -272,8 +360,10 @@ export type OfferQueryFindByIdArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  newsLike: NewsLikeQuery;
   notify: NotifyQuery;
   offer: OfferQuery;
+  offerLike: OfferLikeQuery;
   user: UserQuery;
   userInfo: UserInfoQuery;
   userNews: UserNewsQuery;
@@ -374,6 +464,7 @@ export type UserNews = {
   __typename?: 'UserNews';
   createdAt: Scalars['DateTime']['output'];
   img?: Maybe<Scalars['String']['output']>;
+  news: News;
   newsId: Scalars['UUID']['output'];
   payload: Scalars['String']['output'];
   readingAt?: Maybe<Scalars['DateTime']['output']>;
@@ -526,7 +617,7 @@ export type FindByUserIdQueryVariables = Exact<{
 }>;
 
 
-export type FindByUserIdQuery = { __typename?: 'Query', userNews: { __typename?: 'UserNewsQuery', findByUserId: Array<{ __typename?: 'UserNews', img?: string | null, newsId: any, payload: string, title: string, userNewsId: any }> } };
+export type FindByUserIdQuery = { __typename?: 'Query', userNews: { __typename?: 'UserNewsQuery', findByUserId: Array<{ __typename?: 'UserNews', img?: string | null, newsId: any, payload: string, title: string, userNewsId: any, news: { __typename?: 'News', countNewsLike: number } }> } };
 
 export type FindManyQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -559,7 +650,7 @@ export const FindTariffPlanByOfferDocument = {"kind":"Document","definitions":[{
 export const BuyTariffPlanDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"BuyTariffPlan"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tariffPlanId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userTariffPlan"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"buyTariffPlan"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tariffPlanId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tariffPlanId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tariffPlanId"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}}]}}]}}]} as unknown as DocumentNode<BuyTariffPlanMutation, BuyTariffPlanMutationVariables>;
 export const OfferFindByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"OfferFindById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"offer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"offerId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offerId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"img"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"offerId"}},{"kind":"Field","name":{"kind":"Name","value":"tariffIds"}}]}}]}}]}}]} as unknown as DocumentNode<OfferFindByIdQuery, OfferFindByIdQueryVariables>;
 export const UserFindByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UserFindById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findByPk"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"userTariffPlan"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tariffPlanId"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UserFindByIdQuery, UserFindByIdQueryVariables>;
-export const FindByUserIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindByUserId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userNews"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findByUserId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"img"}},{"kind":"Field","name":{"kind":"Name","value":"newsId"}},{"kind":"Field","name":{"kind":"Name","value":"payload"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"userNewsId"}}]}}]}}]}}]} as unknown as DocumentNode<FindByUserIdQuery, FindByUserIdQueryVariables>;
+export const FindByUserIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindByUserId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userNews"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findByUserId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"img"}},{"kind":"Field","name":{"kind":"Name","value":"newsId"}},{"kind":"Field","name":{"kind":"Name","value":"payload"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"userNewsId"}},{"kind":"Field","name":{"kind":"Name","value":"news"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"countNewsLike"}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindByUserIdQuery, FindByUserIdQueryVariables>;
 export const FindManyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindMany"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"offer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findMany"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"img"}},{"kind":"Field","name":{"kind":"Name","value":"offerId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"tariffIds"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]}}]} as unknown as DocumentNode<FindManyQuery, FindManyQueryVariables>;
 export const GetUserInfoByUserIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserInfoByUserId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fundByUserId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"hourOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"minOfBirth"}}]}}]}}]}}]} as unknown as DocumentNode<GetUserInfoByUserIdQuery, GetUserInfoByUserIdQueryVariables>;
 export const UserInfoUpdateOneDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UserInfoUpdateOne"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userInfoId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserInfoUpdateInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOne"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userInfoId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userInfoId"}}},{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"hourOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"minOfBirth"}}]}}]}}]}}]} as unknown as DocumentNode<UserInfoUpdateOneMutation, UserInfoUpdateOneMutationVariables>;

@@ -62,7 +62,7 @@
   position: fixed;
   bottom: 25px;
   display: flex;
-  gap: var(--spaces-md);
+  gap: var(--spaces-xsm);
   align-items: center;
   justify-content: center;
   width: 100%;
