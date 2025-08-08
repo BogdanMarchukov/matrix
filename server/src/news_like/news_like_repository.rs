@@ -31,6 +31,26 @@ impl NewsLikeRepository {
             .await
     }
 
+    pub async fn count<C>(
+        db: &C,
+        filter: NewsLikeFilter,
+    ) -> Result<u64, DbErr>
+    where
+        C: ConnectionTrait,
+    {
+        let mut query = news_like::Entity::find();
+
+        if let Some(news_id) = filter.news_id {
+            query = query.filter(news_like::Column::NewsId.eq(news_id));
+        }
+
+        if let Some(user_id) = filter.user_id {
+            query = query.filter(news_like::Column::UserId.eq(user_id));
+        }
+
+        query.count(db).await
+    }
+
     pub async fn find_many<C>(
         db: &C,
         filter: NewsLikeFilter,

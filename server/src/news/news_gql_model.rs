@@ -11,6 +11,12 @@ use crate::{
 
 use super::news_repository;
 
+#[derive(SimpleObject)]
+pub struct ManyData {
+    count: u64,
+    value: Vec<NewsLikeGqlModel>,
+}
+
 #[derive(Clone, SimpleObject, Debug)]
 #[graphql(complex)]
 #[graphql(name = "News")]
@@ -27,12 +33,16 @@ pub struct NewsGqlModel {
 
 #[ComplexObject]
 impl NewsGqlModel {
-    async fn news_likes(
-        &self,
-        ctx: &async_graphql::Context<'_>,
-    ) -> FieldResult<Vec<NewsLikeGqlModel>> {
+    async fn news_likes(&self, ctx: &async_graphql::Context<'_>) -> FieldResult<ManyData> {
         let conn = db_utils::get_connection_from_gql_ctx(ctx)?;
-        news_like_service::find_by_news_id(&conn, self.news_id.to_owned()).await
+        let value = news_like_service::find_by_news_id(&conn, self.news_id.to_owned()).await?;
+        let count = news_like_service::find_count_by_news_id(&conn, self.news_id).await?;
+        Ok(ManyData { value, count })
+    }
+
+    async fn count_news_like(&self, ctx: &async_graphql::Context<'_>) -> FieldResult<u64> {
+        let conn = db_utils::get_connection_from_gql_ctx(ctx)?;
+        news_like_service::find_count_by_news_id(&conn, self.news_id).await
     }
 }
 

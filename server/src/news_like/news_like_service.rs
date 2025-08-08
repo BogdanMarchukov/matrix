@@ -1,5 +1,8 @@
-use crate::{news_like::news_like_repository::NewsLikeRepository, user::user_gql_model::User};
-use async_graphql::FieldResult;
+use crate::{
+    errors::gql_error::GqlError, news_like::news_like_repository::NewsLikeRepository,
+    user::user_gql_model::User,
+};
+use async_graphql::{ErrorExtensions, FieldResult};
 use sea_orm::DatabaseConnection;
 use uuid::Uuid;
 
@@ -18,6 +21,21 @@ pub async fn find_by_news_id(
     )
     .await?;
     Ok(result.into_iter().map(NewsLikeGqlModel::from).collect())
+}
+
+pub async fn find_count_by_news_id(db: &DatabaseConnection, news_id: Uuid) -> FieldResult<u64> {
+    match NewsLikeRepository::count(
+        db,
+        NewsLikeFilter {
+            news_id: Some(news_id),
+            user_id: None,
+        },
+    )
+    .await
+    {
+        Ok(count) => Ok(count),
+        Err(_) => Err(GqlError::ServerError("database error".to_string()).extend()),
+    }
 }
 
 pub async fn find_by_user_id(
