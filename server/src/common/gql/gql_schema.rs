@@ -1,4 +1,6 @@
 use crate::guards::auth_guard::AuthGuard;
+use crate::news_like::news_like_gql::NewsLikeMutation;
+use crate::news_like::news_like_gql::NewsLikeQuery;
 use crate::notify::notify_gql::NotifySub;
 use crate::notify::notify_gql::UserNewsSub;
 use crate::offer_like::offer_like_gql::OfferLikeMutation;
@@ -78,6 +80,10 @@ impl Mutation {
     async fn offer_like(&self) -> FieldResult<OfferLikeMutation> {
         Ok(OfferLikeMutation)
     }
+
+    async fn news_like(&self) -> FieldResult<NewsLikeMutation> {
+        Ok(NewsLikeMutation)
+    }
 }
 
 #[Object]
@@ -104,6 +110,10 @@ impl Query {
 
     async fn offer_like(&self) -> FieldResult<OfferLikeQuery> {
         Ok(OfferLikeQuery)
+    }
+
+    async fn news_like(&self) -> FieldResult<NewsLikeQuery> {
+        Ok(NewsLikeQuery)
     }
 }
 
