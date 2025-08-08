@@ -26,7 +26,7 @@ const LIKE = gql(/* GraphQl */ `
 `);
 
 const LIKE_COUNT = gql(/* GraphQl */ `
-    query NewsLike($newsId: UUID!) {
+    query NewsLikeFindCount($newsId: UUID!) {
       newsLike {
         findCountByNewsId(newsId: $newsId)
       }
@@ -89,7 +89,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ newsId, onClose, payload, img, ti
 
       <div className={styles.footer}>
         <Liked liked={liked} onClick={handleDoubleClick} />
-        <p>{likeCount?.findCountByNewsId ?? 0}</p>
+        <p>{likeCount?.newsLike?.findCountByNewsId ?? 0}</p>
       </div>
     </div >
   );
