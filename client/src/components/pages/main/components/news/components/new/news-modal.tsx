@@ -1,11 +1,10 @@
+import { useMutation, useQuery } from "@apollo/client";
 import React, { useState } from "react";
+import { gql } from "../../../../../../../__generated__";
+import { useUserStore } from "../../../../../../../common/store/userStore";
 import Liked from "../../../../../../atoms/liked/liked";
 import { CloseIcon } from "../../../scores/svg/close";
 import styles from "./news-modal.module.css";
-import { gql } from "../../../../../../../__generated__";
-import { useMutation, useQuery } from "@apollo/client";
-import { useStore } from "zustand";
-import { useUserStore } from "../../../../../../../common/store/userStore";
 
 interface NewsModalProps {
   onClose: () => void;
@@ -46,7 +45,7 @@ const FIND_LIKE = gql(/* GraphQl */ `
 const NewsModal: React.FC<NewsModalProps> = ({ newsId, onClose, payload, img, title }) => {
   const userId = useUserStore((state) => state.userId);
   const [showBigHeart, setShowBigHeart] = useState(false);
-  const [like, { loading, error, data }] = useMutation(LIKE, { variables: { newsId } });
+  const [like] = useMutation(LIKE, { variables: { newsId } });
   const { data: likeCount, refetch } = useQuery(LIKE_COUNT, { variables: { newsId }, skip: !newsId });
   const { data: likeData, refetch: refetchLike } = useQuery(FIND_LIKE, { variables: { data: { userId, newsId } }, skip: !userId });
   const liked = typeof likeData?.newsLike?.findByUserId?.newsId === 'string';
