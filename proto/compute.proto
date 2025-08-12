@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package compute;
+
+service Calculator {
+  rpc Calculate (ComputeRequest) returns (ComputeResponse);
+}
+
+service MatrixSchema {
+  rpc CalcMatrixSchema (MatrixSchemaRequest) returns (MatrixSchemaResponse);
+}
+
+message MatrixSchemaRequest {
+  int32 year = 1;
+  int32 month = 2;
+  int32 day = 3;
+}
+
+message Int32Array {
+  repeated int32 values = 1;
+}
+
+message MatrixSchemaResponse {
+  repeated Int32Array schema = 1;
+}
+
+message ComputeRequest {
+  int32 input = 1;
+}
+
+message ComputeResponse {
+  int32 result = 1;
+}
