@@ -1,4 +1,4 @@
-use sea_orm_migration::{prelude::*, schema::*};
+use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -17,16 +17,18 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Calculator::Type).string().not_null())
                     .col(
-                        ColumnDef::new(Calculator::RequireParams)
-                            .array(ColumnType::String(StringLen::N(60)))
+                        ColumnDef::new(Calculator::Type)
+                            .enumeration(Calculator::Type, vec![CalculatorType::MatrixSchema])
                             .not_null(),
                     )
                     .col(
+                        ColumnDef::new(Calculator::RequireParams)
+                            .array(ColumnType::String(StringLen::N(60))),
+                    )
+                    .col(
                         ColumnDef::new(Calculator::OptionsParams)
-                            .array(ColumnType::String(StringLen::N(60)))
-                            .not_null(),
+                            .array(ColumnType::String(StringLen::N(60))),
                     )
                     .to_owned(),
             )
@@ -49,6 +51,7 @@ enum Calculator {
     OptionsParams,
 }
 
+#[derive(Iden)]
 enum CalculatorType {
     MatrixSchema,
 }
