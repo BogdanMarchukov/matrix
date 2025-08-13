@@ -22,6 +22,7 @@ mod m20250806_000000_create_offer_like_table;
 mod m20250806_000001_create_news_like_table;
 mod m20250813_143047_create_calculator_table;
 mod m20250813_185426_calculate_insert_data;
+mod m20250813_190000_create_user_calc_result_table;
 
 pub struct Migrator;
 
@@ -51,6 +52,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20250806_000001_create_news_like_table::Migration),
             Box::new(m20250813_143047_create_calculator_table::Migration),
             Box::new(m20250813_185426_calculate_insert_data::Migration),
+            Box::new(m20250813_190000_create_user_calc_result_table::Migration),
         ]
     }
 }
