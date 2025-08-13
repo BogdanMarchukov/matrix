@@ -40,6 +40,8 @@ mod offer;
 #[path = "common/secret/mod.rs"]
 mod secret;
 mod tariff_plan;
+#[path = "common/types/mod.rs"]
+mod types;
 #[path = "user/mod.rs"]
 mod user;
 use crate::gql_schema::Mutation;

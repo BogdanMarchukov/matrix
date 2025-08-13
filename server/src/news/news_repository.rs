@@ -7,7 +7,7 @@ use crate::{
     TxSender,
 };
 use async_graphql::{ErrorExtensions, FieldResult};
-use chrono::{NaiveDateTime, Utc};
+use chrono::Utc;
 use migration::OnConflict;
 use sea_orm::QueryFilter;
 use sea_orm::{ActiveModelTrait, ConnectionTrait, DatabaseConnection, EntityTrait, Set};
