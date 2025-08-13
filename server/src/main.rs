@@ -2,6 +2,7 @@ use actix_multipart::form::tempfile::TempFileConfig;
 use actix_web::{guard, web, App, Error, HttpRequest, HttpResponse, HttpServer};
 use async_graphql::Schema;
 use async_graphql::{Data, ErrorExtensions};
+mod calculator;
 mod news;
 mod news_like;
 mod payment;
