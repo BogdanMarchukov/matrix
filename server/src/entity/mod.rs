@@ -2,6 +2,7 @@
 
 pub mod prelude;
 
+pub mod calculator;
 pub mod news;
 pub mod news_like;
 pub mod newsletter;

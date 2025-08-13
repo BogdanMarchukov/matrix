@@ -3,6 +3,12 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum)]
+#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "calculator_type")]
+pub enum CalculatorType {
+    #[sea_orm(string_value = "MATRIX_SCHEMA")]
+    MatrixSchema,
+}
+#[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum)]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "notify_type_enum")]
 pub enum NotifyTypeEnum {
     #[sea_orm(string_value = "DALY")]

@@ -1,3 +1,4 @@
+use sea_orm::Statement;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -6,6 +7,11 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+
+        let sql = "CREATE TYPE calculator_type AS ENUM ('MATRIX_SCHEMA');";
+        let stmt = Statement::from_string(manager.get_database_backend(), sql.to_owned());
+        manager.get_connection().execute(stmt).await.map(|_| ())?;
+
         manager
             .create_table(
                 Table::create()
@@ -19,7 +25,8 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(Calculator::Type)
-                            .enumeration(Calculator::Type, vec![CalculatorType::MatrixSchema])
+                            .enumeration(CalculatorType::CalculatorType, vec![CalculatorType::MatrixSchema])
+                            .unique_key()
                             .not_null(),
                     )
                     .col(
@@ -53,5 +60,6 @@ enum Calculator {
 
 #[derive(Iden)]
 enum CalculatorType {
+    CalculatorType,
     MatrixSchema,
 }
