@@ -10,6 +10,7 @@ pub use super::offer_like::Entity as OfferLike;
 pub use super::payment::Entity as Payment;
 pub use super::tariff_plan::Entity as TariffPlan;
 pub use super::tariff_plan_payment::Entity as TariffPlanPayment;
+pub use super::user_calc_result::Entity as UserCalcResult;
 pub use super::user_info::Entity as UserInfo;
 pub use super::user_news::Entity as UserNews;
 pub use super::user_tariff_plan::Entity as UserTariffPlan;
