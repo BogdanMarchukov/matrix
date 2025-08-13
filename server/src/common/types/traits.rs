@@ -19,7 +19,7 @@ where
 
     async fn create_one(data: D, db: &C) -> Result<T, DbErr>;
 
-    async fn update_one(id: Uuid, data: T, db: &C) -> Result<T, DbErr>;
+    async fn update_one(id: Uuid, data: F , db: &C) -> Result<T, DbErr>;
 
     async fn delete_one(id: Uuid, db: &C) -> Result<bool, DbErr>;
 }

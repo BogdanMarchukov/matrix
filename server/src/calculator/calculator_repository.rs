@@ -1,7 +1,9 @@
 use crate::entity::calculator;
 use crate::entity::sea_orm_active_enums::CalculatorType;
 use crate::types::traits::{InsertData, OptionFieldsFilter, Repository};
-use sea_orm::{ColumnTrait, DatabaseConnection, DbErr, EntityTrait, QueryFilter, Set};
+use sea_orm::{
+    ActiveModelTrait, ColumnTrait, DatabaseConnection, DbErr, EntityTrait, QueryFilter, Set,
+};
 use uuid::Uuid;
 
 pub struct CalculatorRepository;
@@ -21,7 +23,7 @@ impl Repository<calculator::Model, DatabaseConnection, CalculatorFilter, Calcula
         db: &DatabaseConnection,
     ) -> Result<Vec<calculator::Model>, DbErr> {
         let mut query = calculator::Entity::find();
-        if let Some(calculator_type) = filter.calculator_type {
+        if let Some(calculator_type) = filter.r#type {
             query = query.filter(calculator::Column::Type.eq(calculator_type));
         }
         query.all(db).await
@@ -32,7 +34,7 @@ impl Repository<calculator::Model, DatabaseConnection, CalculatorFilter, Calcula
         db: &DatabaseConnection,
     ) -> Result<Option<calculator::Model>, DbErr> {
         let mut query = calculator::Entity::find();
-        if let Some(calculator_type) = filter.calculator_type {
+        if let Some(calculator_type) = filter.r#type {
             query = query.filter(calculator::Column::Type.eq(calculator_type));
         }
         query.one(db).await
@@ -52,10 +54,44 @@ impl Repository<calculator::Model, DatabaseConnection, CalculatorFilter, Calcula
             .exec_with_returning(db)
             .await
     }
+
+    async fn update_one(
+        id: Uuid,
+        data: CalculatorFilter,
+        db: &DatabaseConnection,
+    ) -> Result<calculator::Model, DbErr> {
+        let mut model: calculator::ActiveModel = calculator::Entity::find_by_id(id)
+            .one(db)
+            .await?
+            .ok_or(DbErr::Custom("Record not found".to_string()))?
+            .into();
+
+        if let Some(calculator_type) = data.r#type {
+            model.r#type = Set(calculator_type);
+        }
+        if let Some(require_params) = data.require_params {
+            model.require_params = Set(Some(require_params));
+        }
+        if let Some(options_params) = data.options_params {
+            model.options_params = Set(Some(options_params));
+        }
+
+        model.update(db).await
+    }
+
+    async fn delete_one(id: Uuid, db: &DatabaseConnection) -> Result<bool, DbErr> {
+        let result = calculator::Entity::delete_by_id(id).exec(db).await;
+        match result {
+            Ok(_) => Ok(true),
+            Err(err) => Err(err),
+        }
+    }
 }
 
 pub struct CalculatorFilter {
-    pub calculator_type: Option<String>,
+    pub r#type: Option<CalculatorType>,
+    pub require_params: Option<Vec<String>>,
+    pub options_params: Option<Vec<String>>,
 }
 
 pub struct CalculatorInsertData {
@@ -63,6 +99,17 @@ pub struct CalculatorInsertData {
     pub r#type: CalculatorType,
     pub require_params: Option<Vec<String>>,
     pub options_params: Option<Vec<String>>,
+}
+
+impl Default for CalculatorInsertData {
+    fn default() -> Self {
+        Self {
+            calculator_id: Uuid::new_v4(),
+            r#type: CalculatorType::MatrixSchema,
+            require_params: None,
+            options_params: None,
+        }
+    }
 }
 
 impl InsertData for CalculatorInsertData {}
