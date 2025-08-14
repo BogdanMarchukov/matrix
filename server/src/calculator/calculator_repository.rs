@@ -6,6 +6,8 @@ use sea_orm::{
 };
 use uuid::Uuid;
 
+use super::calculator_gql::{CreateOneInput, FindOneFilterInput};
+
 pub struct CalculatorRepository;
 
 impl Repository<calculator::Model, DatabaseConnection, CalculatorFilter, CalculatorInsertData>
@@ -112,6 +114,27 @@ impl Default for CalculatorInsertData {
     }
 }
 
+impl From<CreateOneInput> for CalculatorInsertData {
+    fn from(input: CreateOneInput) -> Self {
+        Self {
+            r#type: input.r#type.into(),
+            require_params: input.require_params,
+            options_params: input.options_params,
+            ..Default::default()
+        }
+    }
+}
+
 impl InsertData for CalculatorInsertData {}
 
 impl OptionFieldsFilter for CalculatorFilter {}
+
+impl From<FindOneFilterInput> for CalculatorFilter {
+    fn from(filter: FindOneFilterInput) -> Self {
+        Self {
+            r#type: Some(filter.r#type.into()),
+            require_params: None,
+            options_params: None,
+        }
+    }
+}
