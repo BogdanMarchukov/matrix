@@ -13,11 +13,11 @@ pub struct CalculatorRepository;
 impl Repository<calculator::Model, DatabaseConnection, CalculatorFilter, CalculatorInsertData>
     for CalculatorRepository
 {
-    async fn find_by_pk(id: Uuid, db: &DatabaseConnection) -> Result<calculator::Model, DbErr> {
-        calculator::Entity::find_by_id(id)
-            .one(db)
-            .await
-            .map(|opt| opt.unwrap())
+    async fn find_by_pk(
+        id: Uuid,
+        db: &DatabaseConnection,
+    ) -> Result<Option<calculator::Model>, DbErr> {
+        calculator::Entity::find_by_id(id).one(db).await
     }
 
     async fn find_many(

@@ -75,7 +75,8 @@ mod tests {
 
         let found = CalculatorRepository::find_by_pk(created.calculator_id, conn)
             .await
-            .expect("Failed to find calculator");
+            .expect("Failed to find calculator")
+            .unwrap();
         assert_eq!(created.calculator_id, found.calculator_id);
     }
 }
