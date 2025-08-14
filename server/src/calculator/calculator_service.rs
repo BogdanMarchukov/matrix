@@ -38,6 +38,7 @@ mod tests {
     use crate::calculator::calculator_gql::CreateOneInput;
     use crate::db_utils::TestDb;
     use crate::entity::sea_orm_active_enums::CalculatorType;
+    use crate::offer::offer_repository;
 
     #[tokio::test]
     async fn test_calculator_service() {
@@ -59,8 +60,13 @@ mod tests {
                 .await
                 .expect("Failed to delete all calculators");
         assert_eq!(result, true);
+        let matrix_offer = offer_repository::find_many(conn, None, None, None)
+            .await
+            .expect("Failed to find offers");
+        assert_eq!(matrix_offer.len(), 1);
 
         let create_data = CreateOneInput {
+            offer_id: matrix_offer[0].offer_id,
             r#type: CalculatorType::MatrixSchema.into(),
             require_params: Some(vec!["param1".to_string(), "param2".to_string()]),
             options_params: Some(vec!["option1".to_string(), "option2".to_string()]),

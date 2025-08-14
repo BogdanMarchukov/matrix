@@ -1,6 +1,7 @@
 use crate::guards::{auth_guard::AuthGuard, system_guard::SystemGuard};
 use crate::{calculator::calculator_gql_model::CalculatorGqlModel, db_utils};
 use async_graphql::{Context, FieldResult, InputObject, Object};
+use uuid::Uuid;
 
 use super::{calculator_gql_model::CalculatorGqlType, calculator_service};
 
@@ -17,6 +18,7 @@ pub struct CreateOneInput {
     pub r#type: CalculatorGqlType,
     pub require_params: Option<Vec<String>>,
     pub options_params: Option<Vec<String>>,
+    pub offer_id: Uuid,
 }
 
 #[Object]

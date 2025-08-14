@@ -10,6 +10,7 @@ pub struct CalculatorGqlModel {
     pub r#type: CalculatorGqlType,
     pub require_params: Option<Vec<String>>,
     pub options_params: Option<Vec<String>>,
+    pub offer_id: Uuid,
 }
 
 #[derive(Enum, Copy, Clone, Eq, PartialEq, Debug)]
@@ -25,6 +26,7 @@ impl From<calculator::Model> for CalculatorGqlModel {
             r#type: model.r#type.into(),
             require_params: model.require_params,
             options_params: model.options_params,
+            offer_id: model.offer_id,
         }
     }
 }

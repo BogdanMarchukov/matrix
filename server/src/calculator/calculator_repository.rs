@@ -57,6 +57,7 @@ impl
             r#type: Set(data.r#type),
             require_params: Set(data.require_params),
             options_params: Set(data.options_params),
+            offer_id: Set(data.offer_id),
         };
         calculator::Entity::insert(data)
             .exec_with_returning(db)
@@ -108,6 +109,7 @@ pub struct CalculatorUpdateData {
 
 pub struct CalculatorInsertData {
     pub calculator_id: Uuid,
+    pub offer_id: Uuid,
     pub r#type: CalculatorType,
     pub require_params: Option<Vec<String>>,
     pub options_params: Option<Vec<String>>,
@@ -116,6 +118,7 @@ pub struct CalculatorInsertData {
 impl Default for CalculatorInsertData {
     fn default() -> Self {
         Self {
+            offer_id: Uuid::new_v4(),
             calculator_id: Uuid::new_v4(),
             r#type: CalculatorType::MatrixSchema,
             require_params: None,
@@ -130,6 +133,7 @@ impl From<CreateOneInput> for CalculatorInsertData {
             r#type: input.r#type.into(),
             require_params: input.require_params,
             options_params: input.options_params,
+            offer_id: input.offer_id,
             ..Default::default()
         }
     }
