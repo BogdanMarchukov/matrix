@@ -1,6 +1,6 @@
-use async_graphql::{Context, FieldResult, InputObject, Object};
-
+use crate::guards::{auth_guard::AuthGuard, system_guard::SystemGuard};
 use crate::{calculator::calculator_gql_model::CalculatorGqlModel, db_utils};
+use async_graphql::{Context, FieldResult, InputObject, Object};
 
 use super::{calculator_gql_model::CalculatorGqlType, calculator_service};
 
@@ -21,6 +21,7 @@ pub struct CreateOneInput {
 
 #[Object]
 impl CalculatorQuery {
+    #[graphql(guard = "AuthGuard")]
     async fn find_one<'ctx>(
         &self,
         ctx: &Context<'ctx>,
@@ -33,12 +34,13 @@ impl CalculatorQuery {
 
 #[Object]
 impl CalculatorMutation {
+    #[graphql(guard = "SystemGuard")]
     async fn crete_one<'ctx>(
         &self,
         ctx: &Context<'ctx>,
         data: CreateOneInput,
     ) -> FieldResult<CalculatorGqlModel> {
         let db = db_utils::get_connection_from_gql_ctx(ctx)?;
-        todo!()
+        calculator_service::create_one(data, &db).await
     }
 }

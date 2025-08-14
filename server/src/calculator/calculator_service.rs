@@ -4,8 +4,9 @@ use sea_orm::DatabaseConnection;
 use crate::{errors::gql_error::GqlError, types::traits::Repository};
 
 use super::{
-    calculator_gql::FindOneFilterInput, calculator_gql_model::CalculatorGqlModel,
-    calculator_repository::{CalculatorInsertData, CalculatorRepository},
+    calculator_gql::{CreateOneInput, FindOneFilterInput},
+    calculator_gql_model::CalculatorGqlModel,
+    calculator_repository::CalculatorRepository,
 };
 
 pub async fn find_one(
@@ -21,9 +22,13 @@ pub async fn find_one(
     }
 }
 
-pub async fn create_one(data: CalculatorInsertData, db: &DatabaseConnection) -> FieldResult<CalculatorGqlModel> {
+pub async fn create_one(
+    data: CreateOneInput,
+    db: &DatabaseConnection,
+) -> FieldResult<CalculatorGqlModel> {
     match CalculatorRepository::create_one(data.into(), db).await {
         Ok(model) => Ok(model.into()),
         Err(_) => Err(GqlError::ServerError("database error".to_string()).extend()),
     }
 }
+

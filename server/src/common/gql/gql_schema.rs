@@ -1,3 +1,5 @@
+use crate::calculator::calculator_gql::CalculatorMutation;
+use crate::calculator::calculator_gql::CalculatorQuery;
 use crate::guards::auth_guard::AuthGuard;
 use crate::news_like::news_like_gql::NewsLikeMutation;
 use crate::news_like::news_like_gql::NewsLikeQuery;
@@ -84,6 +86,10 @@ impl Mutation {
     async fn news_like(&self) -> FieldResult<NewsLikeMutation> {
         Ok(NewsLikeMutation)
     }
+
+    async fn calculator(&self) -> FieldResult<CalculatorMutation> {
+        Ok(CalculatorMutation)
+    }
 }
 
 #[Object]
@@ -114,6 +120,10 @@ impl Query {
 
     async fn news_like(&self) -> FieldResult<NewsLikeQuery> {
         Ok(NewsLikeQuery)
+    }
+
+    async fn calculator(&self) -> FieldResult<CalculatorQuery> {
+        Ok(CalculatorQuery)
     }
 }
 
