@@ -40,7 +40,7 @@ mod tests {
     use crate::entity::sea_orm_active_enums::CalculatorType;
 
     #[tokio::test]
-    async fn test_create_calculator() {
+    async fn test_calculator_service() {
         let docker = testcontainers::clients::Cli::default();
         let test_db = TestDb::new(&docker).await;
         let conn = &test_db.db;
