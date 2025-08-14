@@ -32,3 +32,50 @@ pub async fn create_one(
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::calculator::calculator_gql::CreateOneInput;
+    use crate::db_utils::TestDb;
+    use crate::entity::sea_orm_active_enums::CalculatorType;
+
+    #[tokio::test]
+    async fn test_create_calculator() {
+        let docker = testcontainers::clients::Cli::default();
+        let test_db = TestDb::new(&docker).await;
+        let conn = &test_db.db;
+        let default_calculator = find_one(
+            FindOneFilterInput {
+                r#type: CalculatorType::MatrixSchema.into(),
+            },
+            conn,
+        )
+        .await
+        .expect("Failed to find default calculator");
+        assert!(default_calculator.is_some());
+
+        let result =
+            CalculatorRepository::delete_one(default_calculator.unwrap().calculator_id, conn)
+                .await
+                .expect("Failed to delete all calculators");
+        assert_eq!(result, true);
+
+        let create_data = CreateOneInput {
+            r#type: CalculatorType::MatrixSchema.into(),
+            require_params: Some(vec!["param1".to_string(), "param2".to_string()]),
+            options_params: Some(vec!["option1".to_string(), "option2".to_string()]),
+        };
+
+        let created = create_one(create_data.clone(), conn)
+            .await
+            .expect("Failed to create calculator");
+        assert_eq!(created.r#type, create_data.r#type);
+        assert_eq!(created.require_params, create_data.require_params);
+        assert_eq!(created.options_params, create_data.options_params);
+
+        let found = CalculatorRepository::find_by_pk(created.calculator_id, conn)
+            .await
+            .expect("Failed to find calculator");
+        assert_eq!(created.calculator_id, found.calculator_id);
+    }
+}
