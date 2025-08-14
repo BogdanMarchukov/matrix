@@ -3,13 +3,15 @@ use uuid::Uuid;
 
 pub trait OptionFieldsFilter {}
 pub trait InsertData {}
+pub trait UpdateData {}
 
-pub trait Repository<T, C, F, D>
+pub trait Repository<T, C, F, D, U>
 where
     T: ModelTrait,
     C: ConnectionTrait,
     F: OptionFieldsFilter,
     D: InsertData,
+    U: UpdateData,
 {
     async fn find_by_pk(id: Uuid, db: &C) -> Result<Option<T>, DbErr>;
 
@@ -19,7 +21,7 @@ where
 
     async fn create_one(data: D, db: &C) -> Result<T, DbErr>;
 
-    async fn update_one(id: Uuid, data: F, db: &C) -> Result<T, DbErr>;
+    async fn update_one(id: Uuid, data: U, db: &C) -> Result<T, DbErr>;
 
     async fn delete_one(id: Uuid, db: &C) -> Result<bool, DbErr>;
 }

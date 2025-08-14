@@ -1,6 +1,6 @@
 use crate::entity::calculator;
 use crate::entity::sea_orm_active_enums::CalculatorType;
-use crate::types::traits::{InsertData, OptionFieldsFilter, Repository};
+use crate::types::traits::{InsertData, OptionFieldsFilter, Repository, UpdateData};
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, DatabaseConnection, DbErr, EntityTrait, QueryFilter, Set,
 };
@@ -10,8 +10,14 @@ use super::calculator_gql::{CreateOneInput, FindOneFilterInput};
 
 pub struct CalculatorRepository;
 
-impl Repository<calculator::Model, DatabaseConnection, CalculatorFilter, CalculatorInsertData>
-    for CalculatorRepository
+impl
+    Repository<
+        calculator::Model,
+        DatabaseConnection,
+        CalculatorFilter,
+        CalculatorInsertData,
+        CalculatorUpdateData,
+    > for CalculatorRepository
 {
     async fn find_by_pk(
         id: Uuid,
@@ -59,7 +65,7 @@ impl Repository<calculator::Model, DatabaseConnection, CalculatorFilter, Calcula
 
     async fn update_one(
         id: Uuid,
-        data: CalculatorFilter,
+        data: CalculatorUpdateData,
         db: &DatabaseConnection,
     ) -> Result<calculator::Model, DbErr> {
         let mut model: calculator::ActiveModel = calculator::Entity::find_by_id(id)
@@ -91,6 +97,10 @@ impl Repository<calculator::Model, DatabaseConnection, CalculatorFilter, Calcula
 }
 
 pub struct CalculatorFilter {
+    pub r#type: Option<CalculatorType>,
+}
+
+pub struct CalculatorUpdateData {
     pub r#type: Option<CalculatorType>,
     pub require_params: Option<Vec<String>>,
     pub options_params: Option<Vec<String>>,
@@ -127,14 +137,14 @@ impl From<CreateOneInput> for CalculatorInsertData {
 
 impl InsertData for CalculatorInsertData {}
 
+impl UpdateData for CalculatorUpdateData {}
+
 impl OptionFieldsFilter for CalculatorFilter {}
 
 impl From<FindOneFilterInput> for CalculatorFilter {
     fn from(filter: FindOneFilterInput) -> Self {
         Self {
             r#type: Some(filter.r#type.into()),
-            require_params: None,
-            options_params: None,
         }
     }
 }

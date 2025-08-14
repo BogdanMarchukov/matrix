@@ -1,5 +1,5 @@
 use crate::entity::user_calc_result;
-use crate::types::traits::{InsertData, OptionFieldsFilter, Repository};
+use crate::types::traits::{InsertData, OptionFieldsFilter, Repository, UpdateData};
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, DatabaseConnection, DbErr, EntityTrait, QueryFilter, Set,
 };
@@ -12,7 +12,8 @@ impl
         user_calc_result::Model,
         DatabaseConnection,
         UserCalcResultFilter,
-        UserCalcInsertData,
+        UserCalcResultInsertData,
+        UserCalcResultUpdateData,
     > for UserCalcResultRepository
 {
     async fn find_by_pk(
@@ -57,7 +58,7 @@ impl
     }
 
     async fn create_one(
-        data: UserCalcInsertData,
+        data: UserCalcResultInsertData,
         db: &DatabaseConnection,
     ) -> Result<user_calc_result::Model, DbErr> {
         let data = user_calc_result::ActiveModel {
@@ -74,7 +75,7 @@ impl
 
     async fn update_one(
         id: Uuid,
-        data: UserCalcResultFilter,
+        data: UserCalcResultUpdateData,
         db: &DatabaseConnection,
     ) -> Result<user_calc_result::Model, DbErr> {
         let mut model: user_calc_result::ActiveModel = user_calc_result::Entity::find_by_id(id)
@@ -112,10 +113,16 @@ pub struct UserCalcResultFilter {
     pub user_id: Option<Uuid>,
     pub calculator_id: Option<Uuid>,
     pub key: Option<String>,
-    pub result: Option<serde_json::Value>,
 }
 
-pub struct UserCalcInsertData {
+pub struct UserCalcResultUpdateData {
+    pub user_id: Option<Uuid>,
+    pub calculator_id: Option<Uuid>,
+    pub result: Option<serde_json::Value>,
+    pub key: Option<String>,
+}
+
+pub struct UserCalcResultInsertData {
     pub user_calc_result_id: Uuid,
     pub user_id: Uuid,
     pub calculator_id: Uuid,
@@ -123,7 +130,7 @@ pub struct UserCalcInsertData {
     pub key: String,
 }
 
-impl Default for UserCalcInsertData {
+impl Default for UserCalcResultInsertData {
     fn default() -> Self {
         Self {
             user_calc_result_id: Uuid::new_v4(),
@@ -135,6 +142,8 @@ impl Default for UserCalcInsertData {
     }
 }
 
-impl InsertData for UserCalcInsertData {}
+impl UpdateData for UserCalcResultUpdateData {}
+
+impl InsertData for UserCalcResultInsertData {}
 
 impl OptionFieldsFilter for UserCalcResultFilter {}
