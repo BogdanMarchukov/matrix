@@ -17,8 +17,16 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
+    #[sea_orm(has_one = "super::calculator::Entity")]
+    Calculator,
     #[sea_orm(has_many = "super::offer_like::Entity")]
     OfferLike,
+}
+
+impl Related<super::calculator::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Calculator.def()
+    }
 }
 
 impl Related<super::offer_like::Entity> for Entity {

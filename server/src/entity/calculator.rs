@@ -12,12 +12,28 @@ pub struct Model {
     pub r#type: CalculatorType,
     pub require_params: Option<Vec<String>>,
     pub options_params: Option<Vec<String>>,
+    #[sea_orm(unique)]
+    pub offer_id: Uuid,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
+    #[sea_orm(
+        belongs_to = "super::offer::Entity",
+        from = "Column::OfferId",
+        to = "super::offer::Column::OfferId",
+        on_update = "NoAction",
+        on_delete = "NoAction"
+    )]
+    Offer,
     #[sea_orm(has_many = "super::user_calc_result::Entity")]
     UserCalcResult,
+}
+
+impl Related<super::offer::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Offer.def()
+    }
 }
 
 impl Related<super::user_calc_result::Entity> for Entity {

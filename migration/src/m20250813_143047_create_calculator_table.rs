@@ -7,7 +7,6 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-
         let sql = "CREATE TYPE calculator_type AS ENUM ('MATRIX_SCHEMA');";
         let stmt = Statement::from_string(manager.get_database_backend(), sql.to_owned());
         manager.get_connection().execute(stmt).await.map(|_| ())?;
@@ -25,7 +24,10 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(Calculator::Type)
-                            .enumeration(CalculatorType::CalculatorType, vec![CalculatorType::MatrixSchema])
+                            .enumeration(
+                                CalculatorType::CalculatorType,
+                                vec![CalculatorType::MatrixSchema],
+                            )
                             .unique_key()
                             .not_null(),
                     )
@@ -36,6 +38,18 @@ impl MigrationTrait for Migration {
                     .col(
                         ColumnDef::new(Calculator::OptionsParams)
                             .array(ColumnType::String(StringLen::N(60))),
+                    )
+                    .col(
+                        ColumnDef::new(Calculator::OfferId)
+                            .uuid()
+                            .unique_key()
+                            .not_null(),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("FK_calculator_offer")
+                            .from(Calculator::Table, Calculator::OfferId)
+                            .to(Offer::Table, Offer::OfferId),
                     )
                     .to_owned(),
             )
@@ -55,7 +69,14 @@ enum Calculator {
     CalculatorId,
     Type,
     RequireParams,
+    OfferId,
     OptionsParams,
+}
+
+#[derive(DeriveIden)]
+enum Offer {
+    Table,
+    OfferId,
 }
 
 #[derive(Iden)]
