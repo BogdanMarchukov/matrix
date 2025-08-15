@@ -4,17 +4,11 @@ use sea_orm::{ConnectionTrait, DatabaseConnection};
 use uuid::Uuid;
 
 use crate::{
-    calculator::{self, calculator_repository::CalculatorRepository},
-    db_utils,
-    errors::gql_error::GqlError,
-    tariff_plan::tariff_plan_service,
+    calculator::calculator_repository::CalculatorRepository, db_utils, errors::gql_error::GqlError,
 };
 
 use super::user_info_gql_model::UserInfoGqlModel;
-use super::{
-    user_calc_result_gql_model::UserCalcResultGqlModel, user_info_repository,
-    user_tariff_plan_service,
-};
+use super::{user_info_repository, user_tariff_plan_service};
 
 pub async fn create_calc(
     user_id: Uuid,
@@ -35,6 +29,7 @@ pub async fn create_calc(
     {
         return Err(GqlError::BadRequest("Tariff plan not found".into()).extend());
     }
+    let user_info = check_require_fields(&calculator, &user_id, &transaction).await?;
 
     Ok(())
 }
