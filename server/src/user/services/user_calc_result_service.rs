@@ -43,31 +43,43 @@ async fn check_require_fields<C>(
     calculator: &calculator_entity::Model,
     user_id: &Uuid,
     conn: &C,
-) -> FieldResult<(UserInfoGqlModel, bool)>
+) -> FieldResult<UserInfoGqlModel>
 where
     C: ConnectionTrait,
 {
-    let mut checked = false;
     let user_info = user_info_repository::find_one_by_user_id(user_id, conn).await?;
     let require_params = match calculator.require_params.as_ref() {
         Some(params) => params,
-        None => return Ok((user_info, checked)),
+        None => return Ok(user_info),
     };
     for p in require_params.iter() {
-        if p.as_str() == "date_of_birth" && user_info.date_of_birth.is_some() {
-            return Ok((user_info, true));
-        }
-        if p.as_str() == "hour_of_birth" && user_info.hour_of_birth.is_some() {
-            return Ok((user_info, true));
-        }
-        if p.as_str() == "min_of_birth" && user_info.min_of_birth.is_some() {
-            return Ok((user_info, true));
-        }
-        if p.as_str() == "city" && user_info.city.is_some() {
-            return Ok((user_info, true));
+        match p.as_str() {
+            "date_of_birth" => {
+                if user_info.date_of_birth.is_none() {
+                    return Err(GqlError::BadRequest("Date of birth is required".into()).extend());
+                }
+            }
+            "hour_of_birth" => {
+                if user_info.hour_of_birth.is_none() {
+                    return Err(GqlError::BadRequest("Hour of birth is required".into()).extend());
+                }
+            }
+            "min_of_birth" => {
+                if user_info.min_of_birth.is_none() {
+                    return Err(GqlError::BadRequest("Min of birth is required".into()).extend());
+                }
+            }
+            "city" => {
+                if user_info.city.is_none() {
+                    return Err(GqlError::BadRequest("City is required".into()).extend());
+                }
+            }
+            _ => {
+                return Err(GqlError::ServerError("unknown params".into()).extend());
+            }
         }
     }
-    Ok((user_info, false))
+    Ok(user_info)
 }
 
 async fn get_calculator_and_offer<C>(
