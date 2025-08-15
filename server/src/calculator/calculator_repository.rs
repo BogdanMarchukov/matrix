@@ -1,8 +1,9 @@
-use crate::entity::calculator;
 use crate::entity::sea_orm_active_enums::CalculatorType;
+use crate::entity::{calculator, offer};
 use crate::types::traits::{InsertData, OptionFieldsFilter, Repository, UpdateData};
 use sea_orm::{
-    ActiveModelTrait, ColumnTrait, DatabaseConnection, DbErr, EntityTrait, QueryFilter, Set,
+    ActiveModelTrait, ColumnTrait, ConnectionTrait, DatabaseConnection, DbErr, EntityTrait,
+    QueryFilter, Set,
 };
 use uuid::Uuid;
 
@@ -10,26 +11,20 @@ use super::calculator_gql::{CreateOneInput, FindOneFilterInput};
 
 pub struct CalculatorRepository;
 
-impl
-    Repository<
-        calculator::Model,
-        DatabaseConnection,
-        CalculatorFilter,
-        CalculatorInsertData,
-        CalculatorUpdateData,
-    > for CalculatorRepository
+impl Repository<calculator::Model, CalculatorFilter, CalculatorInsertData, CalculatorUpdateData>
+    for CalculatorRepository
 {
-    async fn find_by_pk(
-        id: Uuid,
-        db: &DatabaseConnection,
-    ) -> Result<Option<calculator::Model>, DbErr> {
+    async fn find_by_pk<C>(id: Uuid, db: &C) -> Result<Option<calculator::Model>, DbErr>
+    where
+        C: ConnectionTrait,
+    {
         calculator::Entity::find_by_id(id).one(db).await
     }
 
-    async fn find_many(
-        filter: CalculatorFilter,
-        db: &DatabaseConnection,
-    ) -> Result<Vec<calculator::Model>, DbErr> {
+    async fn find_many<C>(filter: CalculatorFilter, db: &C) -> Result<Vec<calculator::Model>, DbErr>
+    where
+        C: ConnectionTrait,
+    {
         let mut query = calculator::Entity::find();
         if let Some(calculator_type) = filter.r#type {
             query = query.filter(calculator::Column::Type.eq(calculator_type));
@@ -37,10 +32,13 @@ impl
         query.all(db).await
     }
 
-    async fn find_one(
+    async fn find_one<C>(
         filter: CalculatorFilter,
-        db: &DatabaseConnection,
-    ) -> Result<Option<calculator::Model>, DbErr> {
+        db: &C,
+    ) -> Result<Option<calculator::Model>, DbErr>
+    where
+        C: ConnectionTrait,
+    {
         let mut query = calculator::Entity::find();
         if let Some(calculator_type) = filter.r#type {
             query = query.filter(calculator::Column::Type.eq(calculator_type));
@@ -48,10 +46,10 @@ impl
         query.one(db).await
     }
 
-    async fn create_one(
-        data: CalculatorInsertData,
-        db: &DatabaseConnection,
-    ) -> Result<calculator::Model, DbErr> {
+    async fn create_one<C>(data: CalculatorInsertData, db: &C) -> Result<calculator::Model, DbErr>
+    where
+        C: ConnectionTrait,
+    {
         let data = calculator::ActiveModel {
             calculator_id: Set(data.calculator_id),
             r#type: Set(data.r#type),
@@ -64,11 +62,14 @@ impl
             .await
     }
 
-    async fn update_one(
+    async fn update_one<C>(
         id: Uuid,
         data: CalculatorUpdateData,
-        db: &DatabaseConnection,
-    ) -> Result<calculator::Model, DbErr> {
+        db: &C,
+    ) -> Result<calculator::Model, DbErr>
+    where
+        C: ConnectionTrait,
+    {
         let mut model: calculator::ActiveModel = calculator::Entity::find_by_id(id)
             .one(db)
             .await?
@@ -88,12 +89,30 @@ impl
         model.update(db).await
     }
 
-    async fn delete_one(id: Uuid, db: &DatabaseConnection) -> Result<bool, DbErr> {
+    async fn delete_one<C>(id: Uuid, db: &C) -> Result<bool, DbErr>
+    where
+        C: ConnectionTrait,
+    {
         let result = calculator::Entity::delete_by_id(id).exec(db).await;
         match result {
             Ok(_) => Ok(true),
             Err(err) => Err(err),
         }
+    }
+}
+
+impl CalculatorRepository {
+    pub async fn find_by_pk_with_offer<C>(
+        id: Uuid,
+        db: &C,
+    ) -> Result<Option<(calculator::Model, Option<offer::Model>)>, DbErr>
+    where
+        C: ConnectionTrait,
+    {
+        calculator::Entity::find_by_id(id)
+            .find_also_related(offer::Entity)
+            .one(db)
+            .await
     }
 }
 

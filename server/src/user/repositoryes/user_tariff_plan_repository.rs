@@ -1,5 +1,6 @@
 use async_graphql::{ErrorExtensions, FieldResult};
 use chrono::{Duration, NaiveDateTime, Utc};
+use migration::IntoCondition;
 use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, Set};
 use uuid::Uuid;
 
@@ -11,8 +12,33 @@ use crate::{
 
 use super::user_tariff_plan_gql_model::UserTariffPlanGqlModel;
 
-pub async fn find_by_user_id<C>(
+pub async fn find_by_user_id<C, F>(
     user_id: &Uuid,
+    conn: &C,
+    filter: Option<F>,
+) -> FieldResult<Vec<UserTariffPlanGqlModel>>
+where
+    C: ConnectionTrait,
+    F: IntoCondition,
+{
+    if let Ok(result) = UserTariffPlan::find()
+        .filter(user_tariff_plan::Column::UserId.eq(user_id.to_owned()))
+        .filter(user_tariff_plan::Column::ExpiresAt.gte(chrono::Utc::now()))
+        .all(conn)
+        .await
+    {
+        Ok(result
+            .into_iter()
+            .map(|u| UserTariffPlanGqlModel::new(u))
+            .collect())
+    } else {
+        Err(GqlError::ServerError("Database error".to_string()).extend())
+    }
+}
+
+pub async fn find_by_user_id_and_tariff_ids<C>(
+    user_id: &Uuid,
+    tariff_ids: Vec<Uuid>,
     conn: &C,
 ) -> FieldResult<Vec<UserTariffPlanGqlModel>>
 where
@@ -20,6 +46,7 @@ where
 {
     if let Ok(result) = UserTariffPlan::find()
         .filter(user_tariff_plan::Column::UserId.eq(user_id.to_owned()))
+        .filter(user_tariff_plan::Column::TariffPlanId.is_in(tariff_ids))
         .filter(user_tariff_plan::Column::ExpiresAt.gte(chrono::Utc::now()))
         .all(conn)
         .await

@@ -3,6 +3,8 @@ pub mod types;
 pub mod user_calc_result_gql_model;
 #[path = "./gql_models/user_calc_result_gql_model.rs"]
 pub mod user_calc_result_repository;
+#[path = "./services/user_calc_result_service.rs"]
+pub mod user_calc_result_service;
 pub mod user_gql;
 #[path = "./gql_models/user_gql_model.rs"]
 pub mod user_gql_model;
