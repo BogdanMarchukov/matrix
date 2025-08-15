@@ -42,7 +42,7 @@ pub async fn buy_tariff_plan(
 
 pub async fn check_user_tariff_plan_by_tariff_ids<C>(
     ids: Vec<Uuid>,
-    user_id: Uuid,
+    user_id: &Uuid,
     conn: &C,
 ) -> FieldResult<bool>
 where

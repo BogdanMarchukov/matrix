@@ -2,20 +2,20 @@ use crate::entity::user_info;
 use crate::{entity::prelude::UserInfo, errors::gql_error::GqlError};
 use async_graphql::{ErrorExtensions, FieldResult};
 use sea_orm::{
-    ActiveModelTrait, ColumnTrait, DatabaseConnection, DatabaseTransaction, EntityTrait,
-    QueryFilter, Set,
+    ActiveModelTrait, ColumnTrait, ConnectionTrait, DatabaseConnection, DatabaseTransaction,
+    EntityTrait, QueryFilter, Set,
 };
 use uuid::Uuid;
 
 use super::types::UserInfoUpdateInput;
 use super::user_info_gql_model::UserInfoGqlModel;
 
-pub async fn find_one_by_user_id(
-    user_id: Uuid,
-    conn: &DatabaseConnection,
-) -> FieldResult<UserInfoGqlModel> {
+pub async fn find_one_by_user_id<C>(user_id: &Uuid, conn: &C) -> FieldResult<UserInfoGqlModel>
+where
+    C: ConnectionTrait,
+{
     if let Ok(Some(result)) = UserInfo::find()
-        .filter(user_info::Column::UserId.eq(user_id))
+        .filter(user_info::Column::UserId.eq(*user_id))
         .one(conn)
         .await
     {
