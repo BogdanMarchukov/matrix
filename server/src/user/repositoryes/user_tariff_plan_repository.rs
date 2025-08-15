@@ -1,7 +1,7 @@
 use async_graphql::{ErrorExtensions, FieldResult};
 use chrono::{Duration, NaiveDateTime, Utc};
 use migration::IntoCondition;
-use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, Set};
+use sea_orm::{ColumnTrait, Condition, ConnectionTrait, EntityTrait, QueryFilter, Set};
 use uuid::Uuid;
 
 use crate::{
@@ -21,36 +21,17 @@ where
     C: ConnectionTrait,
     F: IntoCondition,
 {
-    if let Ok(result) = UserTariffPlan::find()
-        .filter(user_tariff_plan::Column::UserId.eq(user_id.to_owned()))
-        .filter(user_tariff_plan::Column::ExpiresAt.gte(chrono::Utc::now()))
-        .all(conn)
-        .await
-    {
-        Ok(result
-            .into_iter()
-            .map(|u| UserTariffPlanGqlModel::new(u))
-            .collect())
-    } else {
-        Err(GqlError::ServerError("Database error".to_string()).extend())
-    }
-}
+    if let Ok(result) = {
+        let mut query = UserTariffPlan::find()
+            .filter(user_tariff_plan::Column::UserId.eq(user_id.to_owned()))
+            .filter(user_tariff_plan::Column::ExpiresAt.gte(chrono::Utc::now()));
 
-pub async fn find_by_user_id_and_tariff_ids<C>(
-    user_id: &Uuid,
-    tariff_ids: Vec<Uuid>,
-    conn: &C,
-) -> FieldResult<Vec<UserTariffPlanGqlModel>>
-where
-    C: ConnectionTrait,
-{
-    if let Ok(result) = UserTariffPlan::find()
-        .filter(user_tariff_plan::Column::UserId.eq(user_id.to_owned()))
-        .filter(user_tariff_plan::Column::TariffPlanId.is_in(tariff_ids))
-        .filter(user_tariff_plan::Column::ExpiresAt.gte(chrono::Utc::now()))
-        .all(conn)
-        .await
-    {
+        if let Some(f) = filter {
+            query = query.filter(f);
+        }
+
+        query.all(conn).await
+    } {
         Ok(result
             .into_iter()
             .map(|u| UserTariffPlanGqlModel::new(u))
@@ -100,7 +81,7 @@ pub async fn find_or_create_free<C>(
 where
     C: ConnectionTrait,
 {
-    let user_tariff_plans = find_by_user_id(&user_id, conn).await?;
+    let user_tariff_plans = find_by_user_id(&user_id, conn, None::<Condition>).await?;
     if user_tariff_plans.len() == 0 {
         let free_tariff_plan = tariff_plan_repository::find_free_tariff_plan(conn).await?;
         let exp = Utc::now() + Duration::days(free_tariff_plan.expiry_days.into());

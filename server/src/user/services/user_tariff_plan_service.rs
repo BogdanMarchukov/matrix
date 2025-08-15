@@ -1,9 +1,11 @@
 use async_graphql::{ErrorExtensions, FieldResult};
-use sea_orm::ConnectionTrait;
+use migration::IntoCondition;
+use sea_orm::{ColumnTrait, ConnectionTrait};
 use uuid::Uuid;
 
 use crate::{
     db_utils,
+    entity::user_tariff_plan,
     payment::{payment_repository, tariff_plan_payment_repository},
     tariff_plan::{tariff_plan_repository, tariff_plan_service},
     GqlError,
@@ -46,6 +48,9 @@ pub async fn check_user_tariff_plan_by_tariff_ids<C>(
 where
     C: ConnectionTrait,
 {
+    let filter = user_tariff_plan::Column::TariffPlanId.is_in(ids);
+    let result = user_tariff_plan_repository::find_by_user_id(&user_id, conn, Some(filter)).await?;
+    Ok(result.len() > 0)
 }
 
 async fn is_free_tariff_plan<C>(tariff_plan_id: Uuid, conn: &C) -> FieldResult<bool>

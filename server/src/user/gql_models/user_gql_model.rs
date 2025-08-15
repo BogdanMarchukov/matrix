@@ -4,6 +4,8 @@ use crate::entity::users;
 use crate::errors::gql_error::GqlError;
 use async_graphql::FieldResult;
 use async_graphql::*;
+use migration::IntoCondition;
+use sea_orm::Condition;
 use uuid::Uuid;
 
 use super::user_info_gql_model::UserInfoGqlModel;
@@ -77,7 +79,8 @@ impl User {
     ) -> FieldResult<Vec<UserTariffPlanGqlModel>> {
         let (user, conn) = get_auth_user_from_ctx(ctx)?;
         if let Ok(user_tariff_plans) =
-            user_tariff_plan_repository::find_by_user_id(&self.0.user_id, &conn).await
+            user_tariff_plan_repository::find_by_user_id(&self.0.user_id, &conn, None::<Condition>)
+                .await
         {
             for us in user_tariff_plans.iter() {
                 us.check_role(&user)?;
