@@ -1,5 +1,7 @@
 pub mod types;
-#[path = "./repositoryes/user_calc_result_repository.rs"]
+#[path = "./gql_models/user_calc_result_gql_model.rs"]
+pub mod user_calc_result_gql_model;
+#[path = "./gql_models/user_calc_result_gql_model.rs"]
 pub mod user_calc_result_repository;
 pub mod user_gql;
 #[path = "./gql_models/user_gql_model.rs"]
