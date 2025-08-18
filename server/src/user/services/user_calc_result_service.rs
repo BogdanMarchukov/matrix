@@ -1,11 +1,13 @@
 use std::sync::Arc;
 
-use crate::calculator;
+use crate::types::structurs::MatrixSchemaSvcWrapper;
+use crate::{calculator, AppState};
 use crate::compute::matrix_schema_client::{self, MatrixSchemaClient};
 use crate::compute::MatrixSchemaRequest;
 use crate::entity::calculator as calculator_entity;
+use crate::entity::sea_orm_active_enums::CalculatorType;
 use crate::types::traits::MatrixSchemaSvc;
-use async_graphql::{ErrorExtensions, FieldResult};
+use async_graphql::{Context, ErrorExtensions, FieldResult};
 use chrono::{Datelike, NaiveDate};
 use sea_orm::{ConnectionTrait, DatabaseConnection};
 use tonic::transport::Channel;
@@ -23,6 +25,7 @@ pub async fn create_calc(
     user_id: Uuid,
     calculator_id: Uuid,
     db: DatabaseConnection,
+    matrix_schema_client: Arc<MatrixSchemaClient<Channel>>,
 ) -> FieldResult<()> {
     let transaction = match db_utils::get_transaction(Some(db)).await {
         Ok(transaction) => transaction,
@@ -39,6 +42,13 @@ pub async fn create_calc(
         return Err(GqlError::BadRequest("Tariff plan not found".into()).extend());
     }
     let user_info = check_require_fields(&calculator, &user_id, &transaction).await?;
+    let matrix_calc = MatrixSchemaSvcWrapper::new(matrix_schema_client.as_ref().clone());
+    let result = match calculator.r#type {
+        CalculatorType::MatrixSchema => {
+            let date_of_birth = user_info.date_of_birth.unwrap();
+            create_matrix_calc(user_info.date_of_birth, matrix_calc).await
+        }
+    };
 
     Ok(())
 }
