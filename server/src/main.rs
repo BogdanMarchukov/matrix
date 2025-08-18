@@ -9,6 +9,7 @@ mod payment;
 use async_graphql_actix_web::GraphQLSubscription;
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use auth::auth_service;
+use compute::matrix_schema_client::MatrixSchemaClient;
 use errors::gql_error::GqlError;
 use gql_schema::Subscription;
 use guards::http_system_guard;
@@ -21,10 +22,13 @@ use offer::uploader::save_file;
 use once_cell::sync::Lazy;
 #[path = "common/s3/mod.rs"]
 mod s3;
+use ::s3::bucket_ops::CannedBucketAcl;
 use sea_orm::DatabaseConnection;
 use secret::secret_service;
 use std::collections::HashMap;
+use std::sync::Arc;
 use tokio::sync::broadcast::{self};
+use tonic::transport::{Channel, Endpoint};
 use tracing::info;
 use user::user_gql_model::User;
 #[path = "auth/mod.rs"]
@@ -61,6 +65,10 @@ use actix_cors::Cors;
 use tracing_subscriber;
 use uuid::Uuid;
 mod offer_like;
+
+pub mod compute {
+    tonic::include_proto!("compute");
+}
 
 const FRONTEND_DIR: Dir = include_d!("../client/build");
 
@@ -107,11 +115,20 @@ pub struct TxSender {
 pub struct AppState {
     pub db: DatabaseConnection,
     pub schema: GqlSchema,
+    pub matrix_schema_client: Arc<MatrixSchemaClient<Channel>>,
 }
 
 impl AppState {
-    pub fn new(db: DatabaseConnection, schema: GqlSchema) -> Self {
-        Self { db, schema }
+    pub fn new(
+        db: DatabaseConnection,
+        schema: GqlSchema,
+        matrix_schema_client: Arc<MatrixSchemaClient<Channel>>,
+    ) -> Self {
+        Self {
+            db,
+            schema,
+            matrix_schema_client,
+        }
     }
 }
 
@@ -183,6 +200,11 @@ async fn main() -> std::io::Result<()> {
     std::fs::create_dir_all("./tmp")?;
     let pool: DatabaseConnection = get_pool().await.expect("database error");
     Migrator::up(&pool, None).await.expect("migration error");
+    let client = Arc::new(
+        MatrixSchemaClient::connect("http://[::1]:50051")
+            .await
+            .expect("grpc connection error"),
+    );
 
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::DEBUG)
@@ -200,6 +222,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(AppState {
                 db: pool.to_owned(),
                 schema: schema.to_owned(),
+                matrix_schema_client: client.to_owned(),
             }))
             .app_data(TempFileConfig::default().directory("./tmp"))
             .wrap(cors)

@@ -1,8 +1,14 @@
+use std::sync::Arc;
+
 use crate::calculator;
+use crate::compute::matrix_schema_client::{self, MatrixSchemaClient};
+use crate::compute::MatrixSchemaRequest;
 use crate::entity::calculator as calculator_entity;
 use async_graphql::{ErrorExtensions, FieldResult};
 use chrono::{Datelike, NaiveDate};
 use sea_orm::{ConnectionTrait, DatabaseConnection};
+use tonic::transport::Channel;
+use tonic::Request;
 use uuid::Uuid;
 
 use crate::{
@@ -36,11 +42,29 @@ pub async fn create_calc(
     Ok(())
 }
 
-async fn create_matrix_calc(date_of_birth: NaiveDate) -> FieldResult<Vec<i32>> {
+async fn create_matrix_calc(
+    date_of_birth: NaiveDate,
+    matrix_schema_client: Arc<MatrixSchemaClient<Channel>>,
+) -> FieldResult<Vec<i32>> {
     let year = date_of_birth.year();
     let month = date_of_birth.month() as i32;
     let day = date_of_birth.day() as i32;
-    Ok(vec![year, month, day])
+
+    let request = Request::new(MatrixSchemaRequest { year, month, day });
+
+    let response = matrix_schema_client
+        .as_ref()
+        .clone()
+        .calc_matrix_schema(request)
+        .await?;
+    let schema = response
+        .into_inner()
+        .schema
+        .into_iter()
+        .flat_map(|arr| arr.values)
+        .collect();
+
+    Ok(schema)
 }
 
 async fn check_require_fields<C>(
