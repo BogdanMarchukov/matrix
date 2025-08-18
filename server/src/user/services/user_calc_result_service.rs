@@ -1,5 +1,7 @@
+use crate::calculator;
 use crate::entity::calculator as calculator_entity;
 use async_graphql::{ErrorExtensions, FieldResult};
+use chrono::{Datelike, NaiveDate};
 use sea_orm::{ConnectionTrait, DatabaseConnection};
 use uuid::Uuid;
 
@@ -32,6 +34,13 @@ pub async fn create_calc(
     let user_info = check_require_fields(&calculator, &user_id, &transaction).await?;
 
     Ok(())
+}
+
+async fn create_matrix_calc(date_of_birth: NaiveDate) -> FieldResult<Vec<i32>> {
+    let year = date_of_birth.year();
+    let month = date_of_birth.month() as i32;
+    let day = date_of_birth.day() as i32;
+    Ok(vec![year, month, day])
 }
 
 async fn check_require_fields<C>(
