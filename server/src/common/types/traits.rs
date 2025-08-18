@@ -1,5 +1,8 @@
 use sea_orm::{ConnectionTrait, DbErr, ModelTrait};
+use tonic::{Request, Response, Status};
 use uuid::Uuid;
+
+use crate::compute::{MatrixSchemaRequest, MatrixSchemaResponse};
 
 pub trait OptionFieldsFilter {}
 pub trait InsertData {}
@@ -35,4 +38,13 @@ where
     async fn delete_one<C>(id: Uuid, db: &C) -> Result<bool, DbErr>
     where
         C: ConnectionTrait;
+}
+
+#[tonic::async_trait]
+#[cfg_attr(test, mockall::automock)]
+pub trait MatrixSchemaSvc: Send + Sync + 'static {
+    async fn calc_matrix_schema(
+        &self,
+        request: Request<MatrixSchemaRequest>,
+    ) -> Result<Response<MatrixSchemaResponse>, Status>;
 }

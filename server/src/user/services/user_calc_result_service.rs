@@ -4,6 +4,7 @@ use crate::calculator;
 use crate::compute::matrix_schema_client::{self, MatrixSchemaClient};
 use crate::compute::MatrixSchemaRequest;
 use crate::entity::calculator as calculator_entity;
+use crate::types::traits::MatrixSchemaSvc;
 use async_graphql::{ErrorExtensions, FieldResult};
 use chrono::{Datelike, NaiveDate};
 use sea_orm::{ConnectionTrait, DatabaseConnection};
@@ -42,9 +43,9 @@ pub async fn create_calc(
     Ok(())
 }
 
-async fn create_matrix_calc(
+async fn create_matrix_calc<S: MatrixSchemaSvc>(
     date_of_birth: NaiveDate,
-    matrix_schema_client: Arc<MatrixSchemaClient<Channel>>,
+    matrix_schema_client: Arc<S>,
 ) -> FieldResult<Vec<i32>> {
     let year = date_of_birth.year();
     let month = date_of_birth.month() as i32;
@@ -133,3 +134,35 @@ where
         };
     Ok((calculator, offer))
 }
+
+// #[cfg(test)]
+// mod tests {
+//     use chrono::NaiveDate;
+//     use tonic::Response;
+//     use super::*;
+//
+//     use crate::{
+//         compute::{Int32Array, MatrixSchemaResponse},
+//         types::traits::MockMatrixSchemaSvc,
+//     };
+//
+//     #[tokio::test]
+//     async fn test() {
+//         let mut mock = MockMatrixSchemaSvc::new();
+//
+//         mock.expect_calc_matrix_schema().returning(|_| {
+//             Ok(Response::new(MatrixSchemaResponse {
+//                 schema: vec![Int32Array {
+//                     values: vec![1, 2, 3],
+//                 }],
+//             }))
+//         });
+//
+//         let date_of_birth = NaiveDate::from_ymd_opt(1990, 1, 1).unwrap();
+//         let result = create_matrix_calc(date_of_birth, Arc::new(mock))
+//             .await
+//             .unwrap();
+//
+//         assert_eq!(result, vec![1, 2, 3]);
+//     }
+// }
