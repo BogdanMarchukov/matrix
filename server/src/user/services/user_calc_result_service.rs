@@ -135,34 +135,36 @@ where
     Ok((calculator, offer))
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use chrono::NaiveDate;
-//     use tonic::Response;
-//     use super::*;
-//
-//     use crate::{
-//         compute::{Int32Array, MatrixSchemaResponse},
-//         types::traits::MockMatrixSchemaSvc,
-//     };
-//
-//     #[tokio::test]
-//     async fn test() {
-//         let mut mock = MockMatrixSchemaSvc::new();
-//
-//         mock.expect_calc_matrix_schema().returning(|_| {
-//             Ok(Response::new(MatrixSchemaResponse {
-//                 schema: vec![Int32Array {
-//                     values: vec![1, 2, 3],
-//                 }],
-//             }))
-//         });
-//
-//         let date_of_birth = NaiveDate::from_ymd_opt(1990, 1, 1).unwrap();
-//         let result = create_matrix_calc(date_of_birth, Arc::new(mock))
-//             .await
-//             .unwrap();
-//
-//         assert_eq!(result, vec![1, 2, 3]);
-//     }
-// }
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::NaiveDate;
+    use tonic::Response;
+
+    use crate::{
+        compute::{Int32Array, MatrixSchemaResponse},
+        types::traits::MockMatrixSchemaSvc,
+    };
+
+    #[tokio::test]
+    async fn test_create_matrix_calc() {
+        let mut mock = MockMatrixSchemaSvc::new();
+
+        mock.expect_calc_matrix_schema().returning(|_req| {
+            Box::pin(async {
+                Ok(Response::new(MatrixSchemaResponse {
+                    schema: vec![Int32Array {
+                        values: vec![1, 2, 3],
+                    }],
+                }))
+            })
+        });
+
+        let date_of_birth = NaiveDate::from_ymd_opt(1990, 1, 1).unwrap();
+        let result = create_matrix_calc(date_of_birth, Arc::new(mock))
+            .await
+            .unwrap();
+
+        assert_eq!(result, vec![1, 2, 3]);
+    }
+}
