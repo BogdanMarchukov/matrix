@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use tonic::{async_trait, transport::Channel, Request, Response, Status};
 
 use crate::compute::{
@@ -8,11 +10,11 @@ use super::traits::MatrixSchemaSvc;
 
 #[derive(Clone)]
 pub struct MatrixSchemaSvcWrapper {
-    inner: MatrixSchemaClient<Channel>,
+    inner: Arc<MatrixSchemaClient<Channel>>,
 }
 
 impl MatrixSchemaSvcWrapper {
-    pub fn new(inner: MatrixSchemaClient<Channel>) -> Self {
+    pub fn new(inner: Arc<MatrixSchemaClient<Channel>>) -> Self {
         Self { inner }
     }
 }
@@ -23,7 +25,7 @@ impl MatrixSchemaSvc for MatrixSchemaSvcWrapper {
         &self,
         req: Request<MatrixSchemaRequest>,
     ) -> Result<Response<MatrixSchemaResponse>, Status> {
-        let mut c = self.inner.clone();
+        let mut c = self.inner.as_ref().clone();
         c.calc_matrix_schema(req).await
     }
 }

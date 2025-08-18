@@ -1,13 +1,13 @@
+use std::result;
 use std::sync::Arc;
 
-use crate::types::structurs::MatrixSchemaSvcWrapper;
-use crate::{calculator, AppState};
 use crate::compute::matrix_schema_client::{self, MatrixSchemaClient};
 use crate::compute::MatrixSchemaRequest;
 use crate::entity::calculator as calculator_entity;
 use crate::entity::sea_orm_active_enums::CalculatorType;
-use crate::types::traits::MatrixSchemaSvc;
-use async_graphql::{Context, ErrorExtensions, FieldResult};
+use crate::types::structurs::MatrixSchemaSvcWrapper;
+use crate::types::traits::{MatrixSchemaSvc, Repository};
+use async_graphql::{ErrorExtensions, FieldResult};
 use chrono::{Datelike, NaiveDate};
 use sea_orm::{ConnectionTrait, DatabaseConnection};
 use tonic::transport::Channel;
@@ -18,16 +18,18 @@ use crate::{
     calculator::calculator_repository::CalculatorRepository, db_utils, errors::gql_error::GqlError,
 };
 
+use super::user_calc_result_gql_model::UserCalcResultGqlModel;
+use super::user_calc_result_repository::{UserCalcResultInsertData, UserCalcResultRepository};
 use super::user_info_gql_model::UserInfoGqlModel;
 use super::{user_info_repository, user_tariff_plan_service};
 
 pub async fn create_calc(
     user_id: Uuid,
     calculator_id: Uuid,
-    db: DatabaseConnection,
+    db: &DatabaseConnection,
     matrix_schema_client: Arc<MatrixSchemaClient<Channel>>,
-) -> FieldResult<()> {
-    let transaction = match db_utils::get_transaction(Some(db)).await {
+) -> FieldResult<UserCalcResultGqlModel> {
+    let transaction = match db_utils::get_transaction(Some(db.clone())).await {
         Ok(transaction) => transaction,
         Err(_) => return Err(GqlError::ServerError("Database error".into()).extend()),
     };
@@ -42,15 +44,27 @@ pub async fn create_calc(
         return Err(GqlError::BadRequest("Tariff plan not found".into()).extend());
     }
     let user_info = check_require_fields(&calculator, &user_id, &transaction).await?;
-    let matrix_calc = MatrixSchemaSvcWrapper::new(matrix_schema_client.as_ref().clone());
-    let result = match calculator.r#type {
+    let matrix_calc = MatrixSchemaSvcWrapper::new(matrix_schema_client);
+    let calc_result = match calculator.r#type {
         CalculatorType::MatrixSchema => {
-            let date_of_birth = user_info.date_of_birth.unwrap();
-            create_matrix_calc(user_info.date_of_birth, matrix_calc).await
+            let date_of_birth = user_info
+                .date_of_birth
+                .ok_or_else(|| GqlError::BadRequest("Date of birth is required".into()).extend())?;
+
+            create_matrix_calc(date_of_birth, Arc::new(matrix_calc)).await?
         }
     };
+    let insert_data = UserCalcResultInsertData {
+        user_id,
+        calculator_id,
+        result: serde_json::json!(calc_result),
+        ..Default::default()
+    };
+    let user_matrix_calc_result = UserCalcResultRepository::create_one(insert_data, db)
+        .await
+        .map_err(|_| GqlError::ServerError("Database error".into()).extend())?;
 
-    Ok(())
+    Ok(user_matrix_calc_result.into())
 }
 
 async fn create_matrix_calc<S: MatrixSchemaSvc>(

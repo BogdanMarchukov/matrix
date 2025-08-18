@@ -1,7 +1,8 @@
 use crate::entity::user_calc_result;
 use crate::types::traits::{InsertData, OptionFieldsFilter, Repository, UpdateData};
 use sea_orm::{
-    ActiveModelTrait, ColumnTrait, DatabaseConnection, DbErr, EntityTrait, QueryFilter, Set,
+    ActiveModelTrait, ColumnTrait, ConnectionTrait, DatabaseConnection, DbErr, EntityTrait,
+    QueryFilter, Set,
 };
 use uuid::Uuid;
 
@@ -10,23 +11,25 @@ pub struct UserCalcResultRepository;
 impl
     Repository<
         user_calc_result::Model,
-        DatabaseConnection,
         UserCalcResultFilter,
         UserCalcResultInsertData,
         UserCalcResultUpdateData,
     > for UserCalcResultRepository
 {
-    async fn find_by_pk(
-        id: Uuid,
-        db: &DatabaseConnection,
-    ) -> Result<Option<user_calc_result::Model>, DbErr> {
+    async fn find_by_pk<C>(id: Uuid, db: &C) -> Result<Option<user_calc_result::Model>, DbErr>
+    where
+        C: ConnectionTrait,
+    {
         user_calc_result::Entity::find_by_id(id).one(db).await
     }
 
-    async fn find_many(
+    async fn find_many<C>(
         filter: UserCalcResultFilter,
-        db: &DatabaseConnection,
-    ) -> Result<Vec<user_calc_result::Model>, DbErr> {
+        db: &C,
+    ) -> Result<Vec<user_calc_result::Model>, DbErr>
+    where
+        C: ConnectionTrait,
+    {
         let mut query = user_calc_result::Entity::find();
         if let Some(user_id) = filter.user_id {
             query = query.filter(user_calc_result::Column::UserId.eq(user_id));
@@ -40,10 +43,13 @@ impl
         query.all(db).await
     }
 
-    async fn find_one(
+    async fn find_one<C>(
         filter: UserCalcResultFilter,
-        db: &DatabaseConnection,
-    ) -> Result<Option<user_calc_result::Model>, DbErr> {
+        db: &C,
+    ) -> Result<Option<user_calc_result::Model>, DbErr>
+    where
+        C: ConnectionTrait,
+    {
         let mut query = user_calc_result::Entity::find();
         if let Some(user_id) = filter.user_id {
             query = query.filter(user_calc_result::Column::UserId.eq(user_id));
@@ -57,10 +63,13 @@ impl
         query.one(db).await
     }
 
-    async fn create_one(
+    async fn create_one<C>(
         data: UserCalcResultInsertData,
-        db: &DatabaseConnection,
-    ) -> Result<user_calc_result::Model, DbErr> {
+        db: &C,
+    ) -> Result<user_calc_result::Model, DbErr>
+    where
+        C: ConnectionTrait,
+    {
         let data = user_calc_result::ActiveModel {
             user_calc_result_id: Set(data.user_calc_result_id),
             user_id: Set(data.user_id),
@@ -73,11 +82,14 @@ impl
             .await
     }
 
-    async fn update_one(
+    async fn update_one<C>(
         id: Uuid,
         data: UserCalcResultUpdateData,
-        db: &DatabaseConnection,
-    ) -> Result<user_calc_result::Model, DbErr> {
+        db: &C,
+    ) -> Result<user_calc_result::Model, DbErr>
+    where
+        C: ConnectionTrait,
+    {
         let mut model: user_calc_result::ActiveModel = user_calc_result::Entity::find_by_id(id)
             .one(db)
             .await?
@@ -100,7 +112,10 @@ impl
         model.update(db).await
     }
 
-    async fn delete_one(id: Uuid, db: &DatabaseConnection) -> Result<bool, DbErr> {
+    async fn delete_one<C>(id: Uuid, db: &C) -> Result<bool, DbErr>
+    where
+        C: ConnectionTrait,
+    {
         let result = user_calc_result::Entity::delete_by_id(id).exec(db).await;
         match result {
             Ok(result) => Ok(result.rows_affected > 0),
