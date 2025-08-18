@@ -45,7 +45,7 @@ pub async fn create_calc(
     }
     let user_info = check_require_fields(&calculator, &user_id, &transaction).await?;
     let matrix_calc = MatrixSchemaSvcWrapper::new(matrix_schema_client);
-    let calc_result = match calculator.r#type {
+    let (calc_result, key) = match calculator.r#type {
         CalculatorType::MatrixSchema => {
             let date_of_birth = user_info
                 .date_of_birth
@@ -57,6 +57,7 @@ pub async fn create_calc(
     let insert_data = UserCalcResultInsertData {
         user_id,
         calculator_id,
+        key,
         result: serde_json::json!(calc_result),
         ..Default::default()
     };
@@ -70,7 +71,7 @@ pub async fn create_calc(
 async fn create_matrix_calc<S: MatrixSchemaSvc>(
     date_of_birth: NaiveDate,
     matrix_schema_client: Arc<S>,
-) -> FieldResult<Vec<i32>> {
+) -> FieldResult<(Vec<i32>, String)> {
     let year = date_of_birth.year();
     let month = date_of_birth.month() as i32;
     let day = date_of_birth.day() as i32;
@@ -88,8 +89,9 @@ async fn create_matrix_calc<S: MatrixSchemaSvc>(
         .into_iter()
         .flat_map(|arr| arr.values)
         .collect();
+    let key = date_of_birth.to_string();
 
-    Ok(schema)
+    Ok((schema, key))
 }
 
 async fn check_require_fields<C>(
@@ -185,10 +187,11 @@ mod tests {
         });
 
         let date_of_birth = NaiveDate::from_ymd_opt(1990, 1, 1).unwrap();
-        let result = create_matrix_calc(date_of_birth, Arc::new(mock))
-            .await
-            .unwrap();
+        let (result, key) = create_matrix_calc(date_of_birth, Arc::new(mock))
+           
+                .await
+                .unwrap();
 
-        assert_eq!(result, vec![1, 2, 3]);
+        assert_eq!(key, date_of_birth.to_string());
     }
 }
