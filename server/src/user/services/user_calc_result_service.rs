@@ -188,9 +188,8 @@ mod tests {
 
         let date_of_birth = NaiveDate::from_ymd_opt(1990, 1, 1).unwrap();
         let (result, key) = create_matrix_calc(date_of_birth, Arc::new(mock))
-           
-                .await
-                .unwrap();
+            .await
+            .unwrap();
 
         assert_eq!(key, date_of_birth.to_string());
     }
