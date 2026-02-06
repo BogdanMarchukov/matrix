@@ -1,7 +1,7 @@
 import { News } from "./components/news";
 import { PriceCalc } from "./components/price-calc";
 import { Products } from "./components/products";
-import { Scores } from "./components/scores";
+import { Scores } from "./components/scores/scores";
 import { UserBar } from "./components/user-bar";
 import classes from './main-page.module.css';
 

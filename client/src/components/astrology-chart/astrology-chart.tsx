@@ -203,6 +203,21 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
 
   const showIndex = [0, 8, 16, 24, 32, 40, 48, 56]
 
+  const shortenLine = (p1: Point, p2: Point, r1: number, r2: number = 0) => {
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    const length = Math.sqrt(dx * dx + dy * dy);
+    if (length === 0) return { from: p1, to: p2 };
+
+    const scale1 = r1 / length;
+    const scale2 = r2 / length;
+
+    return {
+      from: { x: p1.x + dx * scale1, y: p1.y + dy * scale1 },
+      to: { x: p2.x - dx * scale2, y: p2.y - dy * scale2 }
+    };
+  };
+
   return show ? (
     <div>
       <svg viewBox="0 0 600 660">
@@ -222,14 +237,11 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
         />
 
         <AnimatedLine
-          from={{
-            x: circlePoints90[1].x,
-            y: circlePoints90[1].y
-          }}
-          to={{
-            x: circlePoints90[8].x,
-            y: circlePoints90[8].y
-          }}
+          {...shortenLine(
+            { x: circlePoints90[1].x, y: circlePoints90[1].y },
+            { x: circlePoints90[8].x, y: circlePoints90[8].y },
+            12 + 8, 12 + 8
+          )}
           delay={6900}
           strokeDasharray="20 10"
           stroke="#455568"
@@ -237,14 +249,11 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
         />
 
         <AnimatedLine
-          from={{
-            x: circlePoints90[4].x,
-            y: circlePoints90[4].y
-          }}
-          to={{
-            x: circlePoints90[6].x,
-            y: circlePoints90[6].y
-          }}
+          {...shortenLine(
+            { x: circlePoints90[4].x, y: circlePoints90[4].y },
+            { x: circlePoints90[6].x, y: circlePoints90[6].y },
+            12 + 8, 12 + 8
+          )}
           delay={6900}
           strokeDasharray="20 10"
           stroke="#455568"
@@ -252,14 +261,11 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
         />
 
         <AnimatedLine
-          from={{
-            x: circlePoints90[5].x,
-            y: circlePoints90[5].y
-          }}
-          to={{
-            x: circlePoints90[3].x,
-            y: circlePoints90[3].y
-          }}
+          {...shortenLine(
+            { x: circlePoints90[5].x, y: circlePoints90[5].y },
+            { x: circlePoints90[3].x, y: circlePoints90[3].y },
+            14 + 8, 14 + 8
+          )}
           delay={6900}
           strokeDasharray="20 10"
           stroke="#455568"
@@ -268,16 +274,15 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
 
         {sectors.map((s, idx) =>
           showIndex.includes(idx) ? (
-            < AnimatedLine
+            <AnimatedLine
               key={'line' + idx}
-              from={center}
-              to={s.outer}
+              {...shortenLine(center, s.outer, 30 + 5, 0)}
               stroke={idx === 8 || idx === 24 ? "#e1112a" : idx === 40 || idx === 56 ? "#196fec" : "#718096"}
               strokeWidth={1}
               duration={1500}
               delayedText={100}
               delay={([0, 16, 32, 48].includes(idx) ? 0 : 1500) + 4400}
-              circlePoints={circlePoints90}
+            // circlePoints removed from here to separate layers
             />
           ) : null
         )}
@@ -339,7 +344,7 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
           )
         })}
 
-        < DelayedText
+        <DelayedText
           x={center.x - 40}
           y={center.y - 35}
           fontSize="25"
@@ -393,6 +398,22 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
           delay={200}
           textDelay={200}
         />
+
+        {/* Circles Layer - Rendered last to be on top */}
+        {sectors.map((s, idx) =>
+          showIndex.includes(idx) ? (
+            <AnimatedLine
+              key={'circles-' + idx}
+              {...shortenLine(center, s.outer, 30 + 5, 0)}
+              stroke="none"
+              strokeWidth={0}
+              duration={1500}
+              delayedText={100}
+              delay={([0, 16, 32, 48].includes(idx) ? 0 : 1500) + 4400}
+              circlePoints={circlePoints90}
+            />
+          ) : null
+        )}
       </svg>
     </div >
   ) : null
