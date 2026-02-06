@@ -56,10 +56,10 @@ export const Message = () => {
   }, [subscriptionData, refetch, load])
 
   const onMessageClick = useCallback(() => {
-    if (notifyId && !showNotify) {
-      setShowNotify(true)
+    if (notifyId) {
+      setShowNotify(prev => !prev)
     }
-  }, [notifyId, showNotify])
+  }, [notifyId])
 
   return (
     <div className={classes.root} onTouchStart={onMessageClick} ref={popupRef}>
