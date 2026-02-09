@@ -3,6 +3,7 @@
   flex-direction: column;
   padding: var(--spaces-smm);
   border-radius: var(--spaces-smm);
+  position: relative;
 }
 
 .primary {

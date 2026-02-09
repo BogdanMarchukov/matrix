@@ -5,9 +5,8 @@ import { Card } from "../../../../atoms/card";
 import { Currency } from "../../../../atoms/currency";
 import { DateInput } from "../../../../atoms/date-input";
 import classes from "./scores.module.css";
-import ButtonSvg from "./svg/button";
+import { SearchIcon } from "./svg/search";
 import MiniBtnSvg from "./svg/miniBtn";
-import { CloseIcon } from "./svg/close";
 import { Modal } from "../../../../atoms/modal/modal";
 
 const { root, input, content, horizontalBox, verticalBox, titleBox, scoreTitle, sumBox, sum, friendsBonusTitle, friendsBonusText, orderTitle } = classes;
@@ -58,11 +57,15 @@ export const Scores = () => {
               </p>
             </Card>
           </div>
-          <Card variant="secondary">
-            <p className={orderTitle}>Выбрать и заказать</p>
-            <IconButton variant="secondary" size="large" onClick={() => setShow((prev) => !prev)}>
-              <ButtonSvg />
-            </IconButton>
+          <Card variant="secondary" style={{ background: 'black' }}>
+            <div className={classes.miniChartWrapper} onClick={() => setShow(true)}>
+              <AstrologyChart show={true} pointValue={data} />
+            </div>
+            <div className={classes.searchButtonWrapper}>
+              <IconButton variant="secondary" size="large" onClick={() => setShow((prev) => !prev)} style={{ width: '40px', height: '40px', background: 'transparent', color: 'white', boxShadow: 'none' }}>
+                <SearchIcon />
+              </IconButton>
+            </div>
           </Card>
         </div>
       </div>

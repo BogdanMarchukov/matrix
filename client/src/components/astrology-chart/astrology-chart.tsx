@@ -9,6 +9,7 @@ import DelayedText from "../atoms/svg/delayed-text/delayed-text";
 type AnimatedLineProps = {
   show: boolean
   pointValue: number[][]
+  isMini?: boolean
 };
 
 
@@ -31,7 +32,7 @@ const polarToCartesian = (centerX: number, centerY: number, radius: number, angl
   };
 };
 
-const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: AnimatedLineProps) => {
+const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue, isMini = false }: AnimatedLineProps) => {
   const center: Point = { x: 300, y: 320 };
   const circleRadius = 255;
 
@@ -220,7 +221,7 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
 
   return show ? (
     <div>
-      <svg viewBox="0 0 600 660">
+      <svg viewBox="0 0 600 660" style={{ width: '100%', height: '100%' }}>
         <defs>
           <filter id="dropShadow" x="-50%" y="-50%" width="200%" height="200%">
             <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="#000" floodOpacity="0.4" />
@@ -242,10 +243,10 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
             { x: circlePoints90[8].x, y: circlePoints90[8].y },
             12 + 8, 12 + 8
           )}
-          delay={6900}
+          delay={isMini ? 0 : 6900}
           strokeDasharray="20 10"
           stroke="#455568"
-          duration={1500}
+          duration={isMini ? 0 : 1500}
         />
 
         <AnimatedLine
@@ -254,10 +255,10 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
             { x: circlePoints90[6].x, y: circlePoints90[6].y },
             12 + 8, 12 + 8
           )}
-          delay={6900}
+          delay={isMini ? 0 : 6900}
           strokeDasharray="20 10"
           stroke="#455568"
-          duration={1500}
+          duration={isMini ? 0 : 1500}
         />
 
         <AnimatedLine
@@ -266,10 +267,10 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
             { x: circlePoints90[3].x, y: circlePoints90[3].y },
             14 + 8, 14 + 8
           )}
-          delay={6900}
+          delay={isMini ? 0 : 6900}
           strokeDasharray="20 10"
           stroke="#455568"
-          duration={1500}
+          duration={isMini ? 0 : 1500}
         />
 
         {sectors.map((s, idx) =>
@@ -279,9 +280,9 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
               {...shortenLine(center, s.outer, 30 + 5, 0)}
               stroke={idx === 8 || idx === 24 ? "#e1112a" : idx === 40 || idx === 56 ? "#196fec" : "#718096"}
               strokeWidth={1}
-              duration={1500}
+              duration={isMini ? 0 : 1500}
               delayedText={100}
-              delay={([0, 16, 32, 48].includes(idx) ? 0 : 1500) + 4400}
+              delay={isMini ? 0 : ([0, 16, 32, 48].includes(idx) ? 0 : 1500) + 4400}
             // circlePoints removed from here to separate layers
             />
           ) : null
@@ -350,7 +351,7 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
           fontSize="25"
           textAnchor="middle"
           fill="#196fec"
-          delay={8400}
+          delay={isMini ? 0 : 8400}
           content="♂"
         />
 
@@ -360,7 +361,7 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
           fontSize="25"
           textAnchor="middle"
           fill="#E53E3E"
-          delay={8400}
+          delay={isMini ? 0 : 8400}
           content="♀"
 
         />
@@ -371,7 +372,7 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
           fontSize="20"
           textAnchor="middle"
           fill="#E53E3E"
-          delay={8400}
+          delay={isMini ? 0 : 8400}
           content="❤️"
         />
 
@@ -381,22 +382,22 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
           fontSize="25"
           textAnchor="middle"
           fill="#E53E3E"
-          delay={8400}
+          delay={isMini ? 0 : 8400}
           content="💰"
         />
 
         <AnimatedPolygonPath
           points={getSquarePoints(90, ['#8E61EF', '#e1112a', '#e1112a', '#8E61EF'], pointValue[0])}
-          duration={2000}
-          delay={2400}
-          textDelay={200}
+          duration={isMini ? 0 : 2000}
+          delay={isMini ? 0 : 2400}
+          textDelay={isMini ? 0 : 200}
         />
 
         <AnimatedPolygonPath
           points={getSquarePoints(45, undefined, pointValue[1])}
-          duration={2000}
-          delay={200}
-          textDelay={200}
+          duration={isMini ? 0 : 2000}
+          delay={isMini ? 0 : 200}
+          textDelay={isMini ? 0 : 200}
         />
 
         {/* Circles Layer - Rendered last to be on top */}
@@ -407,9 +408,9 @@ const AstrologyChart: React.FC<AnimatedLineProps> = ({ show, pointValue }: Anima
               {...shortenLine(center, s.outer, 30 + 5, 0)}
               stroke="none"
               strokeWidth={0}
-              duration={1500}
+              duration={isMini ? 0 : 1500}
               delayedText={100}
-              delay={([0, 16, 32, 48].includes(idx) ? 0 : 1500) + 4400}
+              delay={isMini ? 0 : ([0, 16, 32, 48].includes(idx) ? 0 : 1500) + 4400}
               circlePoints={circlePoints90}
             />
           ) : null

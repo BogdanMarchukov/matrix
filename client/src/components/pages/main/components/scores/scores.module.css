@@ -89,6 +89,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .friendsBonusText {
   font-size: var(--font-xs);
+
   span {
     color: var(--color-primary-middle)
   }
@@ -99,4 +100,24 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-size: var(--font-sm);
   margin-bottom: auto;
   font-family: var(--font-unbounded);
+}
+
+.miniChartWrapper {
+  width: 100%;
+  height: 100%;
+  max-width: 150px;
+  max-height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  cursor: pointer;
+  margin: 0 auto;
+}
+
+.searchButtonWrapper {
+  position: absolute;
+  bottom: var(--spaces-md);
+  left: var(--spaces-md);
+  z-index: 10;
 }
