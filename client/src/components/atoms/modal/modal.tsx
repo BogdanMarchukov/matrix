@@ -1,6 +1,7 @@
 import { ReactNode, useEffect } from "react";
 import { CloseIcon } from "../../pages/main/components/scores/svg/close";
 import { IconButton } from "../buttons/icon-button";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ModalProps {
   children: ReactNode;
@@ -8,6 +9,7 @@ interface ModalProps {
   show: boolean;
   maxWidth?: string;
   maxHeight?: string;
+  layoutId?: string;
 }
 
 export const Modal = ({
@@ -15,7 +17,8 @@ export const Modal = ({
   onClose,
   show,
   maxWidth = "100%",
-  maxHeight = "90vh"
+  maxHeight = "90vh",
+  layoutId
 }: ModalProps) => {
   useEffect(() => {
     if (show) {
@@ -29,54 +32,67 @@ export const Modal = ({
     };
   }, [show]);
 
-  if (!show) return null;
-
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 1000,
-      padding: '16px',
-      boxSizing: 'border-box'
-    }}>
-      <div style={{
-        position: 'relative',
-        width: '100%',
-        maxWidth: maxWidth,
-        maxHeight: maxHeight,
-        overflow: 'auto',
-        backgroundColor: 'black',
-        borderRadius: '8px',
-      }}>
-        {/* Кнопка закрытия */}
-        <div style={{
-          position: 'absolute',
-          top: '8px',
-          right: '8px',
-          zIndex: 1001
-        }}>
-          <IconButton
-            onClick={onClose}
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+            padding: '16px',
+            boxSizing: 'border-box'
+          }}
+        >
+          <motion.div
+            layoutId={layoutId} // Shared element transition if layoutId is provided
+            initial={layoutId ? undefined : { scale: 0.8, opacity: 0 }}
+            animate={layoutId ? undefined : { scale: 1, opacity: 1 }}
+            exit={layoutId ? undefined : { scale: 0.8, opacity: 0 }}
             style={{
-              backgroundColor: 'transparent',
-              padding: '4px'
+              position: 'relative',
+              width: '100%',
+              maxWidth: maxWidth,
+              maxHeight: maxHeight,
+              overflow: 'auto',
+              backgroundColor: 'black',
+              borderRadius: '8px',
             }}
-            size="medium"
-            aria-label="Close modal"
           >
-            <CloseIcon />
-          </IconButton>
-        </div>
+            {/* Кнопка закрытия */}
+            <div style={{
+              position: 'absolute',
+              top: '8px',
+              right: '8px',
+              zIndex: 1001
+            }}>
+              <IconButton
+                onClick={onClose}
+                style={{
+                  backgroundColor: 'transparent',
+                  padding: '4px'
+                }}
+                size="medium"
+                aria-label="Close modal"
+              >
+                <CloseIcon />
+              </IconButton>
+            </div>
 
-        {children}
-      </div>
-    </div>
+            {children}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };

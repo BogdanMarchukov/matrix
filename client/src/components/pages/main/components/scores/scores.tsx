@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import AstrologyChart from "../../../../astrology-chart/astrology-chart";
+import { motion } from "framer-motion";
 import { IconButton } from "../../../../atoms/buttons/icon-button";
 import { Card } from "../../../../atoms/card";
 import { Currency } from "../../../../atoms/currency";
